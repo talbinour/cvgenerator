@@ -1,35 +1,54 @@
-// import models
 const express = require('express');
 const mongoose = require('mongoose');
-const morgan = require ('morgan');
-const cors= require ('cors');
-require("dotenv").config();
+const morgan = require('morgan');
+const cors = require('cors');
+const dotenv = require('dotenv');
 
-//app
-const app=express();
+// Load environment variables
+dotenv.config();
 
+// Import MongoDB models
+require('./userDetails'); // Make sure to register the model
 
-//db
-const mongoURI = 'mongodb://localhost:27017n';mongodb:
+// Import routes
+const postRoutes = require('./routes/postRoutes');
+const registerRoutes = require('./routes/registerRoutes');
 
-mongoose.connect(mongoURI, {
+// App setup
+const app = express();
+app.use(express.json());
+app.use(morgan('dev'));
+app.use(cors({ origin: true, credentials: true }));
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000, // Set a timeout to detect initial connection
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB', err));
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+    process.exit(1); // Terminate the application on connection error
+  });
 
-//middlweare
-app.use(morgan("dev"));
-app.use(cors({origin: true , credentials: true }));
+// Routes setup
+app.use('/post', postRoutes);
+app.use('/register', registerRoutes);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError') {
+    // Handle Mongoose validation errors
+    const validationErrors = Object.values(err.errors).map((error) => error.message);
+    res.status(400).json({ error: 'Validation failed', details: validationErrors });
+  } else {
+    // Handle other types of errors
+    console.error(err.stack);
+    res.status(500).send(`Something went wrong! Error: ${err.message}`);
+  }
+});
 
-//routes
-
-
-//port
+// Start the server
 const port = process.env.PORT || 8080;
-
-//listener 
-
-const server = app.listen(port , ()=> console.log(`Server is running on port ${port}`));
+app.listen(port, () => console.log(`Server is running on port ${port}`));
