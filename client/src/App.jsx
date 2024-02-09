@@ -6,6 +6,7 @@ import Login from './Login';  // Make sure the path is correct
 import SignUp from './SignUp';  // Make sure the path is correct
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 function App() {
   return (
     <Router>
@@ -17,11 +18,6 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link" to={'/sign-in'}>
                     Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to={'/sign-up'}>
-                    Sign up
                   </Link>
                 </li>
               </ul>

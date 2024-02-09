@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const AuthController = require('./authController');
+const passport = require('passport');
+const session = require('express-session');
 
 // Load environment variables
 dotenv.config();
@@ -10,15 +13,25 @@ dotenv.config();
 // Import MongoDB models
 require('./userDetails'); // Make sure to register the model
 
-// Import routes
-const postRoutes = require('./routes/postRoutes');
-const registerRoutes = require('./routes/registerRoutes');
+// Create an instance of the AuthController
+const authController = new AuthController();
 
 // App setup
 const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors({ origin: true, credentials: true }));
+
+// Add express-session middleware
+app.use(session({
+  secret: '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', // Replace with your own secret key
+  resave: true,
+  saveUninitialized: true,
+}));
+
+// Initialize Passport and restore authentication state from the session
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -31,6 +44,13 @@ mongoose.connect(process.env.MONGO_URI, {
     console.error('Error connecting to MongoDB:', err);
     process.exit(1); // Terminate the application on connection error
   });
+
+// Initialize routes from the AuthController
+authController.initializeRoutes();
+
+// Import routes
+const postRoutes = require('./routes/postRoutes');
+const registerRoutes = require('./routes/registerRoutes');
 
 // Routes setup
 app.use('/post', postRoutes);
@@ -48,7 +68,6 @@ app.use((err, req, res, next) => {
     res.status(500).send(`Something went wrong! Error: ${err.message}`);
   }
 });
-
 // Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Server is running on port ${port}`));

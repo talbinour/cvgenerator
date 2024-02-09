@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import "./Login.css";
+
+const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [motPasse, setMotPasse] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    // Check if the entered email and password match the admin credentials
+    if (email === 'admin@example.com' && motPasse === 'adminPassword') {
+      // Admin credentials are valid, redirect to the admin page
+      navigate('/admin');
+      return;
+    }
+
+    try {
+      // Send login data to the server
+      const response = await axios.post('http://localhost:8080/api/login', { email, motPasse });
+
+      // Assuming the server responds with a user object including the role upon successful login
+      const user = response.data.user;
+
+      // Redirect the user based on their role
+      if (user.role === 'admin') {
+        navigate('/admin'); // Redirect to the admin page
+      } else if (user.role === 'user') {
+        navigate('/user'); // Redirect to the user page
+      } else {
+        console.error('Unknown role:', user.role);
+      }
+    } catch (error) {
+      // Handle login error
+      console.error('Login failed', error);
+    }
+  };
+
+  const loginWithGoogle = ()=>{
+    window.open("http://localhost:8080/auth/google/callback","_self")
+}
+
+
+  return (
+    <div className="login-page">
+      <h2 style={{ textAlign: 'center' }}>Connexion</h2>
+      <div className="form">
+        <form className="login-form">
+          <label>Email:</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+
+          <label>Mot de passe:</label>
+          <input type="password" value={motPasse} onChange={(e) => setMotPasse(e.target.value)} />
+
+          <button type="button" onClick={handleLogin}>
+            Connexion
+          </button>
+          <p className='message'>Not Registerd? <a href="/sign-up">Create an account</a></p>
+        </form>
+        <button className='login-with-google-btn' onClick={loginWithGoogle}>
+          Sign In With Google
+        </button>
+
+      </div>
+    </div>
+  );
+};
+
+export default Login;

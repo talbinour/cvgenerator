@@ -1,0 +1,42 @@
+/* SignUp.css */
+
+/* Container styling */
+div {
+    max-width: 400px;
+    margin: auto;
+  }
+  
+  
+  /* Form styling */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Input styling */
+  input {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+
+   
+  }
+  
+  /* Button styling */
+  button {
+    background-color: #1F4172;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    width: 300px;
+    cursor: pointer;
+    
+
+  }
+  
+  /* Button hover effect */
+  button:hover {
+    background-color: #4b6891;
+  }
+  
