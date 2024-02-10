@@ -47,21 +47,33 @@ const Login = () => {
   return (
     <div className="login-page">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
+      <p>veuiller s'authetifier </p>   
       <div className="form">
         <form className="login-form">
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>Email:</label> 
+          <input type="email" 
+           name="email" 
+           placeholder='Entre votre Email' 
+           value={email}
+           onChange={(e) => setEmail(e.target.value)} />
 
           <label>Mot de passe:</label>
-          <input type="password" value={motPasse} onChange={(e) => setMotPasse(e.target.value)} />
+          <input type="password" 
+           placeholder='Entre votre mot de passe '
+           value={motPasse}
+           onChange={(e) => setMotPasse(e.target.value)} />
 
           <button type="button" onClick={handleLogin}>
-            Connexion
+            Connexion 
           </button>
-          <p className='message'>Not Registerd? <a href="/sign-up">Create an account</a></p>
+
+          <p className='message'>Vous n'avez pas de compte ? <a href="/sign-up">S'inscrire maintenet</a></p>
+        
         </form>
-        <button className='login-with-google-btn' onClick={loginWithGoogle}>
-          Sign In With Google
+
+        <button className='login-with-google-btn' 
+        onClick={loginWithGoogle}>
+        Se connecter avec Google
         </button>
 
       </div>
