@@ -38,7 +38,7 @@ const SignUp = () => {
 
   return (
     <div className='signup_page '>
-      <h2>Inscription</h2>
+      <h2 style={{ textAlign: 'center' }} >Inscription</h2>
       <form onSubmit={handleSubmit}>
           <label>Nom:</label>
           <input type="text" 
