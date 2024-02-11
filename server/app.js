@@ -15,6 +15,8 @@ require('./userDetails'); // Make sure to register the model
 
 // Create an instance of the AuthController
 const authController = new AuthController();
+// Initialize routes from the AuthController
+authController.initializeRoutes();
 
 // App setup
 const app = express();
@@ -24,7 +26,7 @@ app.use(cors({ origin: true, credentials: true }));
 
 // Add express-session middleware
 app.use(session({
-  secret: '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', // Replace with your own secret key
+  secret: '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', // Replace with your own secret key
   resave: true,
   saveUninitialized: true,
 }));
@@ -32,6 +34,11 @@ app.use(session({
 // Initialize Passport and restore authentication state from the session
 app.use(passport.initialize());
 app.use(passport.session());
+// Handle Google callback
+app.get('/auth/google/callback',passport.authenticate("google",{
+  successRedirect:"http://localhost:3000/dashboard",
+  failureRedirect:"http://localhost:3000/sign-in"
+}))
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -45,17 +52,16 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1); // Terminate the application on connection error
   });
 
-// Initialize routes from the AuthController
-authController.initializeRoutes();
+
 
 // Import routes
 const postRoutes = require('./routes/postRoutes');
 const registerRoutes = require('./routes/registerRoutes');
+const { authenticate } = require('passport');
 
 // Routes setup
 app.use('/post', postRoutes);
 app.use('/register', registerRoutes);
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {

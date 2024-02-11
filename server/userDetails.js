@@ -34,6 +34,9 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     default: 'user', // Par défaut, l'utilisateur a le rôle 'user'
   },
+  googleId: String,
+  displayName: String,
+  image: String,
 });
 
 // Méthode pour comparer les mots de passe

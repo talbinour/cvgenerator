@@ -1,11 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login';  // Make sure the path is correct
 import SignUp from './SignUp';  // Make sure the path is correct
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 function App() {
   return (
