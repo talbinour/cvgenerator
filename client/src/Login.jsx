@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "./Login.css";
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,8 +68,7 @@ const Login = () => {
             Connexion 
           </button>
 
-          <p className='message'>Vous n'avez pas de compte ? <a href="/sign-up">S'inscrire maintenet</a></p>
-        
+          <p className='message'>Vous n'avez pas de compte ? <Link to="/signup">Sign Up</Link></p>
         </form>
 
         <button className='login-with-google-btn' 
