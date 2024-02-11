@@ -35,10 +35,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 // Handle Google callback
-app.get('/auth/google/callback',passport.authenticate("google",{
-  successRedirect:"http://localhost:3000/dashboard",
-  failureRedirect:"http://localhost:3000/sign-in"
-}))
+app.get('/auth/google/callback', async (req, res, next) => {
+  try {
+    await passport.authenticate("google", {
+      successRedirect: "http://localhost:3000/dashboard",
+      failureRedirect: "http://localhost:3000/sign-in"
+    })(req, res, next);
+  } catch (error) {
+    console.error('Error during Google callback:', error);
+    // Ajoutez un traitement personnalisé pour les erreurs ici
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
