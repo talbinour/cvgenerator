@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const SALT_ROUNDS = 10;
 
 const userDetailsSchema = new mongoose.Schema({
   nom: {
@@ -13,9 +14,9 @@ const userDetailsSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Ensures the email is unique in the database
-    lowercase: true, // Converts email to lowercase before saving
-    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'], // Validates the email format
+    unique: true,
+    lowercase: true,
+    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'],
   },
   date_naissance: {
     type: Date,
@@ -29,20 +30,37 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: [6, 'Password must be at least 6 characters long'],
-    
   },
+
   role: {
     type: String,
-    default: 'user', // Par défaut, l'utilisateur a le rôle 'user'
+    default: 'user',
   },
 });
+userDetailsSchema.pre('save', async function (next) {
+  try {
+    // Hash the password only if it's modified or a new user
+    if (this.isModified('mot_passe') || this.isNew) {
+      const hashedPassword = await bcrypt.hash(this.mot_passe, SALT_ROUNDS);
+      this.mot_passe = hashedPassword;
+    }
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});
 
-// Méthode pour comparer les mots de passe
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.mot_passe);
+  try {
+    console.log('Comparing passwords:', candidatePassword, this.mot_passe);
+    const result = await bcrypt.compare(candidatePassword, this.mot_passe);
+    console.log('Password comparison result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error comparing passwords:', error);
+    return false;
+  }
 };
-
-  // Add more fields as needed based on your application's requirements
 
 const UserInfo = mongoose.model('UserInfo', userDetailsSchema);
 

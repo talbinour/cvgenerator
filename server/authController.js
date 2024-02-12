@@ -1,18 +1,14 @@
+// Import necessary modules and dependencies
 const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
-const UserInfo = require('./userDetails');
-const Admin = require('./admin'); // Import Admin model
-const session = require('express-session');
+const bcrypt = require('bcrypt');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require('express-session'); // Include session middleware
 
-// Ajoutez la fonction generateToken
-const generateToken = (user) => {
-  // Implémentez votre logique de génération de token ici
-  // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
-  // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
-};
+// Import user model
+const UserInfo = require('./userDetails');
 
 class AuthController {
   constructor() {
@@ -22,29 +18,49 @@ class AuthController {
   }
 
   initializeRoutes() {
+    // Enable CORS for login route
     this.router.post('/loginuser', cors(), this.loginUser.bind(this));
-    this.router.get('/auth/google/callback',
+    this.router.options('*', cors()); // Handle CORS preflight for all routes
+
+    // Google OAuth callback route
+    this.router.get(
+      '/auth/google/callback',
       passport.authenticate('google', {
-        successRedirect: "/dashboard",
-        failureRedirect: "/Login",
+        successRedirect: '/dashboard',
+        failureRedirect: '/Login',
       }),
       (req, res) => {
         res.redirect('/dashboard');
       }
     );
 
+    // Success and Logout routes
     this.router.get('/login/success', this.loginSuccess.bind(this));
     this.router.get('/logout', this.logout.bind(this));
   }
 
   initializePassport() {
+    // Configure session middleware
+    this.router.use(
+      session({
+        secret: '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',
+        resave: false,
+        saveUninitialized: true,
+      })
+    );
+
+    // Initialize Passport
+    this.router.use(passport.initialize());
+    this.router.use(passport.session());
+
+    // Configure Google OAuth Strategy
     passport.use(
       new GoogleStrategy(
         {
-          clientID: "1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com",
-          clientSecret: "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",
-          callbackURL: "/auth/google/callback",
-          scope: ["profile", "email"]
+          clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
+          clientSecret: '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',
+          callbackURL: '/auth/google/callback',
+          scope: ['profile', 'email'],
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
@@ -55,7 +71,7 @@ class AuthController {
                 googleId: profile.id,
                 displayName: profile.displayName,
                 email: profile.emails[0].value,
-                image: profile.photos[0].value
+                image: profile.photos[0].value,
               });
 
               await user.save();
@@ -69,60 +85,90 @@ class AuthController {
       )
     );
 
-    passport.serializeUser((user, done) => {
-      done(null, user);
-    });
+   // Configure Local Strategy
+   passport.use(
+    new LocalStrategy(
+      { usernameField: 'email' },
+      async (email, password, done) => {
+        try {
+          console.log('Attempting local authentication for email:', email);
 
-    passport.deserializeUser((user, done) => {
-      done(null, user);
-    });
-  }
+          const user = await UserInfo.findOne({ email });
 
-  async loginUser(req, res) {
-    const { email, mot_passe } = req.body;
+          if (!user) {
+            console.log('User not found');
+            return done(null, false, { message: 'Authentication failed' });
+          }
 
-    try {
-      // Try to find both admin and user with the provided email
-      const user = await UserInfo.findOne({ email });
-      const admin = await Admin.findOne({ email });
+          const isPasswordMatch = await user.comparePassword(password);
 
-      if (user || admin) {
-        // Determine if it's an admin or user login
-        const targetUser = user || admin;
+          if (!isPasswordMatch) {
+            console.log('Invalid password');
+            return done(null, false, { message: 'Authentication failed' });
+          }
 
-        const passwordMatch = await targetUser.comparePassword(mot_passe);
-
-        if (passwordMatch) {
-          const token = generateToken(targetUser);
-
-          res.status(201).json({ status: 'ok', data: token, role: targetUser.role });
-        } else {
-          res.status(401).json({ status: 'Invalid Password' });
+          console.log('Local authentication successful');
+          return done(null, user);
+        } catch (error) {
+          console.error('Error during local authentication:', error);
+          return done(error, null);
         }
-      } else {
-        res.status(404).json({ status: 'User/Admin Not Found' });
       }
-    } catch (error) {
-      res.status(500).json({ status: 'Error', error: error.message });
-    }
-  }
+    )
+  );
 
-  async loginSuccess(req, res) {
-    if (req.user) {
-      res.status(200).json({ message: 'User Login', user: req.user });
-    } else {
-      res.status(400).json({ message: 'Not Authorized' });
-    }
-  }
+  // Serialize and deserialize user
+  passport.serializeUser((user, done) => {
+    done(null, user);
+  });
 
-  logout(req, res, next) {
-    req.logout(function (err) {
+  passport.deserializeUser((user, done) => {
+    done(null, user);
+  });
+}
+
+async loginUser(req, res, next) {
+  console.log('Inside loginUser method');
+  passport.authenticate('local', (err, user, info) => {
+    console.log('Inside passport.authenticate callback');
+    if (err) {
+      console.log('Error during authentication:', err);
+      return res.status(500).json({ status: 'Error', error: 'Authentication failed' });
+    }
+    if (!user) {
+      console.log('Invalid email or password');
+      return res.status(401).json({ status: 'Authentication failed' });
+    }
+
+    req.logIn(user, (err) => {
       if (err) {
-        return next(err);
+        console.log('Error during req.logIn:', err);
+        return res.status(500).json({ status: 'Error', error: 'Authentication failed' });
       }
-      res.redirect('http://localhost:3000');
+
+      console.log('Login successful');
+      // Redirect to the dashboard on successful login
+      res.redirect('/dashboard');
     });
+  })(req, res, next); // Pass the 'next' parameter here
+}
+
+async loginSuccess(req, res) {
+  if (req.user) {
+    res.status(200).json({ message: 'User Login', user: req.user });
+  } else {
+    res.status(400).json({ message: 'Not Authorized' });
   }
+}
+
+logout(req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('http://localhost:3000');
+  });
+}
 }
 
 module.exports = AuthController;

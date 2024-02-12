@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import "./Login.css";
-import { Link } from 'react-router-dom';
+import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const Login = () => {
         if (user.role === 'admin') {
           navigate('/admin');
         } else if (user.role === 'user') {
-          navigate('/skills'); // Assuming '/dashboard' is the route for user
+          navigate('/dashboard'); // Update the route based on your application
         } else {
           console.error('Unknown role:', user.role);
         }
@@ -36,36 +35,39 @@ const Login = () => {
   };
 
   const loginWithGoogle = () => {
-    window.open("http://localhost:8080/auth/google/callback", "_self");
+    window.open('http://localhost:8080/auth/google/callback', '_self');
   };
 
   return (
     <div className="login-page">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
-      <p>veuillez vous authentifier </p>   
+      <p>veuillez vous authentifier </p>
       <div className="form">
         <form className="login-form" onSubmit={handleSubmit}>
-          <label>Email:</label> 
-          <input type="email" 
-            name="email" 
-            placeholder='Entrez votre Email' 
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Entrez votre Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)} />
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
           <label>Mot de passe:</label>
-          <input type="password" 
-            placeholder='Entrez votre mot de passe '
+          <input
+            type="password"
+            placeholder="Entrez votre mot de passe "
             value={mot_passe}
-            onChange={(e) => setMotPasse(e.target.value)} />
+            onChange={(e) => setMotPasse(e.target.value)}
+          />
 
-          <button type="submit">
-            Connexion 
-          </button>
+          <button type="submit">Connexion</button>
         </form>
-        <p className='message'>Vous n'avez pas de compte ? <Link to="/signup">Sign Up</Link></p>
+        <p className="message">
+          Vous n&apos;'avez pas de compte ? <Link to="/signup">Sign Up</Link>
+        </p>
 
-        <button className='login-with-google-btn' 
-          onClick={loginWithGoogle}>
+        <button className="login-with-google-btn" onClick={loginWithGoogle}>
           Se connecter avec Google
         </button>
       </div>

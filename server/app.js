@@ -24,6 +24,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
+  optionsSuccessStatus: 204, // Set the response status for successful CORS requests to 204
 }));
 
 // Configure session before passport
@@ -57,11 +58,19 @@ const registerRoutes = require('./routes/registerRoutes');
 app.use('/post', postRoutes);
 app.use('/register', registerRoutes);
 
-// Create an instance of the AuthController
+/// Create an instance of the AuthController
 const authController = new AuthController();
 
-// Add CORS options for /loginuser
+// Handle CORS preflight for /loginuser
+app.options('/loginuser', cors());
+
+// Handle actual login route
 app.post('/loginuser', cors(), authController.loginUser.bind(authController));
+app.get("/auth/google/callback",passport.authenticate("google",{
+  successRedirect:"http://localhost:3000/dashboard",
+  failureRedirect:"http://localhost:3000/login"
+}))
+
 
 /* Handle CORS preflight for /loginuser
 app.post('/loginuser', cors(), async (req, res) => {
