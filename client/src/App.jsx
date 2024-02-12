@@ -1,3 +1,4 @@
+import './App.css';
 import React from 'react';
 // Removed the commented-out import
 import Login from './Login'; // Make sure the path is correct
@@ -9,6 +10,7 @@ import About from "./component/About";
 import Skills from "./component/Skills";
 import Services from "./component/Services";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 
 function App() {
   return (

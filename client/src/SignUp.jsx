@@ -27,7 +27,7 @@ const SignUp = () => {
       const response = await axios.post('http://localhost:8080/register', formData);
 
       if (response.data.status === 'ok') {
-        navigate('/');
+        navigate('/login');
       } else {
         console.error('Erreur d\'inscription:', response.data.message);
       }

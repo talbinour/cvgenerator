@@ -7,75 +7,67 @@ import { Link } from 'react-router-dom';
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [motPasse, setMotPasse] = useState('');
+  const [mot_passe, setMotPasse] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the entered email and password match the admin credentials
-    if (email === 'admin@example.com' && motPasse === 'adminPassword') {
-      // Admin credentials are valid, redirect to the admin page
-      navigate('/admin');
-      return;
-    }
-
     try {
-      // Send login data to the server
-      const response = await axios.post('http://localhost:8080/api/login', { email, motPasse });
+      const response = await axios.post('http://localhost:8080/loginuser', { email, mot_passe }, { withCredentials: true });
+      console.log('Server Response:', response.data);
 
-      // Assuming the server responds with a user object including the role upon successful login
-      const user = response.data.user;
+      if (response && response.data) {
+        const user = response.data.user;
+        console.log('User Object:', user);
 
-      // Redirect the user based on their role
-      if (user.role === 'admin') {
-        navigate('/admin'); // Redirect to the admin page
-      } else if (user.role === 'user') {
-        navigate('/user'); // Redirect to the user page
+        if (user.role === 'admin') {
+          navigate('/admin');
+        } else if (user.role === 'user') {
+          navigate('/skills'); // Assuming '/dashboard' is the route for user
+        } else {
+          console.error('Unknown role:', user.role);
+        }
       } else {
-        console.error('Unknown role:', user.role);
+        console.error('Invalid response format');
       }
     } catch (error) {
-      // Handle login error
       console.error('Login failed', error);
     }
   };
 
-  const loginWithGoogle = ()=>{
-    window.open("http://localhost:8080/auth/google/callback","_self")
-}
-
+  const loginWithGoogle = () => {
+    window.open("http://localhost:8080/auth/google/callback", "_self");
+  };
 
   return (
     <div className="login-page">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
-      <p>veuiller s'authetifier </p>   
+      <p>veuillez vous authentifier </p>   
       <div className="form">
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleSubmit}>
           <label>Email:</label> 
           <input type="email" 
-           name="email" 
-           placeholder='Entre votre Email' 
-           value={email}
-           onChange={(e) => setEmail(e.target.value)} />
+            name="email" 
+            placeholder='Entrez votre Email' 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} />
 
           <label>Mot de passe:</label>
           <input type="password" 
-           placeholder='Entre votre mot de passe '
-           value={motPasse}
-           onChange={(e) => setMotPasse(e.target.value)} />
+            placeholder='Entrez votre mot de passe '
+            value={mot_passe}
+            onChange={(e) => setMotPasse(e.target.value)} />
 
-          <button type="button" onClick={handleLogin}>
+          <button type="submit">
             Connexion 
           </button>
-
-          <p className='message'>Vous n'avez pas de compte ? <Link to="/signup">Sign Up</Link></p>
         </form>
+        <p className='message'>Vous n'avez pas de compte ? <Link to="/signup">Sign Up</Link></p>
 
         <button className='login-with-google-btn' 
-        onClick={loginWithGoogle}>
-        Se connecter avec Google
+          onClick={loginWithGoogle}>
+          Se connecter avec Google
         </button>
-
       </div>
     </div>
   );

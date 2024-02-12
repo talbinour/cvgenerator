@@ -33,8 +33,13 @@ const userDetailsSchema = new mongoose.Schema({
   mot_passe: {
     type: String,
     required: true,
+<<<<<<< HEAD
     minlength: [6, 'Password must be at least 6 characters long'], 
     default: "nnnnnn", 
+=======
+    minlength: [6, 'Password must be at least 6 characters long'],
+    
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
   },
   role: {
     type: String,
