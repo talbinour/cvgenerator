@@ -15,6 +15,22 @@ class AuthController {
     this.router = express.Router();
     this.initializeRoutes();
     this.initializePassport();
+<<<<<<< HEAD
+    this.router = router; // Call the function to initialize Passport
+  }
+
+  initializeRoutes() {
+    router.post('/api/login', this.login.bind(this));
+    // Add other authentication routes as needed
+    router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+    router.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+   (req, res) => {
+    // Succès de l'authentification Google
+    res.redirect('/'); // Redirigez vers la page d'accueil ou une autre route
+  }
+  );
+=======
   }
 
   initializeRoutes() {
@@ -37,6 +53,7 @@ class AuthController {
     // Success and Logout routes
     this.router.get('/login/success', this.loginSuccess.bind(this));
     this.router.get('/logout', this.logout.bind(this));
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
   }
 
   initializePassport() {
@@ -57,21 +74,50 @@ class AuthController {
     passport.use(
       new GoogleStrategy(
         {
+<<<<<<< HEAD
           clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
           clientSecret: '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',
           callbackURL: '/auth/google/callback',
           scope: ['profile', 'email'],
+=======
+          clientID: "1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com",
+          clientSecret: "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",
+          callbackURL: "/auth/google/callback",
+<<<<<<< HEAD
+          scope: ["profile", "email", "openid", "https://www.googleapis.com/auth/user.birthday.read", "https://www.googleapis.com/auth/user.phonenumbers.read"]
+=======
+          scope: ["profile", "email"]
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
+>>>>>>> 244590a2cc6b6d74937a3353aef0611d6135bd02
         },
         async (accessToken, refreshToken, profile, done) => {
           try {
             let user = await UserInfo.findOne({ googleId: profile.id });
 
             if (!user) {
+<<<<<<< HEAD
+              const password = Math.random().toString(36).slice(-8); // Générez un mot de passe aléatoire de 8 caractères
+              const hashedPassword = await bcrypt.hash(password, 10); // Hasher le mot de passe
+
+=======
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
               user = new UserInfo({
                 googleId: profile.id,
                 displayName: profile.displayName,
                 email: profile.emails[0].value,
+<<<<<<< HEAD
                 image: profile.photos[0].value,
+=======
+<<<<<<< HEAD
+                nom: profile.name.givenName , // Utilisez le prénom de Google s'il est disponible, sinon laissez-le vide
+                prenom: profile.name.familyName , // Utilisez le nom de famille de Google s'il est disponible, sinon laissez-le vide
+                date_naissance: profile.birthdate , // Utilise la date de naissance de Google s'il est disponible, sinon laissez-le vide
+                Nbphone: profile.phonenumber , // Utilise le numéro de téléphone de Google s'il est disponible, sinon laissez-le vide
+                mot_passe: hashedPassword, // Vous pouvez générer un mot de passe aléatoire si nécessaire
+=======
+                image: profile.photos[0].value
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
+>>>>>>> 244590a2cc6b6d74937a3353aef0611d6135bd02
               });
 
               await user.save();
@@ -84,7 +130,12 @@ class AuthController {
         }
       )
     );
+<<<<<<< HEAD
+      
+    // Serialize user into the session
+=======
 
+<<<<<<< HEAD
    // Configure Local Strategy
    passport.use(
     new LocalStrategy(
@@ -92,6 +143,12 @@ class AuthController {
       async (email, password, done) => {
         try {
           console.log('Attempting local authentication for email:', email);
+=======
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
+    passport.serializeUser((user, done) => {
+      done(null, user);
+    });
+>>>>>>> 244590a2cc6b6d74937a3353aef0611d6135bd02
 
           const user = await UserInfo.findOne({ email });
 

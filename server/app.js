@@ -29,7 +29,11 @@ app.use(cors({
 
 // Configure session before passport
 app.use(session({
+<<<<<<< HEAD
+  secret: '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', // Replace with your own secret key
+=======
   secret: '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',
+>>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
   resave: true,
   saveUninitialized: true,
 }));
@@ -57,6 +61,9 @@ const registerRoutes = require('./routes/registerRoutes');
 // Routes setup
 app.use('/post', postRoutes);
 app.use('/register', registerRoutes);
+app.get(("/auth/google/callback",passport.authenticate("google",{successRedirect:"http://localhost:3000",failureRedirect:"http://localhost:3000/login"})))
+
+app.use('/', authController.router);
 
 /// Create an instance of the AuthController
 const authController = new AuthController();
