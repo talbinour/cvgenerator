@@ -1,100 +1,112 @@
 const express = require('express');
-const router = express.Router();
-const UserInfo = require('./userDetails');
-const bcrypt = require('bcrypt');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-// Your existing AuthController class
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const UserInfo = require('./userDetails');
+const Admin = require('./admin'); // Import Admin model
+const session = require('express-session');
+
+// Ajoutez la fonction generateToken
+const generateToken = (user) => {
+  // Implémentez votre logique de génération de token ici
+  // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
+  // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
+};
+
 class AuthController {
   constructor() {
+    this.router = express.Router();
     this.initializeRoutes();
-    this.initializePassport(); // Call the function to initialize Passport
+    this.initializePassport();
   }
 
   initializeRoutes() {
-    router.post('/api/login', this.login.bind(this));
-    // Add other authentication routes as needed
-    router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-    router.get('/auth/google/callback',
-    passport.authenticate('google', { failureRedirect: '/' }),
-   (req, res) => {
-    // Succès de l'authentification Google
-    res.redirect('/'); // Redirigez vers la page d'accueil ou une autre route
-  },
-      // Add new routes for handling successful login and logout
-      router.get('/login/success', this.loginSuccess.bind(this)),
-      router.get('/logout', this.logout.bind(this)),
-);
+    this.router.post('/loginuser', cors(), this.loginUser.bind(this));
+    this.router.get('/auth/google/callback',
+      passport.authenticate('google', {
+        successRedirect: "/dashboard",
+        failureRedirect: "/Login",
+      }),
+      (req, res) => {
+        res.redirect('/dashboard');
+      }
+    );
+
+    this.router.get('/login/success', this.loginSuccess.bind(this));
+    this.router.get('/logout', this.logout.bind(this));
   }
 
   initializePassport() {
-    passport.use(new GoogleStrategy({
-      clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
-      clientSecret: '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',
-      callbackURL: '/auth/google/callback',
-      scope: ['profile', 'email'], 
-    }, async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await UserInfo.findOne({ googleId: profile.id });
-    
-        if (!user) {
-          // User not found, create a new user in the database
-          user = new UserInfo({
-            googleId: profile.id,
-            displayName: profile.displayName,
-            email: profile.emails[0].value,
-            image:profile.photos[0].value,
-            // Add any additional fields you want to save from the Google profile
-          });
-    
-          await user.save();
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: "1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com",
+          clientSecret: "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",
+          callbackURL: "/auth/google/callback",
+          scope: ["profile", "email"]
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            let user = await UserInfo.findOne({ googleId: profile.id });
+
+            if (!user) {
+              user = new UserInfo({
+                googleId: profile.id,
+                displayName: profile.displayName,
+                email: profile.emails[0].value,
+                image: profile.photos[0].value
+              });
+
+              await user.save();
+            }
+
+            return done(null, user);
+          } catch (error) {
+            return done(error, null);
+          }
         }
-    
-        return done(null, user);
-      } catch (error) {
-        return done(error, null);
-      }
-    }));
-    
-  
-    // Serialize and deserialize user
+      )
+    );
+
     passport.serializeUser((user, done) => {
       done(null, user);
     });
-  
-    passport.deserializeUser((obj, done) => {
-      done(null, obj);
+
+    passport.deserializeUser((user, done) => {
+      done(null, user);
     });
   }
-  
 
-  async login(req, res, next) {
+  async loginUser(req, res) {
     const { email, mot_passe } = req.body;
 
     try {
-      // Find the user by email
+      // Try to find both admin and user with the provided email
       const user = await UserInfo.findOne({ email });
+      const admin = await Admin.findOne({ email });
 
-      if (user) {
-        // Compare the password
-        const passwordMatch = await user.comparePassword(mot_passe);
+      if (user || admin) {
+        // Determine if it's an admin or user login
+        const targetUser = user || admin;
+
+        const passwordMatch = await targetUser.comparePassword(mot_passe);
 
         if (passwordMatch) {
-          // Correct password, you can generate a JWT token here if needed
-          res.json({ status: 'ok', user });
+          const token = generateToken(targetUser);
+
+          res.status(201).json({ status: 'ok', data: token, role: targetUser.role });
         } else {
-          // Incorrect password
-          res.json({ status: 'Mot de passe incorrect' });
+          res.status(401).json({ status: 'Invalid Password' });
         }
       } else {
-        // User not found
-        res.json({ status: 'Utilisateur non trouvé' });
+        res.status(404).json({ status: 'User/Admin Not Found' });
       }
     } catch (error) {
-      next(error);
+      res.status(500).json({ status: 'Error', error: error.message });
     }
-    res.redirect('/login/success');
   }
+
   async loginSuccess(req, res) {
     if (req.user) {
       res.status(200).json({ message: 'User Login', user: req.user });
@@ -108,15 +120,9 @@ class AuthController {
       if (err) {
         return next(err);
       }
-      // Redirect to the home page after logout
       res.redirect('http://localhost:3000');
     });
   }
-   // Add other authentication methods as needed
-   
 }
-
- 
-
 
 module.exports = AuthController;

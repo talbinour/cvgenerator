@@ -11,77 +11,85 @@ const session = require('express-session');
 dotenv.config();
 
 // Import MongoDB models
-require('./userDetails'); // Make sure to register the model
+require('./userDetails');
+require('./admin'); // Import Admin model
+
+// App setup
+const app = express();
+app.use(express.json());
+app.use(morgan('dev'));
+
+// Configure CORS before routes
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
+// Configure session before passport
+app.use(session({
+  secret: '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',
+  resave: true,
+  saveUninitialized: true,
+}));
+
+// Initialize Passport after session
+app.use(passport.initialize());
+app.use(passport.session());
+app.get("/auth/google/callback",passport.authenticate("google",{
+  successRedirect:"http://localhost:3000/dashboard",
+  failureRedirect:"http://localhost:3000/Login"
+}))
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,
+})
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+    process.exit(1);
+});
+
+// Import routes
+const postRoutes = require('./routes/postRoutes');
+const registerRoutes = require('./routes/registerRoutes');
+
+// Routes setup
+app.use('/post', postRoutes);
+app.use('/register', registerRoutes);
 
 // Create an instance of the AuthController
 const authController = new AuthController();
 // Initialize routes from the AuthController
 authController.initializeRoutes();
 
-// App setup
-const app = express();
-app.use(express.json());
-app.use(morgan('dev'));
-app.use(cors({ origin: true, credentials: true }));
+// Add CORS options for /loginuser
+app.use('/loginuser', authController);
 
-// Add express-session middleware
-app.use(session({
-  secret: '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', // Replace with your own secret key
-  resave: true,
-  saveUninitialized: true,
-}));
-
-// Initialize Passport and restore authentication state from the session
-app.use(passport.initialize());
-app.use(passport.session());
-// Handle Google callback
-app.get('/auth/google/callback', async (req, res, next) => {
+/* Handle CORS preflight for /loginuser
+app.post('/loginuser', cors(), async (req, res) => {
   try {
-    await passport.authenticate("google", {
-      successRedirect: "http://localhost:3000/dashboard",
-      failureRedirect: "http://localhost:3000/sign-in"
-    })(req, res, next);
+    // Your login logic here
+    // ...
+    res.status(200).json({ status: 'ok' });
   } catch (error) {
-    console.error('Error during Google callback:', error);
-    // Ajoutez un traitement personnalisé pour les erreurs ici
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ status: 'Error', error: error.message });
   }
-});
+});*/
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Set a timeout to detect initial connection
-})
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-    process.exit(1); // Terminate the application on connection error
-  });
-
-
-
-// Import routes
-const postRoutes = require('./routes/postRoutes');
-const registerRoutes = require('./routes/registerRoutes');
-const { authenticate } = require('passport');
-
-// Routes setup
-app.use('/post', postRoutes);
-app.use('/register', registerRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {
-    // Handle Mongoose validation errors
     const validationErrors = Object.values(err.errors).map((error) => error.message);
     res.status(400).json({ error: 'Validation failed', details: validationErrors });
   } else {
-    // Handle other types of errors
     console.error(err.stack);
     res.status(500).send(`Something went wrong! Error: ${err.message}`);
   }
 });
+
 // Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Server is running on port ${port}`));

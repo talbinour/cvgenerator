@@ -27,7 +27,7 @@ const SignUp = () => {
       const response = await axios.post('http://localhost:8080/register', formData);
 
       if (response.data.status === 'ok') {
-        navigate('/');
+        navigate('/login');
       } else {
         console.error('Erreur d\'inscription:', response.data.message);
       }
@@ -35,9 +35,6 @@ const SignUp = () => {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
     }
   };
-  const handleSignuUp = ()=>{
-    navigate('/sign-in');
-}
 
   return (
     <div className='signup_page '>
@@ -85,7 +82,7 @@ const SignUp = () => {
           value={formData.mot_passe} 
           onChange={handleInputChange} required />
      
-        <button type="submit" >S'inscrire</button>
+        <button type="submit">S'inscrire</button>
       </form>
     </div>
   );

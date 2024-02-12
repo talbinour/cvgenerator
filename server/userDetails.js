@@ -29,14 +29,12 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: [6, 'Password must be at least 6 characters long'],
+    
   },
   role: {
     type: String,
     default: 'user', // Par défaut, l'utilisateur a le rôle 'user'
   },
-  googleId: String,
-  displayName: String,
-  image: String,
 });
 
 // Méthode pour comparer les mots de passe
