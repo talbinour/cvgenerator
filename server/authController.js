@@ -9,7 +9,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 class AuthController {
   constructor() {
     this.initializeRoutes();
-    this.initializePassport(); // Call the function to initialize Passport
+    this.initializePassport();
+    this.router = router; // Call the function to initialize Passport
   }
 
   initializeRoutes() {
@@ -22,19 +23,47 @@ class AuthController {
     // Succès de l'authentification Google
     res.redirect('/'); // Redirigez vers la page d'accueil ou une autre route
   }
-);
+  );
   }
 
   initializePassport() {
-    passport.use(new GoogleStrategy({
-        clientID: '250803111005-b271f2crrtjhe9idkhiv9fg6pqqel0el.apps.googleusercontent.com',
-        clientSecret: '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',
-        callbackURL: 'http://localhost:8080/auth/google/callback',
-      }, (accessToken, refreshToken, profile, done) => {
-        // Handle the Google authentication callback
-        // Store user information in the database if needed
-        return done(null, profile);
-      }));
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: "1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com",
+          clientSecret: "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",
+          callbackURL: "/auth/google/callback",
+          scope: ["profile", "email", "openid", "https://www.googleapis.com/auth/user.birthday.read", "https://www.googleapis.com/auth/user.phonenumbers.read"]
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            let user = await UserInfo.findOne({ googleId: profile.id });
+
+            if (!user) {
+              const password = Math.random().toString(36).slice(-8); // Générez un mot de passe aléatoire de 8 caractères
+              const hashedPassword = await bcrypt.hash(password, 10); // Hasher le mot de passe
+
+              user = new UserInfo({
+                googleId: profile.id,
+                displayName: profile.displayName,
+                email: profile.emails[0].value,
+                nom: profile.name.givenName , // Utilisez le prénom de Google s'il est disponible, sinon laissez-le vide
+                prenom: profile.name.familyName , // Utilisez le nom de famille de Google s'il est disponible, sinon laissez-le vide
+                date_naissance: profile.birthdate , // Utilise la date de naissance de Google s'il est disponible, sinon laissez-le vide
+                Nbphone: profile.phonenumber , // Utilise le numéro de téléphone de Google s'il est disponible, sinon laissez-le vide
+                mot_passe: hashedPassword, // Vous pouvez générer un mot de passe aléatoire si nécessaire
+              });
+
+              await user.save();
+            }
+
+            return done(null, user);
+          } catch (error) {
+            return done(error, null);
+          }
+        }
+      )
+    );
       
     // Serialize user into the session
     passport.serializeUser((user, done) => {

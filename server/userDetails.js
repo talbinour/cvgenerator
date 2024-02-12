@@ -5,10 +5,12 @@ const userDetailsSchema = new mongoose.Schema({
   nom: {
     type: String,
     required: true,
+    default: "nn", 
   },
   prenom: {
     type: String,
     required: true,
+    default: "nn", 
   },
   email: {
     type: String,
@@ -16,19 +18,23 @@ const userDetailsSchema = new mongoose.Schema({
     unique: true, // Ensures the email is unique in the database
     lowercase: true, // Converts email to lowercase before saving
     match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'], // Validates the email format
+
   },
   date_naissance: {
     type: Date,
     required: true,
+    default: Date.now
   },
   Nbphone: {
     type: String,
     required: true,
+    default: "nn", 
   },
   mot_passe: {
     type: String,
     required: true,
-    minlength: [6, 'Password must be at least 6 characters long'],
+    minlength: [6, 'Password must be at least 6 characters long'], 
+    default: "nnnnnn", 
   },
   role: {
     type: String,

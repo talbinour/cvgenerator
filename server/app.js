@@ -24,7 +24,7 @@ app.use(cors({ origin: true, credentials: true }));
 
 // Add express-session middleware
 app.use(session({
-  secret: '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', // Replace with your own secret key
+  secret: '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', // Replace with your own secret key
   resave: true,
   saveUninitialized: true,
 }));
@@ -55,6 +55,9 @@ const registerRoutes = require('./routes/registerRoutes');
 // Routes setup
 app.use('/post', postRoutes);
 app.use('/register', registerRoutes);
+app.get(("/auth/google/callback",passport.authenticate("google",{successRedirect:"http://localhost:3000",failureRedirect:"http://localhost:3000/login"})))
+
+app.use('/', authController.router);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
