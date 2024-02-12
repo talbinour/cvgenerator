@@ -36,10 +36,7 @@ app.use(session({
 // Initialize Passport after session
 app.use(passport.initialize());
 app.use(passport.session());
-app.get("/auth/google/callback",passport.authenticate("google",{
-  successRedirect:"http://localhost:3000/dashboard",
-  failureRedirect:"http://localhost:3000/Login"
-}))
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -62,11 +59,9 @@ app.use('/register', registerRoutes);
 
 // Create an instance of the AuthController
 const authController = new AuthController();
-// Initialize routes from the AuthController
-authController.initializeRoutes();
 
 // Add CORS options for /loginuser
-app.use('/loginuser', authController);
+app.post('/loginuser', cors(), authController.loginUser.bind(authController));
 
 /* Handle CORS preflight for /loginuser
 app.post('/loginuser', cors(), async (req, res) => {
