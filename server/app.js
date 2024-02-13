@@ -5,11 +5,10 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
-
+const initializeAdmin = require('./utils/initAdmin');
 // Import MongoDB models
 require('./userDetails');
 require('./admin');
-
 // Import AuthController
 const AuthController = require('./authController');
 
@@ -45,7 +44,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(() => {console.log('Connected to MongoDB');initializeAdmin();})
 .catch((err) => {
   console.error('Error connecting to MongoDB:', err);
   process.exit(1);

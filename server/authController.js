@@ -89,7 +89,7 @@ class AuthController {
   async loginUser(req, res) {
     
     // Utilisation de express-validator pour valider et nettoyer les données d'entrée
-    await body('email').isEmail().normalizeEmail().run(req);
+    await body('email').isEmail().run(req);
     await body('mot_passe').isLength({ min: 6 }).trim().run(req);
     console.log('Request Data:', req.body);
     const errors = validationResult(req);
