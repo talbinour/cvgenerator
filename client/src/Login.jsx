@@ -18,9 +18,14 @@ const Login = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8080/loginuser', requestData, {
-        withCredentials: true,
+      const response = await axios.post('http://localhost:8080/loginuser', requestData, { withCredentials: true })
+      .then(response => {
+        console.log(response.data); // Affichez la réponse pour le débogage
+      })
+      .catch(error => {
+        console.error('Erreur de requête POST', error);
       });
+    
 
       if (response && response.data) {
         const user = response.data.data.user;

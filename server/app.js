@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { UserInfo } = require('./userDetails');
 const AuthController = require('./AuthController');
-
+const LocalStrategy = require('passport-local').Strategy;
 // Load environment variables
 require('dotenv').config();
 
@@ -16,19 +16,19 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
+app.options('*', cors()); // Utilisez le middleware CORS pour les requêtes OPTIONS
 
 // Define CORS options
 const corsOptions = {
   origin: 'http://localhost:3000',  // Replace with your frontend's origin
   credentials: true,
 };
-
+app.options('/loginuser', cors(corsOptions)); 
 // Use CORS with defined options
-app.use(cors(corsOptions));
-
+app.use(cors(corsOptions))
 // Configure session before passport
 app.use(session({
-  secret: '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',
+  secret: process.env.SESSION_SECRET || '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',
   resave: true,
   saveUninitialized: true,
 }));
@@ -56,7 +56,7 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({ message: 'Token not provided' });
   }
 
-  jwt.verify(token.split(' ')[1], 'yourSecretKey', (err, decoded) => {
+  jwt.verify(token.split(' ')[1], process.env.JWT_SECRET || 'yourSecretKey', (err, decoded) => {
     if (err) {
       return res.status(401).json({ message: 'Invalid token' });
     }
@@ -65,6 +65,7 @@ const verifyToken = (req, res, next) => {
     next();
   });
 };
+
 // Protected route
 app.get('/protected-route', verifyToken, (req, res) => {
   res.json({ message: 'This route is protected', user: req.user });
@@ -81,27 +82,23 @@ app.post('/register', async (req, res) => {
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     console.error('Error during registration:', error);
-    res.status(500).json({ message: 'Registration failed - Internal server error' });
+    res.status(500).json({ message: 'Registration failed - Internal server error', error: error.message });
   }
 });
-
-//
 app.post('/loginuser', passport.authenticate('local', {
   failureRedirect: '/login',
 }), (req, res) => {
-  const token = jwt.sign({ userId: req.user._id }, 'yourSecretKey', { expiresIn: '1h' });
+  const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET || 'yourSecretKey', { expiresIn: '1h' });
   res.json({ user: req.user, token });
+  res.status(200).json({ status: 'ok', data: yourData });
 });
-
 // Handle authentication failure manually
 app.use((err, req, res, next) => {
   if (err.name === 'AuthenticationError') {
-    req.flash('error', err.message);  // Send flash message
-    return res.redirect('/login');
+    return res.status(401).json({ message: err.message });
   }
   next(err);
 });
-
 
 // Google login
 app.get('/auth/google',
@@ -114,6 +111,7 @@ app.get('/auth/google/callback',
     res.redirect('/');
   }
 );
+
 // Instantiate AuthController
 const authController = new AuthController(app, passport, jwt, bcrypt);
 

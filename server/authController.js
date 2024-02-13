@@ -7,7 +7,10 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
 const { UserInfo } = require('./userDetails');
-const flash = require('express-flash');  // Add this linec
+const flash = require('express-flash'); // Add this line
+// Import the User model if it's not imported already
+// const User = require('./models/User'); // Replace with your actual path
+
 class AuthController {
   constructor(app, passport, jwt, bcrypt) {
     this.app = app;
@@ -26,10 +29,10 @@ class AuthController {
     }), (req, res) => {
       res.redirect('/dashboard');
     });
-    this.app.use(flash());
+    //this.app.use(flash());
 
-    this.app.get('/login/success', this.loginSuccess.bind(this));
-    this.app.get('/logout', this.logout.bind(this));
+    //this.app.get('/login/success', this.loginSuccess.bind(this));
+    //this.app.get('/logout', this.logout.bind(this));
   }
   initializePassport() {
     this.app.use(
@@ -44,144 +47,132 @@ class AuthController {
       })
     );
   
-    this.app.use(this.passport.initialize());
-    this.app.use(this.passport.session());
-  
-    this.passport.use(
-      new GoogleStrategy(
-        {
-          clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
-          clientSecret: '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',
-          callbackURL: '/auth/google/callback',
-          scope: ['profile', 'email', 'openid', 'https://www.googleapis.com/auth/user.birthday.read', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
-        },
-        async (accessToken, refreshToken, profile, done) => {
-          try {
-            let user = await UserInfo.findOne({ googleId: profile.id });
-  
-            if (!user) {
-              const password = Math.random().toString(36).slice(-8);
-              const hashedPassword = await this.bcrypt.hash(password, 10);
-              user = new UserInfo({
-                googleId: profile.id,
-                displayName: profile.displayName,
-                email: profile.emails[0].value,
-                image: profile.photos[0].value,
-                nom: profile.name.givenName || '',
-                prenom: profile.name.familyName || '',
-                date_naissance: profile.birthdate || '',
-                Nbphone: profile.phonenumber || '',
-                mot_passe: hashedPassword,
-                image: profile.photos[0].value,
-              });
-  
-              await user.save();
-            }
-  
-            return done(null, user);
-          } catch (error) {
-            return done(error, null);
-          }
-        }
-      )
-    );
-  
-    // Inside LocalStrategy
-    // Inside LocalStrategy
-this.passport.use(new LocalStrategy(
-  { usernameField: 'email', passwordField: 'mot_passe' },
-  async (email, password, done) => {
-    try {
-      console.log('Email:', email);
-      console.log('Password:', password);
+    
+  this.app.use(this.passport.initialize());
+  this.app.use(this.passport.session());
 
-      let user = await UserInfo.findOne({ email: email.toLowerCase() });
+  this.passport.use(
+    new GoogleStrategy(
+      {
+        clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
+        clientSecret: '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',
+        callbackURL: '/auth/google/callback',
+        scope: ['profile', 'email', 'openid', 'https://www.googleapis.com/auth/user.birthday.read', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await UserInfo.findOne({ googleId: profile.id });
 
-      console.log('User:', user);
+          if (!user) {
+            const password = Math.random().toString(36).slice(-8);
+            const hashedPassword = await this.bcrypt.hash(password, 10);
+            user = new UserInfo({
+              googleId: profile.id,
+              displayName: profile.displayName,
+              email: profile.emails[0].value,
+              image: profile.photos[0].value,
+              nom: profile.name.givenName || '',
+              prenom: profile.name.familyName || '',
+              date_naissance: profile.birthdate || '',
+              Nbphone: profile.phonenumber || '',
+              mot_passe: hashedPassword,
+              image: profile.photos[0].value,
+            });
 
-      if (!user) {
-        return done(null, false, { message: 'Authentication failed - User not found' });
-      }
-
-      const isValidPassword = await this.bcrypt.compare(password, user.mot_passe);
-
-      if (isValidPassword) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: 'Authentication failed - Invalid password' });
-      }
-    } catch (error) {
-      console.error('Error during authentication:', error);
-      return done(error, false, { message: 'Authentication failed - Internal server error' });
-    }
-  }
-));
-
-  
-    // Serialize and deserialize user
-    this.passport.serializeUser(function (user, done) {
-      done(null, user);
-    });
-  
-    this.passport.deserializeUser(function (user, done) {
-      done(null, user);
-    });
-  }
-  
-
-  async loginUser(req, res, next) {
-    try {
-      this.passport.authenticate('local', async (err, user, info) => {
-        if (err) {
-          console.error('Error during authentication:', err);
-          return res.status(500).json({ status: 'Authentication failed', message: 'Internal server error' });
-        }
-
-        if (!user) {
-          console.error('User not found during authentication');
-          return res.status(401).json({ status: 'Authentication failed', message: 'User not found' });
-        }
-
-        req.login(user, async (err) => {
-          if (err) {
-            console.error('Error during login:', err);
-            return res.status(500).json({ status: 'Authentication failed', message: 'Internal server error' });
+            await user.save();
           }
 
-          // Generate a JWT
-          const token = this.jwt.sign({ userId: user._id }, 'yourSecretKey', { expiresIn: '1h' });
+          return done(null, user);
+        } catch (error) {
+          return done(error, null);
+        }
+      }
+    )
+  );
 
-          // Attach the token to the user object
-          user.jwtToken = token;
+  // Local Strategy
+  this.passport.use(
+    new LocalStrategy(
+      { usernameField: 'email' },
+      async (email, password, done) => {
+        try {
+          const user = await UserInfo.findOne({ email });
 
-          // Save the user with the updated token
-          await user.save();
+          if (!user) {
+            return done(null, false, { message: 'Incorrect email.' });
+          }
 
-          return res.status(200).json({ status: 'ok', data: { user, token } });
-        });
-      })(req, res, next);
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ status: 'Authentication failed', message: 'Internal server error' });
-    }
-  }
+          const isValidPassword = await bcrypt.compare(password, user.mot_passe);
 
-  async loginSuccess(req, res) {
-    if (req.user) {
-      res.status(200).json({ message: 'User Login', user: req.user });
-    } else {
-      res.status(400).json({ message: 'Not Authorized' });
-    }
-  }
+          if (!isValidPassword) {
+            return done(null, false, { message: 'Incorrect password.' });
+          }
 
-  logout(req, res, next) {
-    req.logout(function (err) {
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  // Serialize and deserialize user
+  this.passport.serializeUser(function (user, done) {
+    done(null, user);
+  });
+
+  this.passport.deserializeUser(function (user, done) {
+    done(null, user);
+  });
+}
+  loginUser = async (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
       if (err) {
         return next(err);
       }
-      res.redirect('http://localhost:3000');
-    });
-  }
+
+      if (!user) {
+        return res.json({ status: 'error', error: info.message });
+      }
+
+      req.login(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+
+        const token = jwt.sign({ email: user.email }, 'yourSecretKey', {
+          expiresIn: '15m',
+        });
+
+        return res.json({ status: 'ok', data: token });
+      });
+    })(req, res, next);
+  };
+
+  checkToken = async (req, res) => {
+    const { token } = req.body;
+    try {
+      const user = jwt.verify(token, 'yourSecretKey', (err, decoded) => {
+        if (err) {
+          return 'token expired';
+        }
+        return decoded;
+      });
+
+      if (user === 'token expired') {
+        return res.send({ status: 'error', data: 'token expired' });
+      }
+
+      const useremail = user.email;
+      UserInfo.findOne({ email: useremail })
+        .then((data) => {
+          res.send({ status: 'ok', data: data });
+        })
+        .catch((error) => {
+          res.send({ status: 'error', data: error });
+        });
+    } catch (error) { }
+  };
 }
 
 module.exports = AuthController;
