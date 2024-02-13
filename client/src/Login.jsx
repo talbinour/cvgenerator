@@ -19,8 +19,9 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:8080/loginuser', requestData, {
-      withCredentials: true,
+        withCredentials: true,
       });
+
       if (response && response.data) {
         const user = response.data.data.user;
 
@@ -28,14 +29,9 @@ const Login = () => {
           console.log('Redirecting to /admin');
           navigate('/admin');
         } else if (user.role === 'user') {
-          console.log('Redirecting to /dashboard');
-          navigate('/dashboard');
-        } else {
-          console.error('Unknown role:', user.role);
+          console.log('Redirecting to /');
+          navigate('/');
         }
-      } else {
-        console.error('Invalid response format');
-        setError('Format de réponse invalide');
       }
     } catch (error) {
       console.error('Login failed', error);
@@ -64,23 +60,19 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // Retrieve the token from wherever you store it (e.g., cookies, localStorage)
     const token = 'mLjaK5E6GWwhSv6bSTBCZ0fwa5nphxQOwGLSMOadK5g=';
 
-    // Make an Axios request with the token
     axios.get('http://localhost:8080/protected-route', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {
         console.log('Success:', response.data);
-        // Handle the successful response here, e.g., redirect to a dashboard
         navigate('/dashboard');
       })
       .catch(error => {
         console.error('Error:', error);
-        // Handle the error here, e.g., show an error message to the user
       });
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="login-page">

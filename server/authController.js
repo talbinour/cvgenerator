@@ -7,7 +7,7 @@ const UserInfo = require('./userDetails');
 const Admin = require('./admin');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
-
+const { body, validationResult } = require('express-validator');
 const generateToken = (user) => {
   // Implémentez votre logique de génération de token ici
   // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
@@ -22,9 +22,12 @@ class AuthController {
   }
 
   initializeRoutes() {
+    this.router.options('/loginuser', cors());
     this.router.post('/loginuser', cors(), this.loginUser.bind(this));
+
     this.router.get('/login/success', this.loginSuccess.bind(this));
     this.router.get('/logout', this.logout.bind(this));
+    
 
     this.router.get('/auth/google/callback',
       passport.authenticate('google', {
@@ -82,30 +85,38 @@ class AuthController {
       done(null, user);
     });
   }
-
   async loginUser(req, res) {
+    // Utilisation de express-validator pour valider et nettoyer les données d'entrée
+    await body('email').isEmail().normalizeEmail().run(req);
+    await body('mot_passe').isLength({ min: 6 }).trim().run(req);
+  
+    const errors = validationResult(req);
+  
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
     const { email, mot_passe } = req.body;
     try {
       const user = await UserInfo.findOne({ email });
-      const admin = await Admin.findOne({ email });
+  
+      if (user) {
+        const passwordMatch = await bcrypt.compare(mot_passe, user.mot_passe);
 
-      if (user || admin) {
-        const targetUser = user || admin;
-        const passwordMatch = await targetUser.comparePassword(mot_passe);
+  
         if (passwordMatch) {
-          const token = generateToken(targetUser);
-          res.status(201).json({ status: 'ok', data: token, role: targetUser.role });
+          const token = generateToken(user);
+          res.status(201).json({ status: 'ok', data: token, role: user.role });
         } else {
           res.status(401).json({ status: 'Invalid Password' });
         }
       } else {
-        res.status(404).json({ status: 'User/Admin Not Found' });
+        res.status(404).json({ status: 'User Not Found' });
       }
     } catch (error) {
       res.status(500).json({ status: 'Error', error: error.message });
     }
   }
-
   async loginSuccess(req, res) {
     if (req.user) {
       res.status(200).json({ message: 'User Login', user: req.user });

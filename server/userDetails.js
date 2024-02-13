@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+const Schema = mongoose.Schema;
 const userDetailsSchema = new mongoose.Schema({
   nom: {
     type: String,
@@ -32,19 +32,28 @@ const userDetailsSchema = new mongoose.Schema({
   mot_passe: {
     type: String,
     required: true,
-    minlength: [6, 'Password must be at least 6 characters long'],
-    default: ".......",
   },
   role: {
     type: String,
     default: 'user',
   },
 });
-
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.mot_passe);
+  try {
+    return await bcrypt.compare(candidatePassword, this.mot_passe);
+  } catch (error) {
+    throw new Error(error);
+  }
 };
-
+userDetailsSchema.pre('save', async function (next) {
+  try {
+    const hashedPassword = await bcrypt.hash(this.mot_passe, 10);
+    this.mot_passe = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 const UserInfo = mongoose.model('UserInfo', userDetailsSchema);
 
 module.exports = UserInfo;
