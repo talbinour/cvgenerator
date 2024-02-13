@@ -2,177 +2,126 @@ const express = require('express');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
-const bcrypt = require('bcrypt');
-const LocalStrategy = require('passport-local').Strategy;
-const session = require('express-session');
 const jwt = require('jsonwebtoken');
-const { UserInfo } = require('./userDetails');
-const flash = require('express-flash'); // Add this line
-// Import the User model if it's not imported already
-// const User = require('./models/User'); // Replace with your actual path
+const UserInfo = require('./userDetails');
+const Admin = require('./admin');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
+
+const generateToken = (user) => {
+  // Implémentez votre logique de génération de token ici
+  // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
+  // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
+};
 
 class AuthController {
-  constructor(app, passport, jwt, bcrypt) {
-    this.app = app;
-    this.passport = passport;
-    this.jwt = jwt;
-    this.bcrypt = bcrypt;
+  constructor() {
+    this.router = express.Router();
     this.initializeRoutes();
     this.initializePassport();
   }
 
   initializeRoutes() {
-    this.app.post('/loginuser', this.loginUser.bind(this));
-    this.app.get('/auth/google/callback', passport.authenticate('google', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/login',
-    }), (req, res) => {
-      res.redirect('/dashboard');
-    });
-    //this.app.use(flash());
+    this.router.post('/loginuser', cors(), this.loginUser.bind(this));
+    this.router.get('/login/success', this.loginSuccess.bind(this));
+    this.router.get('/logout', this.logout.bind(this));
 
-    //this.app.get('/login/success', this.loginSuccess.bind(this));
-    //this.app.get('/logout', this.logout.bind(this));
-  }
-  initializePassport() {
-    this.app.use(
-      session({
-        secret: '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',
-        resave: true,
-        saveUninitialized: true,
-        cookie: {
-          secure: true, // Set to true for HTTPS
-          sameSite: 'strict', // Adjust based on your needs
-        },
-      })
+    this.router.get('/auth/google/callback',
+      passport.authenticate('google', {
+        successRedirect: "/dashboard",
+        failureRedirect: "/login",
+      }),
+      (req, res) => {
+        res.redirect('/dashboard');
+      }
     );
-  
-    
-  this.app.use(this.passport.initialize());
-  this.app.use(this.passport.session());
+  }
 
-  this.passport.use(
-    new GoogleStrategy(
-      {
-        clientID: '1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com',
-        clientSecret: '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',
-        callbackURL: '/auth/google/callback',
-        scope: ['profile', 'email', 'openid', 'https://www.googleapis.com/auth/user.birthday.read', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        try {
-          let user = await UserInfo.findOne({ googleId: profile.id });
+  initializePassport() {
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: "YOUR_GOOGLE_CLIENT_ID",
+          clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+          callbackURL: "/auth/google/callback",
+          scope: ["profile", "email", "openid", "https://www.googleapis.com/auth/user.birthday.read", "https://www.googleapis.com/auth/user.phonenumbers.read"]
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            let user = await UserInfo.findOne({ googleId: profile.id });
 
-          if (!user) {
-            const password = Math.random().toString(36).slice(-8);
-            const hashedPassword = await this.bcrypt.hash(password, 10);
-            user = new UserInfo({
-              googleId: profile.id,
-              displayName: profile.displayName,
-              email: profile.emails[0].value,
-              image: profile.photos[0].value,
-              nom: profile.name.givenName || '',
-              prenom: profile.name.familyName || '',
-              date_naissance: profile.birthdate || '',
-              Nbphone: profile.phonenumber || '',
-              mot_passe: hashedPassword,
-              image: profile.photos[0].value,
-            });
+            if (!user) {
+              const password = Math.random().toString(36).slice(-8);
+              const hashedPassword = await bcrypt.hash(password, 10);
+              user = new UserInfo({
+                googleId: profile.id,
+                displayName: profile.displayName,
+                email: profile.emails[0].value,
+                nom: profile.name.givenName || '',
+                prenom: profile.name.familyName || '',
+                date_naissance: profile.birthdate || '',
+                Nbphone: profile.phonenumber || '',
+                mot_passe: hashedPassword,
+              });
+              await user.save();
+            }
 
-            await user.save();
+            return done(null, user);
+          } catch (error) {
+            return done(error, null);
           }
-
-          return done(null, user);
-        } catch (error) {
-          return done(error, null);
         }
-      }
-    )
-  );
+      )
+    );
 
-  // Local Strategy
-  this.passport.use(
-    new LocalStrategy(
-      { usernameField: 'email' },
-      async (email, password, done) => {
-        try {
-          const user = await UserInfo.findOne({ email });
+    passport.serializeUser((user, done) => {
+      done(null, user);
+    });
 
-          if (!user) {
-            return done(null, false, { message: 'Incorrect email.' });
-          }
+    passport.deserializeUser((user, done) => {
+      done(null, user);
+    });
+  }
 
-          const isValidPassword = await bcrypt.compare(password, user.mot_passe);
+  async loginUser(req, res) {
+    const { email, mot_passe } = req.body;
+    try {
+      const user = await UserInfo.findOne({ email });
+      const admin = await Admin.findOne({ email });
 
-          if (!isValidPassword) {
-            return done(null, false, { message: 'Incorrect password.' });
-          }
-
-          return done(null, user);
-        } catch (error) {
-          return done(error);
+      if (user || admin) {
+        const targetUser = user || admin;
+        const passwordMatch = await targetUser.comparePassword(mot_passe);
+        if (passwordMatch) {
+          const token = generateToken(targetUser);
+          res.status(201).json({ status: 'ok', data: token, role: targetUser.role });
+        } else {
+          res.status(401).json({ status: 'Invalid Password' });
         }
+      } else {
+        res.status(404).json({ status: 'User/Admin Not Found' });
       }
-    )
-  );
+    } catch (error) {
+      res.status(500).json({ status: 'Error', error: error.message });
+    }
+  }
 
-  // Serialize and deserialize user
-  this.passport.serializeUser(function (user, done) {
-    done(null, user);
-  });
+  async loginSuccess(req, res) {
+    if (req.user) {
+      res.status(200).json({ message: 'User Login', user: req.user });
+    } else {
+      res.status(400).json({ message: 'Not Authorized' });
+    }
+  }
 
-  this.passport.deserializeUser(function (user, done) {
-    done(null, user);
-  });
-}
-  loginUser = async (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+  logout(req, res, next) {
+    req.logout(function (err) {
       if (err) {
         return next(err);
       }
-
-      if (!user) {
-        return res.json({ status: 'error', error: info.message });
-      }
-
-      req.login(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-
-        const token = jwt.sign({ email: user.email }, 'yourSecretKey', {
-          expiresIn: '15m',
-        });
-
-        return res.json({ status: 'ok', data: token });
-      });
-    })(req, res, next);
-  };
-
-  checkToken = async (req, res) => {
-    const { token } = req.body;
-    try {
-      const user = jwt.verify(token, 'yourSecretKey', (err, decoded) => {
-        if (err) {
-          return 'token expired';
-        }
-        return decoded;
-      });
-
-      if (user === 'token expired') {
-        return res.send({ status: 'error', data: 'token expired' });
-      }
-
-      const useremail = user.email;
-      UserInfo.findOne({ email: useremail })
-        .then((data) => {
-          res.send({ status: 'ok', data: data });
-        })
-        .catch((error) => {
-          res.send({ status: 'error', data: error });
-        });
-    } catch (error) { }
-  };
+      res.redirect('http://localhost:3000');
+    });
+  }
 }
 
 module.exports = AuthController;

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const SALT_ROUNDS = 10;
 
 const userDetailsSchema = new mongoose.Schema({
   nom: {
@@ -11,7 +10,7 @@ const userDetailsSchema = new mongoose.Schema({
   prenom: {
     type: String,
     required: true,
-    default: "nn",
+    default: "...",
   },
   email: {
     type: String,
@@ -23,46 +22,29 @@ const userDetailsSchema = new mongoose.Schema({
   date_naissance: {
     type: Date,
     required: true,
-    default: Date.now,
+    default: Date.now
   },
   Nbphone: {
     type: String,
     required: true,
-    default: "nn",
+    default: "...",
   },
   mot_passe: {
     type: String,
     required: true,
     minlength: [6, 'Password must be at least 6 characters long'],
+    default: ".......",
   },
   role: {
     type: String,
     default: 'user',
   },
-  jwtToken: {
-    type: String,
-  },
-});
-userDetailsSchema.pre('save', async function (next) {
-  try {
-    if (this.isModified('mot_passe')) {
-      const hashedPassword = await bcrypt.hash(this.mot_passe, SALT_ROUNDS);
-      this.mot_passe = hashedPassword;
-    }
-    next();
-  } catch (error) {
-    next(error);
-  }
 });
 
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
-  const result = await bcrypt.compare(candidatePassword, this.mot_passe);
-  return result;
+  return await bcrypt.compare(candidatePassword, this.mot_passe);
 };
 
-
-// Create the UserInfo model
 const UserInfo = mongoose.model('UserInfo', userDetailsSchema);
 
-// Export the UserInfo model
-module.exports = { UserInfo };
+module.exports = UserInfo;
