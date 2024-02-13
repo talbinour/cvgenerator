@@ -2,38 +2,33 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const AuthController = require('./authController');
-const passport = require('passport');
 const session = require('express-session');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { UserInfo } = require('./userDetails');
+const AuthController = require('./AuthController');
 
 // Load environment variables
-dotenv.config();
-
-// Import MongoDB models
-require('./userDetails');
-require('./admin'); // Import Admin model
+require('dotenv').config();
 
 // App setup
 const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Configure CORS before routes
-app.use(cors({
-  origin: 'http://localhost:3000',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+// Define CORS options
+const corsOptions = {
+  origin: 'http://localhost:3000',  // Replace with your frontend's origin
   credentials: true,
-  optionsSuccessStatus: 204, // Set the response status for successful CORS requests to 204
-}));
+};
+
+// Use CORS with defined options
+app.use(cors(corsOptions));
 
 // Configure session before passport
 app.use(session({
-<<<<<<< HEAD
-  secret: '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', // Replace with your own secret key
-=======
   secret: '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',
->>>>>>> 5b3018c1871fdc4436e3fe5e83aa9c013522cf66
   resave: true,
   saveUninitialized: true,
 }));
@@ -46,7 +41,6 @@ app.use(passport.session());
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000,
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => {
@@ -54,52 +48,74 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
 });
 
-// Import routes
-const postRoutes = require('./routes/postRoutes');
-const registerRoutes = require('./routes/registerRoutes');
+// Middleware to verify JWT token
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
 
-// Routes setup
-app.use('/post', postRoutes);
-app.use('/register', registerRoutes);
-app.get(("/auth/google/callback",passport.authenticate("google",{successRedirect:"http://localhost:3000",failureRedirect:"http://localhost:3000/login"})))
-
-app.use('/', authController.router);
-
-/// Create an instance of the AuthController
-const authController = new AuthController();
-
-// Handle CORS preflight for /loginuser
-app.options('/loginuser', cors());
-
-// Handle actual login route
-app.post('/loginuser', cors(), authController.loginUser.bind(authController));
-app.get("/auth/google/callback",passport.authenticate("google",{
-  successRedirect:"http://localhost:3000/dashboard",
-  failureRedirect:"http://localhost:3000/login"
-}))
-
-
-/* Handle CORS preflight for /loginuser
-app.post('/loginuser', cors(), async (req, res) => {
-  try {
-    // Your login logic here
-    // ...
-    res.status(200).json({ status: 'ok' });
-  } catch (error) {
-    res.status(500).json({ status: 'Error', error: error.message });
+  if (!token) {
+    return res.status(401).json({ message: 'Token not provided' });
   }
-});*/
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  if (err.name === 'ValidationError') {
-    const validationErrors = Object.values(err.errors).map((error) => error.message);
-    res.status(400).json({ error: 'Validation failed', details: validationErrors });
-  } else {
-    console.error(err.stack);
-    res.status(500).send(`Something went wrong! Error: ${err.message}`);
+  jwt.verify(token.split(' ')[1], 'yourSecretKey', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    req.user = decoded;
+    next();
+  });
+};
+// Protected route
+app.get('/protected-route', verifyToken, (req, res) => {
+  res.json({ message: 'This route is protected', user: req.user });
+});
+
+// User registration
+app.post('/register', async (req, res) => {
+  const { email, mot_passe } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(mot_passe, 10);
+    const newUser = new UserInfo({ email, mot_passe: hashedPassword });
+    await newUser.save();
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).json({ message: 'Registration failed - Internal server error' });
   }
 });
+
+//
+app.post('/loginuser', passport.authenticate('local', {
+  failureRedirect: '/login',
+}), (req, res) => {
+  const token = jwt.sign({ userId: req.user._id }, 'yourSecretKey', { expiresIn: '1h' });
+  res.json({ user: req.user, token });
+});
+
+// Handle authentication failure manually
+app.use((err, req, res, next) => {
+  if (err.name === 'AuthenticationError') {
+    req.flash('error', err.message);  // Send flash message
+    return res.redirect('/login');
+  }
+  next(err);
+});
+
+
+// Google login
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+// Instantiate AuthController
+const authController = new AuthController(app, passport, jwt, bcrypt);
 
 // Start the server
 const port = process.env.PORT || 8080;
