@@ -27,7 +27,8 @@ class AuthController {
 
     this.router.get('/login/success', this.loginSuccess.bind(this));
     this.router.get('/logout', this.logout.bind(this));
-    
+    // Utilisez la liaison après avoir défini la méthode
+    this.router.get('/protected-route', this.protectedRouteHandler.bind(this));
 
     this.router.get('/auth/google/callback',
       passport.authenticate('google', {
@@ -44,8 +45,8 @@ class AuthController {
     passport.use(
       new GoogleStrategy(
         {
-          clientID: "YOUR_GOOGLE_CLIENT_ID",
-          clientSecret: "YOUR_GOOGLE_CLIENT_SECRET",
+          clientID: "1009937116596-6f9r93cvhchvr1oc9424it9citjo1drv.apps.googleusercontent.com",
+          clientSecret: "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",
           callbackURL: "/auth/google/callback",
           scope: ["profile", "email", "openid", "https://www.googleapis.com/auth/user.birthday.read", "https://www.googleapis.com/auth/user.phonenumbers.read"]
         },
@@ -86,10 +87,11 @@ class AuthController {
     });
   }
   async loginUser(req, res) {
+    
     // Utilisation de express-validator pour valider et nettoyer les données d'entrée
     await body('email').isEmail().normalizeEmail().run(req);
     await body('mot_passe').isLength({ min: 6 }).trim().run(req);
-  
+    console.log('Request Data:', req.body);
     const errors = validationResult(req);
   
     if (!errors.isEmpty()) {
@@ -133,6 +135,26 @@ class AuthController {
       res.redirect('http://localhost:3000');
     });
   }
+  async protectedRouteHandler(req, res) {
+    try {
+      // Assurez-vous que l'utilisateur est authentifié avant d'accéder à cette route
+      if (req.isAuthenticated()) {
+        // Vous pouvez accéder aux données de l'utilisateur authentifié via req.user
+        const user = req.user;
+  
+        // Ajoutez ici la logique spécifique pour la route protégée
+        // Par exemple, renvoyer des données protégées
+        res.status(200).json({ message: 'Route protégée réussie', user });
+      } else {
+        // Si l'utilisateur n'est pas authentifié, renvoyez une réponse appropriée
+        res.status(401).json({ message: 'Non autorisé' });
+      }
+    } catch (error) {
+      console.error('Erreur dans protectedRouteHandler:', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  }
+
 }
 
 module.exports = AuthController;

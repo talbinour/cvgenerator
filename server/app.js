@@ -30,7 +30,7 @@ app.use(cors({
 
 // Configure session before passport
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'default_secret',
+  secret: process.env.SESSION_SECRET || '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',
   resave: true,
   saveUninitialized: true,
 }));
@@ -69,9 +69,11 @@ app.get('/auth/google/callback',
 
 // Create an instance of the AuthController
 const authController = new AuthController();
+// Respond to preflight requests
 
 // Add CORS options for /loginuser
-app.post('/loginuser', cors(), authController.loginUser.bind(authController));
+// Utilisez seulement la définition de route pour /loginuser
+app.post('/loginuser', authController.loginUser.bind(authController));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

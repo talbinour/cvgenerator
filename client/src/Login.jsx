@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
@@ -17,62 +17,40 @@ const Login = () => {
       mot_passe: mot_passe,
     };
 
+    console.log('Request Data:', requestData);
+
     try {
       const response = await axios.post('http://localhost:8080/loginuser', requestData, {
         withCredentials: true,
       });
 
-      if (response && response.data) {
-        const user = response.data.data.user;
+      console.log('Response:', response);
 
-        if (user.role === 'admin') {
-          console.log('Redirecting to /admin');
-          navigate('/admin');
-        } else if (user.role === 'user') {
-          console.log('Redirecting to /');
-          navigate('/');
-        }
+      const responseData = response.data;
+
+      if (responseData.status === 'ok' && responseData.role === 'admin') {
+        console.log('Redirecting to /admin');
+        navigate('/admin');
+      } else if (responseData.status === 'ok' && responseData.role === 'user') {
+        console.log('Redirecting to /dashboard');
+        navigate('/dashboard');
+      } else {
+        console.log('Unknown user or role:', responseData);
+        // Ajoutez une redirection par défaut ici si nécessaire
+        navigate('/default-route');
       }
     } catch (error) {
       console.error('Login failed', error);
+      console.log('Response Data:', error.response ? error.response.data : 'No response data');
 
-      if (error.response) {
-        console.log('Error response data:', error.response.data);
-        console.log('Error response status:', error.response.status);
-
-        if (error.response.status === 401) {
-          setError('Email ou mot de passe incorrect');
-        } else {
-          setError("Une erreur s'est produite lors de la connexion.");
-        }
-      } else if (error.request) {
-        console.log('Error request:', error.request);
-        setError('Aucune réponse du serveur.');
-      } else {
-        console.error('Error message:', error.message);
-        setError("Une erreur s'est produite lors de la connexion.");
-      }
+      setError('Une erreur s\'est produite lors de la connexion.');
+      // Vous pourriez réinitialiser l'erreur après un certain temps ou lorsque l'utilisateur commence à taper.
     }
   };
 
   const loginWithGoogle = () => {
     window.open('http://localhost:8080/auth/google/callback', '_self');
   };
-
-  useEffect(() => {
-    const token = 'mLjaK5E6GWwhSv6bSTBCZ0fwa5nphxQOwGLSMOadK5g=';
-
-    axios.get('http://localhost:8080/protected-route', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(response => {
-        console.log('Success:', response.data);
-        navigate('/dashboard');
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }, [navigate]);
 
   return (
     <div className="login-page">
