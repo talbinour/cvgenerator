@@ -82,7 +82,7 @@ const SignUp = () => {
           value={formData.mot_passe} 
           onChange={handleInputChange} required />
      
-        <button type="submit">S'inscrire</button>
+        <button type="submit">S&apos;inscrire</button>
       </form>
     </div>
   );
