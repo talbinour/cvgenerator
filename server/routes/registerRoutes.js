@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const UserInfo = require('../userDetails');
-
+const nodemailer = require('nodemailer');
 router.post('/', async (req, res, next) => {
   const { nom, prenom, email, date_naissance, mot_passe, Nbphone } = req.body;
 
