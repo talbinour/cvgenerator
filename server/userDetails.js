@@ -5,12 +5,12 @@ const userDetailsSchema = new mongoose.Schema({
   nom: {
     type: String,
     required: true,
-    default: "nn",
+    default: ".....",
   },
   prenom: {
     type: String,
     required: true,
-    default: "...",
+    default: ".....",
   },
   email: {
     type: String,

@@ -55,7 +55,7 @@ const Login = () => {
   return (
     <div className="login-page">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
-      <p>veuillez vous authentifier </p>
+      <p style={{ textAlign: 'center' }} >veuillez vous authentifier </p>
       <div className="form">
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <form className="login-form" onSubmit={handleSubmit}>
@@ -78,13 +78,17 @@ const Login = () => {
 
           <button type="submit">Connexion</button>
         </form>
+        <p className="message"  style={{ textAlign: 'center' }}><Link to="/signup">Oublier mot de passe ?</Link>
+        </p>
+
+        
+        <button className="login-with-google-btn" onClick={loginWithGoogle}>
+          Se connecter avec Google
+        </button>
         <p className="message">
           Vous n&apos;avez pas de compte ? <Link to="/signup">Sign Up</Link>
         </p>
 
-        <button className="login-with-google-btn" onClick={loginWithGoogle}>
-          Se connecter avec Google
-        </button>
       </div>
     </div>
   );

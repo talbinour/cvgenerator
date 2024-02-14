@@ -82,7 +82,6 @@ const SignUp = () => {
           placeholder='Entre votre mot de passe '
           value={formData.mot_passe}
           onChange={handleInputChange} required />
-
         <button type="submit">S&apos;inscrire</button>
       </form>
     </div>
