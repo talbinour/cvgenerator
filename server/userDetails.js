@@ -37,6 +37,11 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     default: 'user',
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailToken: String,
 });
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
   try {

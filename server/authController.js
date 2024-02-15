@@ -8,6 +8,8 @@ const Admin = require('./admin');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
+
 const generateToken = (user) => {
   // Implémentez votre logique de génération de token ici
   // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
@@ -61,10 +63,10 @@ class AuthController {
                 googleId: profile.id,
                 displayName: profile.displayName,
                 email: profile.emails[0].value,
-                nom: profile.name.givenName || '',
-                prenom: profile.name.familyName || '',
-                date_naissance: profile.birthdate || '',
-                Nbphone: profile.phonenumber || '',
+                nom: profile.name.givenName || '..',
+                prenom: profile.name.familyName || '..',
+                date_naissance: profile.birthdate || Date.now(),
+                Nbphone: profile.phonenumber || '..',
                 mot_passe: hashedPassword,
               });
               await user.save();
@@ -79,7 +81,7 @@ class AuthController {
     );
 
     passport.serializeUser((user, done) => {
-      done(null, user);
+      done(null, user); 
     });
 
     passport.deserializeUser((user, done) => {
@@ -154,7 +156,24 @@ class AuthController {
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
-
+  async verifyEmail(req, res) {
+    try {
+      const emailToken = req.params.emailToken;
+      const user = await UserInfo.findOne({ emailToken });
+  
+      if (user) {
+        user.emailToken = null;
+        user.isVerified = true; 
+        await user.save();
+        res.status(200).json({ message: 'Email verified successfully' });
+      } else {
+        res.status(404).json({ message: 'Email verification failed, invalid token' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Error verifying email', error: error.message });
+    }
+  }
+  
 }
 
 module.exports = AuthController;

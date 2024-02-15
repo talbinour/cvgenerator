@@ -6,9 +6,12 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
 const initializeAdmin = require('./utils/initAdmin');
+
 // Import MongoDB models
 require('./userDetails');
 require('./admin');
+require('dotenv').config();
+
 // Import AuthController
 const AuthController = require('./authController');
 
@@ -61,14 +64,16 @@ app.use('/register', registerRoutes);
 // Google OAuth Callback
 app.get('/auth/google/callback',
   passport.authenticate('google', {
-    successRedirect: 'http://localhost:3000',
+    successRedirect: 'http://localhost:3000/dashboard',
     failureRedirect: 'http://localhost:3000/login',
   })
 );
 
 // Create an instance of the AuthController
 const authController = new AuthController();
-// Respond to preflight requests
+
+// Route pour la vérification de l'e-mail
+app.get('/verify-email/:emailToken', authController.verifyEmail.bind(authController));
 
 // Add CORS options for /loginuser
 // Utilisez seulement la définition de route pour /loginuser
@@ -83,6 +88,13 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send(`Something went wrong! Error: ${err.message}`);
   }
+});
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    return res.status(200).json({});
+  }
+  next();
 });
 
 // Start the server

@@ -11,7 +11,7 @@ import Skills from "./component/Skills";
 import Services from "./component/Services";
 import DashboardPage from './DashboardPage';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import VerifyEmail from './VerifyEmail'; 
 
 function App() {
   return (
@@ -27,6 +27,8 @@ function App() {
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} />
+
+          <Route path="/VerifyEmail" element={<VerifyEmail />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
               <Route path='/signup' element={<SignUp />} exact /> */}
