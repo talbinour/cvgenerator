@@ -1,4 +1,3 @@
-// SignUp.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -27,6 +26,10 @@ const SignUp = () => {
       const response = await axios.post('http://localhost:8080/register', formData);
 
       if (response.data.status === 'ok') {
+        // Display a message for email verification
+        console.log('Vérification de l\'e-mail en cours...');
+
+        // Navigate to login after successful registration
         navigate('/login');
       } else {
         console.error('Erreur d\'inscription:', response.data.message);
@@ -35,53 +38,50 @@ const SignUp = () => {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
     }
   };
-
   return (
     <div className='signup_page '>
       <h2 style={{ textAlign: 'center' }} >Inscription</h2>
       <form onSubmit={handleSubmit}>
-          <label>Nom:</label>
-          <input type="text" 
+        <label>Nom:</label>
+        <input type="text"
           name="nom"
           placeholder='Entre votre nom ..  '
-          value={formData.nom} 
+          value={formData.nom}
           onChange={handleInputChange} required />
-        
-          <label>Prénom:</label>
-          <input type="text" 
-          name="prenom" 
-          placeholder='Entre votre prenom ..'
-          value={formData.prenom} 
-          onChange={handleInputChange} required />
-        
-          <label>Email:</label>
-          <input type="email" 
-          name="email" 
-          placeholder='Entre votre Email .. '
-          value={formData.email} 
-          onChange={handleInputChange} required />
-        
-          <label>Date de naissance:</label>
 
-          <input type="date"
-          name="date_naissance" 
-          value={formData.date_naissance} 
-          onChange={handleInputChange} required  />
-       
-          <label>Numéro de téléphone:</label>
-          <input type="tel" 
-          name="Nbphone" 
-          placeholder='Entre votre numéro de telephone  '
-          value={formData.Nbphone} 
+        <label>Prénom:</label>
+        <input type="text"
+          name="prenom"
+          placeholder='Entre votre prénom ..'
+          value={formData.prenom}
           onChange={handleInputChange} required />
-     
-          <label>Mot de passe:</label>
-          <input type="password" 
-          name="mot_passe" 
+
+        <label>Email:</label>
+        <input type="email"
+          name="email"
+          placeholder='Entre votre Email .. '
+          value={formData.email}
+          onChange={handleInputChange} required />
+
+        <label>Date de naissance:</label>
+        <input type="date"
+          name="date_naissance"
+          value={formData.date_naissance}
+          onChange={handleInputChange} required />
+
+        <label>Numéro de téléphone:</label>
+        <input type="tel"
+          name="Nbphone"
+          placeholder='Entre votre numéro de téléphone  '
+          value={formData.Nbphone}
+          onChange={handleInputChange} required />
+
+        <label>Mot de passe:</label>
+        <input type="password"
+          name="mot_passe"
           placeholder='Entre votre mot de passe '
-          value={formData.mot_passe} 
+          value={formData.mot_passe}
           onChange={handleInputChange} required />
-     
         <button type="submit">S&apos;inscrire</button>
       </form>
     </div>
