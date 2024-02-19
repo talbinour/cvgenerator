@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './SignUp.css';
+import {  Link } from 'react-router-dom'; // Importation correcte de Link
+
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -83,6 +85,7 @@ const SignUp = () => {
           value={formData.mot_passe}
           onChange={handleInputChange} required />
         <button type="submit">S&apos;inscrire</button>
+        <p>Déjà un compte ? <Link to="/login">Connectez-vous ici</Link></p>
       </form>
     </div>
   );

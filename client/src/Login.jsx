@@ -78,7 +78,7 @@ const Login = () => {
 
           <button type="submit">Connexion</button>
         </form>
-        <p className="message"  style={{ textAlign: 'center' }}><Link to="/signup">Oublier mot de passe ?</Link>
+        <p className="message"  style={{ textAlign: 'center' }}><Link to="/password-reset">Oublier mot de passe ?</Link>
         </p>
 
         
