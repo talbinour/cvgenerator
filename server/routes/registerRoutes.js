@@ -4,23 +4,26 @@ const UserInfo = require('../userDetails');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
-// Route pour l'enregistrement des utilisateurs
 router.post('/', async (req, res) => {
   const { nom, prenom, email, date_naissance, mot_passe, Nbphone } = req.body;
   console.log('Requête POST reçue:', req.body);
- 
 
   try {
-    // Vérifier si l'utilisateur existe déjà
     let user = await UserInfo.findOne({ email });
     if (user) {
       return res.status(400).json("User already exists...");
     }
 
-    // Générer un token unique pour la validation de l'e-mail
+    const birthDate = new Date(date_naissance);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+
+    if (age < 18) {
+      return res.status(400).json({ error: 'Vous devez avoir au moins 18 ans pour vous inscrire.' });
+    }
+
     const emailToken = crypto.randomBytes(64).toString('hex');
 
-    // Création d'un nouvel utilisateur avec le token d'e-mail
     user = new UserInfo({
       nom,
       prenom,
@@ -32,22 +35,18 @@ router.post('/', async (req, res) => {
       isVerified: false
     });
 
-    // Sauvegarde de l'utilisateur dans la base de données
     await user.save();
-    
 
-    // Configuration et envoi de l'e-mail de confirmation
     const transporter = nodemailer.createTransport({
-      // Configuration de votre serveur de messagerie sortante
       service: 'gmail',
       auth: {
-        user: 'nt0506972@gmail.com', // Remplacez par votre adresse e-mail
-        pass: 'evrz qnsg pume fhdf' // Remplacez par votre mot de passe
+        user: 'nt0506972@gmail.com',
+        pass: 'evrz qnsg pume fhdf'
       }
     });
 
     const mailOptions = {
-      from: 'nt0506972@gmail.com', // Remplacez par votre adresse e-mail
+      from: 'nt0506972@gmail.com',
       to: email,
       subject: 'Confirmation de votre adresse e-mail',
       text: `Bonjour ${prenom}, veuillez cliquer sur le lien suivant pour confirmer votre adresse e-mail : http://localhost:8080/verify-email/${emailToken}`,
