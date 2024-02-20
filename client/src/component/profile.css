@@ -1,0 +1,38 @@
+.avatar-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-text {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+  }
+  
+  .profile-text h5 {
+    margin: 0;
+  }
+  
+  .menu-button {
+    border-radius: 9px;
+  }
+  
+  .message-dropdown {
+    width: 360px;
+    padding: 2rem;
+    padding-bottom: 2rem;
+    padding-top: 0;
+  }
+  
+  .message-dropdown .list-item {
+    padding-top: 0;
+  }
+  
+  .message-dropdown .divider {
+    margin-top: 2rem;
+  }
+  
+  .message-dropdown .logout-button {
+    margin-top: 2rem;
+  }
+  

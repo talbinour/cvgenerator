@@ -1,6 +1,5 @@
 import './App.css';
-import React from 'react';
-// Removed the commented-out import
+import React from 'react';// Removed the commented-out import
 import Login from './Login'; // Make sure the path is correct
 import SignUp from './SignUp'; // Make sure the path is correct
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,6 +9,8 @@ import About from "./component/About";
 import Skills from "./component/Skills";
 import Services from "./component/Services";
 import DashboardPage from './DashboardPage';
+import ForgotPassword from './ForgotPassword';
+import PasswordReset from './PasswordReset';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerifyEmail from './VerifyEmail'; 
 
@@ -27,6 +28,8 @@ function App() {
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/ForgotPassword/:id/:token" element={<ForgotPassword />} />
+          <Route path="/password-reset" element={<PasswordReset />} />
 
           <Route path="/VerifyEmail" element={<VerifyEmail />} />
           {/* Add routes for Login and SignUp if needed */}

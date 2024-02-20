@@ -1,0 +1,9 @@
+/* dashboardPage.css */
+
+.hero {
+    background-color: #f0f0f0;
+    padding: 20px;
+    text-align: center;
+    margin-top: 60px; /* Ajustez cela en fonction de la hauteur de votre navbar */
+  }
+  

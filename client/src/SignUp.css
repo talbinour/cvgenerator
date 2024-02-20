@@ -51,4 +51,8 @@ label{
 .signup_page button:hover {
     background-color: #4b6891;
   }
-  
+  .required-label::after {
+    content: ' *';
+    color: red;
+  }
+    

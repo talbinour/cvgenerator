@@ -17,34 +17,30 @@ const Login = () => {
       mot_passe: mot_passe,
     };
 
-    console.log('Request Data:', requestData);
-
     try {
       const response = await axios.post('http://localhost:8080/loginuser', requestData, {
         withCredentials: true,
       });
 
-      console.log('Response:', response);
-
       const responseData = response.data;
 
       if (responseData.status === 'ok' && responseData.role === 'admin') {
-        console.log('Redirecting to /admin');
         navigate('/admin');
       } else if (responseData.status === 'ok' && responseData.role === 'user') {
-        console.log('Redirecting to /dashboard');
         navigate('/dashboard');
       } else {
-        console.log('Unknown user or role:', responseData);
-        // Ajoutez une redirection par défaut ici si nécessaire
         navigate('/default-route');
       }
     } catch (error) {
       console.error('Login failed', error);
       console.log('Response Data:', error.response ? error.response.data : 'No response data');
 
-      setError('Une erreur s\'est produite lors de la connexion.');
-      // Vous pourriez réinitialiser l'erreur après un certain temps ou lorsque l'utilisateur commence à taper.
+      if (error.response && error.response.status === 401) {
+        // Invalid password or non-existent user
+        setError('Mot de passe incorrect ou utilisateur inexistant.');
+      } else {
+        setError('Une erreur s\'est produite lors de la connexion.');
+      }
     }
   };
 
@@ -78,7 +74,7 @@ const Login = () => {
 
           <button type="submit">Connexion</button>
         </form>
-        <p className="message"  style={{ textAlign: 'center' }}><Link to="/password-reset">Oublier mot de passe ?</Link>
+        <p className="message"  style={{ textAlign: 'center' }}><Link to="/password-reset">Mot de passe oublié ?</Link>
         </p>
 
         
