@@ -8,6 +8,7 @@ import Home from "./component/Home";
 import About from "./component/About";
 import Skills from "./component/Skills";
 import Services from "./component/Services";
+import Profile from "./component/Profile";
 import DashboardPage from './DashboardPage';
 import ForgotPassword from './ForgotPassword';
 import PasswordReset from './PasswordReset';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/ForgotPassword/:id/:token" element={<ForgotPassword />} />
           <Route path="/password-reset" element={<PasswordReset />} />
+          <Route path="/Profile" element={<Profile />} />
 
           <Route path="/VerifyEmail" element={<VerifyEmail />} />
           {/* Add routes for Login and SignUp if needed */}

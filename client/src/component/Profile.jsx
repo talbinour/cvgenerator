@@ -11,14 +11,12 @@ import {
   ListItemButton,
   List,
   ListItemText,
-  useTheme, // Import useTheme from @mui/material
 } from "@mui/material";
-import { ChevronDown as IconChevronDown, CreditCard as IconCreditCard, CurrencyDollar as IconCurrencyDollar, Shield as IconShield } from "@tabler/icons-react";
+import { ChevronDown as IconChevronDown } from "@tabler/icons-react";
 import styles from './profile.css';
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
-  const theme = useTheme(); // Use the theme variable in your component
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -27,9 +25,6 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
-
-  // Remove unused imports if they are unnecessary
-  // import { IconCreditCard, IconCurrencyDollar, IconShield } from "@tabler/icons-react";
 
   return (
     <Box>
