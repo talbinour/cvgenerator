@@ -103,7 +103,7 @@ class AuthController {
       console.log('Database Password:', user.mot_passe);
   
       // Temporairement ignorez la comparaison de mot de passe
-      const passwordMatch = true; // Ajout de cette ligne
+      const passwordMatch = mot_passe.trim() === user.mot_passe;
       if (user && passwordMatch) {
         // Le mot de passe est correct ou la comparaison est ignorée
         const token = generateToken(user);
