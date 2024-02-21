@@ -2,15 +2,23 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
-
+//import { useAuth } from './AuthContext';
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [mot_passe, setMotPasse] = useState('');
   const [error, setError] = useState(null);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [buttonBlocked, setButtonBlocked] = useState(false);
+  //const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // If the login button is blocked, don't proceed
+    if (buttonBlocked) {
+      return;
+    }
 
     const requestData = {
       email: email,
@@ -36,8 +44,13 @@ const Login = () => {
       console.log('Response Data:', error.response ? error.response.data : 'No response data');
 
       if (error.response && error.response.status === 401) {
-        // Invalid password or non-existent user
         setError('Mot de passe incorrect ou utilisateur inexistant.');
+        setAttemptCount(attemptCount + 1);
+
+        // If the number of attempts reaches 3, block the login button
+        if (attemptCount + 1 >= 3) {
+          setButtonBlocked(true);
+        }
       } else {
         setError('Une erreur s\'est produite lors de la connexion.');
       }
@@ -51,7 +64,7 @@ const Login = () => {
   return (
     <div className="login-page">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
-      <p style={{ textAlign: 'center' }} >veuillez vous authentifier </p>
+      <p style={{ textAlign: 'center' }}>Veuillez vous authentifier</p>
       <div className="form">
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <form className="login-form" onSubmit={handleSubmit}>
@@ -72,19 +85,20 @@ const Login = () => {
             onChange={(e) => setMotPasse(e.target.value)}
           />
 
-          <button type="submit">Connexion</button>
+          <button type="submit" disabled={buttonBlocked}>
+            Connexion
+          </button>
         </form>
-        <p className="message"  style={{ textAlign: 'center' }}><Link to="/password-reset">Mot de passe oublié ?</Link>
+        <p className="message" style={{ textAlign: 'center' }}>
+          <Link to="/password-reset">Mot de passe oublié ?</Link>
         </p>
 
-        
         <button className="login-with-google-btn" onClick={loginWithGoogle}>
           Se connecter avec Google
         </button>
         <p className="message">
           Vous n&apos;avez pas de compte ? <Link to="/signup">Sign Up</Link>
         </p>
-
       </div>
     </div>
   );

@@ -1,18 +1,24 @@
-import React from "react";
-import {  IconButton, Menu, Box, ListItemButton, List, ListItemText } from "@mui/material";
-import { IconChevronDown } from "@tabler/icons-react"; // Assurez-vous que ce module est correctement installé
+import React, { useState } from 'react';
+import { IconButton, Menu, Box, ListItemButton, List, ListItemText } from '@mui/material';
+import { IconChevronDown } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const [anchorEl2, setAnchorEl2] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleClick2 = (event) => {
-    setAnchorEl2(event.currentTarget);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const handleClose2 = () => {
-    setAnchorEl2(null);
+  const handleClose = () => {
+    setAnchorEl(null);
   };
+
+  const menuItems = [
+    { label: 'Profile', link: '/profile' },
+    { label: 'Settings', link: '/settings' },
+    // Add more menu items as needed
+  ];
 
   return (
     <Box>
@@ -22,34 +28,30 @@ const Profile = () => {
         color="inherit"
         aria-controls="profile-menu"
         aria-haspopup="true"
-        onClick={handleClick2}
+        onClick={handleClick}
       >
-        {/* Ajouter ici le contenu de l'avatar et du nom d'utilisateur */}
         <IconChevronDown width="20" height="20" />
       </IconButton>
 
       <Menu
         id="profile-menu"
-        anchorEl={anchorEl2}
+        anchorEl={anchorEl}
         keepMounted
-        open={Boolean(anchorEl2)}
-        onClose={handleClose2}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
         <Box pt={0}>
           <List>
-            <Link to="/profile" style={{ textDecoration: 'none' }}>
-              <ListItemButton component="a" onClick={handleClose2}>
-                <ListItemText primary="Profile" />
-              </ListItemButton>
-            </Link>
-            <Link to="/settings" style={{ textDecoration: 'none' }}>
-              <ListItemButton component="a" onClick={handleClose2}>
-                <ListItemText primary="Settings" />
-              </ListItemButton>
-            </Link>
-            <ListItemButton component="a" href="#" onClick={handleClose2}>
+            {menuItems.map((item) => (
+              <Link to={item.link} key={item.label} style={{ textDecoration: 'none' }}>
+                <ListItemButton component="a" onClick={handleClose}>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </Link>
+            ))}
+            <ListItemButton component="a" href="#" onClick={handleClose}>
               <ListItemText primary="Logout" />
             </ListItemButton>
           </List>

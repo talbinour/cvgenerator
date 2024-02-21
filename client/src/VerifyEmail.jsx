@@ -1,12 +1,10 @@
-// VerifyEmail.jsx
-
-import React, { useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import  { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom'; // Remplacer useHistory par useNavigate
 import axios from 'axios';
 
 const VerifyEmail = () => {
   const { emailToken } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate(); // Utilisez useNavigate pour gérer la navigation
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -17,24 +15,24 @@ const VerifyEmail = () => {
           // Affichage de l'alerte de confirmation
           alert('Votre adresse e-mail a été vérifiée avec succès.');
           // Redirection vers la page d'accueil après la validation réussie
-          history.push('/');
+          navigate('/'); // Mettre à jour ici
         } else {
           // Affichage d'une alerte en cas d'échec de la validation
           alert(response.data.message);
           // Redirection vers la page d'accueil en cas d'échec de la validation
-          history.push('/');
+          navigate('/'); // Mettre à jour ici
         }
       } catch (error) {
         console.error('Erreur lors de la validation du compte:', error.message);
         // Affichage d'une alerte en cas d'erreur
         alert('Une erreur est survenue lors de la validation du compte. Veuillez réessayer plus tard.');
         // Redirection vers la page d'accueil en cas d'erreur
-        history.push('/');
+        navigate('/'); // Mettre à jour ici
       }
     };
 
     verifyEmail();
-  }, [emailToken, history]);
+  }, [emailToken, navigate]); // Mettre à jour les dépendances ici
 
   return null; // Pas besoin d'afficher quoi que ce soit dans cette page
 };
