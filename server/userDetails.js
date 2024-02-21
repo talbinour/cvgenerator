@@ -52,6 +52,11 @@ userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
 };
 userDetailsSchema.pre('save', async function (next) {
   try {
+    // Ne hacher le mot de passe que s'il a été modifié (nouveau mot de passe ou modification du mot de passe existant)
+    if (!this.isModified('mot_passe')) {
+      return next();
+    }
+
     const hashedPassword = await bcrypt.hash(this.mot_passe, 10);
     this.mot_passe = hashedPassword;
     next();
@@ -59,6 +64,8 @@ userDetailsSchema.pre('save', async function (next) {
     next(error);
   }
 });
+
+
 const UserInfo = mongoose.model('UserInfo', userDetailsSchema);
 
 module.exports = UserInfo;

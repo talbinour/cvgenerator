@@ -1,22 +1,10 @@
-/*import React, { useState } from "react";
-import Link from "next/link";
-import {
-  Box,
-  Menu,
-  Avatar,
-  Typography,
-  Divider,
-  Button,
-  IconButton,
-  ListItemButton,
-  List,
-  ListItemText,
-} from "@mui/material";
-import { ChevronDown as IconChevronDown } from "@tabler/icons-react";
-import styles from './profile.css';
+import React from "react";
+import {  IconButton, Menu, Box, ListItemButton, List, ListItemText } from "@mui/material";
+import { IconChevronDown } from "@tabler/icons-react"; // Assurez-vous que ce module est correctement installé
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const [anchorEl2, setAnchorEl2] = useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
 
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
@@ -32,77 +20,43 @@ const Profile = () => {
         size="large"
         aria-label="menu"
         color="inherit"
-        aria-controls="msgs-menu"
+        aria-controls="profile-menu"
         aria-haspopup="true"
-        className={`${styles.menu-button} menu-button`}
         onClick={handleClick2}
       >
-        <Avatar
-          src={"/images/users/user2.jpg"}
-          alt={"ProfileImg"}
-          sx={{
-            width: 30,
-            height: 30,
-          }}
-        />
-        <Box className={styles.avatar-container}>
-          <Typography
-            color="textSecondary"
-            variant="h5"
-            fontWeight="400"
-            className={styles.profile-text}
-          >
-            <h5>Bonjour,</h5>
-            <Typography
-              variant="h5"
-              fontWeight="700"
-            >
-              Rahma
-            </Typography>
-          </Typography>
-          <IconChevronDown width="20" height="20" />
-        </Box>
+        {/* Ajouter ici le contenu de l'avatar et du nom d'utilisateur */}
+        <IconChevronDown width="20" height="20" />
       </IconButton>
 
       <Menu
-        id="msgs-menu"
+        id="profile-menu"
         anchorEl={anchorEl2}
         keepMounted
         open={Boolean(anchorEl2)}
         onClose={handleClose2}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
-        className={styles.message-dropdown}
       >
-
         <Box pt={0}>
           <List>
-            <Link href="/modifier-profil" passHref>
-              <ListItemButton component="a" className="list-item">
-                <ListItemText primary="Modifier Profile" />
+            <Link to="/profile" style={{ textDecoration: 'none' }}>
+              <ListItemButton component="a" onClick={handleClose2}>
+                <ListItemText primary="Profile" />
               </ListItemButton>
             </Link>
-            <ListItemButton component="a" href="#" className="list-item">
-              <ListItemText primary="Compte" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#" className="list-item">
-              <ListItemText primary="Changer Mot de Passe" />
-            </ListItemButton>
-            <ListItemButton component="a" href="#" className="list-item">
-              <ListItemText primary="Parametre" />
+            <Link to="/settings" style={{ textDecoration: 'none' }}>
+              <ListItemButton component="a" onClick={handleClose2}>
+                <ListItemText primary="Settings" />
+              </ListItemButton>
+            </Link>
+            <ListItemButton component="a" href="#" onClick={handleClose2}>
+              <ListItemText primary="Logout" />
             </ListItemButton>
           </List>
-        </Box>
-
-        <Divider className="divider" />
-        <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary" className="logout-button">
-            Deconnecter
-          </Button>
         </Box>
       </Menu>
     </Box>
   );
 };
 
-export default Profile;*/
+export default Profile;
