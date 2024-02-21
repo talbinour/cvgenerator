@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import './Login.css';
-
+//import { useAuth } from './AuthContext';
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -10,13 +10,13 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [attemptCount, setAttemptCount] = useState(0);
   const [buttonBlocked, setButtonBlocked] = useState(false);
+  //const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (attemptCount >= 3) {
-      // Rediriger vers la page de réinitialisation du mot de passe après trois tentatives
-      navigate('/password-reset');
+    // If the login button is blocked, don't proceed
+    if (buttonBlocked) {
       return;
     }
 
@@ -47,7 +47,7 @@ const Login = () => {
         setError('Mot de passe incorrect ou utilisateur inexistant.');
         setAttemptCount(attemptCount + 1);
 
-        // Si le nombre de tentatives atteint 3, bloquez le bouton de connexion
+        // If the number of attempts reaches 3, block the login button
         if (attemptCount + 1 >= 3) {
           setButtonBlocked(true);
         }

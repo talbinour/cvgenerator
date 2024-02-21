@@ -32,6 +32,7 @@ function App() {
           <Route path="/ForgotPassword/:id/:token" element={<ForgotPassword />} />
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/Profile" element={<Profile />} />
+          
 
           <Route path="/VerifyEmail" element={<VerifyEmail />} />
           {/* Add routes for Login and SignUp if needed */}
