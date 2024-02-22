@@ -32,9 +32,10 @@ function App() {
           <Route path="/ForgotPassword" element={<ForgotPassword />} />
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/Profile" element={<Profile />} />
-          <Route path="/VerificationPage" element={<VerificationPage />} />
 
+          <Route path="/VerificationPage" element={<VerificationPage />} />
           <Route path="/VerifyEmail" element={<VerifyEmail />} />
+
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
               <Route path='/signup' element={<SignUp />} exact /> */}
