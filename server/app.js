@@ -75,9 +75,9 @@ const authController = new AuthController();
 /// Route for email verification
 app.get('/verify-email/:emailToken', authController.verifyEmail.bind(authController));
 
-// Route for password link
+/// Route for password link
 router.options('/sendpasswordlink', cors()); // Add this route for OPTIONS
-router.post('/sendpasswordlink', authController.sendPasswordLink.bind(authController));
+router.post('/sendpasswordlink', authController.sendVerificationCode.bind(authController));
 
 // Assuming you have a method like this in AuthController
 router.get('/forgotpassword/:id/:token', authController.verifyForgotPasswordToken.bind(authController));

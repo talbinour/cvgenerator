@@ -22,6 +22,11 @@ const generateToken = (user) => {
   // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
   // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
 };
+ // Importez une fonction pour générer un code aléatoire
+ const generateVerificationCode = () => {
+  // Générez un code aléatoire à six chiffres
+  return Math.floor(100000 + Math.random() * 900000);
+};
 
 class AuthController {
   constructor() {
@@ -175,49 +180,50 @@ class AuthController {
     }
   }
  
-  async sendPasswordLink(req, res) {
-    const { email } = req.body;
+ 
 
-    if (!email) {
-      return res.status(401).json({ status: 401, message: "Enter Your Email" });
-    }
+async sendVerificationCode(req, res) {
+  const { email } = req.body;
 
-    try {
-      const user = await UserInfo.findOne({ email });
-
-      // token generate for reset password
-      const token = jwt.sign({ _id: user._id }, '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', {
-        expiresIn: "120s"
-      });
-
-      // Save the reset token in the database
-      user.resetToken = token;
-      user.resetTokenExpiration = Date.now() + 120000; // 2 minutes
-      await user.save();
-
-      const mailOptions = {
-        from: process.env.EMAIL,
-        to: email,
-        subject: "Sending Email For Password Reset",
-        text: `This Link Valid For 2 MINUTES http://localhost:3000/ForgotPassword/${user._id}/${token}`
-      };
-
-      // Use your nodemailer transporter here
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          return console.error('Error sending email:', error);
-        }
-        console.log('Email sent:', info.response);
-      });
-      
-
-      res.status(201).json({ status: 201, message: "Email sent Succsfully" });
-    } catch (error) {
-      console.error('Error sending password reset email:', error);
-      res.status(401).json({ status: 401, message: "Invalid user" });
-    }
+  if (!email) {
+    return res.status(401).json({ status: 401, message: "Enter Your Email" });
   }
 
+  try {
+    const user = await UserInfo.findOne({ email });
+
+    // Générez un code de vérification
+    const verificationCode = generateVerificationCode();
+
+    // Enregistrez le code de vérification dans la base de données
+    user.verificationCode = verificationCode;
+    await user.save();
+
+    // Options du courrier électronique
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Verification Code for Password Reset",
+      text: `Your verification code is: ${verificationCode}`,
+      html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`
+    };
+
+    // Utilisez votre transporter nodemailer ici
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.error('Error sending email:', error);
+      }
+      console.log('Email sent:', info.response);
+    });
+
+    res.status(201).json({ status: 201, message: "Verification code sent successfully" });
+  } catch (error) {
+    console.error('Error sending verification code:', error);
+    res.status(401).json({ status: 401, message: "Invalid user or server error" });
+  }
+}
+
+  
   async verifyForgotPasswordToken(req, res) {
     const { id, token } = req.params;
 
