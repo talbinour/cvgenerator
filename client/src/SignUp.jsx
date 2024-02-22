@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 const SignUp = () => {
   const navigate = useNavigate();
   const [confirmationMessage,] = useState('');
+
   const [formData, setFormData] = useState({
     nom: '',
     prenom: '',
@@ -25,12 +26,17 @@ const SignUp = () => {
     mot_passe: '',
   });
 
+  const [ageError, setAgeError] = useState('');
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    // Effacer les messages d'erreur lors de la saisie
     setErrorMessages({ ...errorMessages, [e.target.name]: '' });
 
+    // Vérifier le numéro de téléphone pour ne pas dépasser 8 chiffres
     if (e.target.name === 'Nbphone') {
-      const phoneNumber = e.target.value.replace(/\D/g, '');
+      const phoneNumber = e.target.value.replace(/\D/g, ''); // Retirer les caractères non numériques
       if (phoneNumber.length > 8) {
         e.target.value = phoneNumber.slice(0, 8);
         setFormData({ ...formData, Nbphone: phoneNumber.slice(0, 8) });
@@ -38,27 +44,66 @@ const SignUp = () => {
     }
   };
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrorMessages = {};
+
+    // Validation pour chaque champ
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value.trim() === '') {
+        newErrorMessages[key] = 'Ce champ est obligatoire';
+        valid = false;
+      } else if (key === 'Nbphone' && (!/^\d+$/.test(value) || value.length < 8)) {
+        newErrorMessages[key] = 'Le numéro de téléphone doit avoir au moins 8 chiffres';
+        valid = false;
+      } else if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        newErrorMessages[key] = 'Adresse e-mail invalide';
+        valid = false;
+      } else if (key === 'date_naissance') {
+        const birthDate = new Date(value);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+
+        if (age < 18) {
+          newErrorMessages[key] = 'Vous devez avoir au moins 18 ans';
+          setAgeError('Vous devez avoir au moins 18 ans');
+          valid = false;
+        }
+      }
+    });
+
+    setErrorMessages(newErrorMessages);
+
+    return valid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      console.error('Le formulaire contient des erreurs');
+      return;
+    }
 
     try {
       const response = await axios.post('http://localhost:8080/register', formData);
 
-      if (response.status === 200) {
+      if (response.data.status === 'ok') {
         // Affichage du message de confirmation sur la page
         alert('Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
 
         // Redirection vers la page de connexion après un court délai
         setTimeout(() => {
           navigate('/login');
-        }, 2000); // Redirection après 3 secondes
+        }, 2000);
       } else {
-        console.error('Erreur lors de l\'inscription:', response.data.message);
+        console.error('Erreur d\'inscription:', response.data.message);
       }
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error.response ? error.response.data.message : error.message);
+      console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
     }
   };
+
   return (
     <div className='signup_page '>
       <h2 style={{ textAlign: 'center' }}>Inscription</h2>
@@ -68,7 +113,7 @@ const SignUp = () => {
         <input
           type="text"
           name="nom"
-          placeholder='Entre votre nom ..'
+          placeholder='Entre votre nom ..  '
           value={formData.nom}
           onChange={handleInputChange}
           required
@@ -90,7 +135,7 @@ const SignUp = () => {
         <input
           type="email"
           name="email"
-          placeholder='Entre votre Email ..'
+          placeholder='Entre votre Email .. '
           value={formData.email}
           onChange={handleInputChange}
           required
@@ -106,6 +151,7 @@ const SignUp = () => {
           required
         />
         {errorMessages.date_naissance && <p style={{ color: 'red' }}>{errorMessages.date_naissance}</p>}
+        {ageError && <p style={{ color: 'red' }}>{ageError}</p>}
 
         <label className="required-label">Numéro de téléphone:</label>
         <input
