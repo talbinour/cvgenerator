@@ -6,26 +6,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import styled from 'styled-components';
 import './forget.css';
 
-// Styled components
-/*
-const Section = styled.section`
+const FormData = styled.div`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  align-items: self-start;
-  width: 60%;
   align-items: center;
+  width: 60%;
   margin-top: 10%;
-`;
-*/
-const FormData = styled.div`
-border-radius: 10px;
-display: flex;
-flex-direction: column;
-align-items: self-start;
-width: 60%;
-align-items: center;
-margin-top: 10%;
 `;
 
 const FormHeading = styled.div`
@@ -66,12 +53,6 @@ const FormButton = styled.button`
   margin: 10px;
   width: 100%;
   height: auto;
-
-  &.login_page {
-    padding: 20px;
-    margin-top: 20px;
-    width: 100%;
-  }
 `;
 
 const NavLinkToHome = styled.p`
@@ -83,62 +64,72 @@ const NavLinkToHome = styled.p`
 
 const ForgotPassword = () => {
   const { id, token } = useParams();
-  const history = useNavigate();
-  const [data2, setData] = useState(false);
+  const navigate = useNavigate();
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const userValid = async () => {
-    const res = await fetch(`http://localhost:8080/ForgotPassword/${id}/${token}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    const data = await res.json();
-
-    if (data.status === 201) {
-      console.log("user valid");
-    } else {
-      history("*");
-    }
-  };
-
-  const setval = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const sendpassword = async (e) => {
-    e.preventDefault();
-
-    if (password === "") {
-      toast.error("password is required!", {
-        position: "top-center"
-      });
-    } else if (password.length < 6) {
-      toast.error("password must be 6 char!", {
-        position: "top-center"
-      });
-    } else {
-      const res = await fetch('http://localhost:8080/sendpasswordlink', {
-        method: 'POST',
-        credentials: 'include',
+    try {
+      const res = await fetch(`/ForgotPassword/${id}/${token}`, {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          // autres headers si nécessaires
-        },
-        body: JSON.stringify(data), // si vous envoyez des données
-      })
-      
+          "Content-Type": "application/json"
+        }
+      });
 
       const data = await res.json();
 
       if (data.status === 201) {
-        setPassword("");
-        setMessage(true);
+        console.log("user valid");
       } else {
-        toast.error("! Token Expired generate new Link", {
+        navigate("*");
+      }
+    } catch (error) {
+      console.error('Error validating user:', error);
+      navigate("*");
+    }
+  };
+
+  const setVal = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const sendPassword = async (e) => {
+    e.preventDefault();
+
+    if (password === "") {
+      toast.error("Password is required!", {
+        position: "top-center"
+      });
+    } else if (password.length < 6) {
+      toast.error("Password must be at least 6 characters!", {
+        position: "top-center"
+      });
+    } else {
+      try {
+        const res = await fetch('/sendpasswordlink', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id, token, password }),
+        });
+
+        const data = await res.json();
+
+        if (data.status === 201) {
+          setPassword("");
+          setMessage(true);
+        } else {
+          toast.error("Token expired. Generate a new link.", {
+            position: "top-center"
+          });
+        }
+      } catch (error) {
+        console.error('Error sending password:', error);
+        toast.error("An error occurred while sending the password.", {
           position: "top-center"
         });
       }
@@ -148,49 +139,47 @@ const ForgotPassword = () => {
   useEffect(() => {
     userValid();
     setTimeout(() => {
-      setData(true);
+      setDataLoaded(true);
     }, 3000);
   }, []);
 
   return (
     <>
-      {data2 ? (
-        
-          <FormData className="form_data">
-            <FormHeading>
-              <h2 style={{ textAlign: 'center' }}>Entrez votre nouvelle mot de passe</h2>
-            </FormHeading>
+      {dataLoaded ? (
+        <FormData className="form_data">
+          <FormHeading>
+            <h2 style={{ textAlign: 'center' }}>Enter your new password</h2>
+          </FormHeading>
 
-            <form>
-              {message ? (
-                <MessageParagraph style={{ color: "green", fontWeight: "bold" }}>
-                  Password Successfully Updated
-                </MessageParagraph>
-              ) : (
-                ""
-              )}
-              <FormInput>
-                <label htmlFor="password">New password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={setval}
-                  name="password"
-                  id="password"
-                  placeholder="Enter Your new password"
-                />
-              </FormInput>
+          <form>
+            {message ? (
+              <MessageParagraph style={{ color: "green", fontWeight: "bold" }}>
+                Password successfully updated
+              </MessageParagraph>
+            ) : (
+              ""
+            )}
+            <FormInput>
+              <label htmlFor="password">New password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={setVal}
+                name="password"
+                id="password"
+                placeholder="Enter your new password"
+              />
+            </FormInput>
 
-              <FormButton className="btn" onClick={sendpassword}>
-                Send
-              </FormButton>
-            </form>
-            <NavLinkToHome>
-              <NavLink to="/">Home</NavLink>
-            </NavLinkToHome>
-            <ToastContainer />
-          </FormData>
-       
+            <FormButton className="btn" onClick={sendPassword}>
+              Send
+            </FormButton>
+          </form>
+          <NavLinkToHome>
+            <NavLink to="/">Home</NavLink>
+          </NavLinkToHome>
+          <ToastContainer />
+        </FormData>
       ) : (
         <Box sx={{ display: 'flex', justifyContent: "center", alignItems: "center", height: "100vh" }}>
           Loading... &nbsp;

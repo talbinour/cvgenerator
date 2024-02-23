@@ -49,8 +49,13 @@ router.post('/', async (req, res) => {
       from: 'nt0506972@gmail.com',
       to: email,
       subject: 'Confirmation de votre adresse e-mail',
-      text: `Bonjour ${prenom}, veuillez cliquer sur le lien suivant pour confirmer votre adresse e-mail : http://localhost:8080/verify-email/${emailToken}`,
-    };
+      html: `
+      <p>Bonjour ${prenom},</p>
+      <p>Merci de vous être inscrit. Veuillez cliquer sur le bouton ci-dessous pour confirmer votre adresse e-mail :</p>
+      <form action="http://localhost:8080/verify-email/${emailToken}" method="get">
+        <button type="submit">Confirmer mon adresse e-mail</button>
+      </form>
+    `,    };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
