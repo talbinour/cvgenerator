@@ -108,7 +108,8 @@ class AuthController {
       console.log('Database Password:', user.mot_passe);
   
       // Temporairement ignorez la comparaison de mot de passe
-      const passwordMatch = mot_passe.trim() === user.mot_passe;
+      const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
+
       if (user && passwordMatch) {
         // Le mot de passe est correct ou la comparaison est ignorée
         const token = generateToken(user);
@@ -269,6 +270,24 @@ async sendVerificationCode(req, res) {
       res.status(401).json({ status: 401, error });
     }
   }
+  async verifyResetCode(req, res) {
+    try {
+      const { verificationCode } = req.body;
+      const user = await UserInfo.findOne({ verificationCode });
+  
+      if (user) {
+        // Verification successful
+        res.status(201).json({ status: 201, message: 'Verification successful' });
+      } else {
+        // Verification failed
+        res.status(401).json({ status: 401, message: "Invalid verification code" });
+      }
+    } catch (error) {
+      console.error('E  rror verifying reset code:', error);
+      res.status(500).json({ status: 500, error: 'Internal server error' });
+    }
+  }
+  
 }
 
 module.exports = AuthController;

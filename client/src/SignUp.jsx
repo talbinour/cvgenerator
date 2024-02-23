@@ -91,17 +91,18 @@ const SignUp = () => {
     try {
       const response = await axios.post('http://localhost:8080/register', formData);
 
-      if (response.data.status === 'ok') {
+      if (response.status === 200) {
         // Affichage du message de confirmation sur la page
         alert('Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
 
         // Redirection vers la page de connexion après un court délai
         setTimeout(() => {
           navigate('/login');
-        }, 2000);
-      } else {
-        console.error('Erreur d\'inscription:', response.data.message);
-      }
+        }, 2000); // Redirection après 3 secondes
+    } else {
+      console.error('Erreur d\'inscription:', response.data.message);
+      alert('!', response.data.message);
+    } 
     } catch (error) {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
     }

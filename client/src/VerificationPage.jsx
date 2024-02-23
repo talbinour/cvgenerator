@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import './VerificationPage.css';
+import './mix.css';
 
 const VerificationPage = () => {
   const [verificationCode, setVerificationCode] = useState("");
@@ -11,7 +11,7 @@ const VerificationPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/verifycode", {
+      const res = await fetch("http://localhost:8080/verify-reset-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -22,14 +22,17 @@ const VerificationPage = () => {
       const data = await res.json();
 
       if (data.status === 201) {
+        // Verification successful, navigate to the next page
         navigate("/ForgotPassword");
       } else {
+        // Verification failed, show error toast
         toast.error("Invalid verification code!", {
           position: "top-center"
         });
       }
     } catch (error) {
       console.error('Error verifying verification code:', error);
+      // Show error toast for server error
       toast.error("An error occurred while verifying the verification code.", {
         position: "top-center"
       });
@@ -37,13 +40,13 @@ const VerificationPage = () => {
   }
 
   return (
-    <div className="verification_page">
-      <div className="verification_heading">
+    <div className="form_data">
+      <div className="form_heading">
         <h2 style={{ textAlign: 'center' }}>Enter Verification Code</h2>
       </div>
 
       <form>
-        <div className="verification_input">
+        <div className="form_input">
           <label htmlFor="verificationCode">Verification Code:</label>
           <input
             type="text"
