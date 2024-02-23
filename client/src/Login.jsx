@@ -97,7 +97,7 @@ const Login = () => {
           Se connecter avec Google
         </button>
         <p className="message">
-          Vous n&apos;avez pas de compte ? <Link to="/signup">Sign Up</Link>
+          Vous n&apos;avez pas de compte ? <Link to="/signup">S&apos;inscrire</Link>
         </p>
       </div>
     </div>
