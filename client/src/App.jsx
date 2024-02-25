@@ -12,6 +12,7 @@ import Profile from "./component/Profile";
 import DashboardPage from './DashboardPage';
 import ForgotPassword from './ForgotPassword';
 import PasswordReset from './PasswordReset';
+import Admin from "./component/Admin";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerificationPage from './VerificationPage';
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/VerificationPage" element={<VerificationPage />} />
+          <Route path='/Admin' element={<Admin />} />
 
 
           {/* Add routes for Login and SignUp if needed */}

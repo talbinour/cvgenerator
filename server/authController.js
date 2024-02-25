@@ -22,11 +22,6 @@ const generateToken = (user) => {
   // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
   // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
 };
- // Importez une fonction pour générer un code aléatoire
- const generateVerificationCode = () => {
-  // Générez un code aléatoire à six chiffres
-  return Math.floor(100000 + Math.random() * 900000);
-};
 
 class AuthController {
   constructor() {
@@ -114,10 +109,14 @@ class AuthController {
       if (user && passwordMatch) {
         // Le mot de passe est correct ou la comparaison est ignorée
         const token = generateToken(user);
-        console.log('Passwords Match');
-        res.status(201).json({ status: 'ok', data: token, role: user.role });
+        if(user.role === 'admin') {
+          // Réponse pour un admin
+          res.status(200).json({ status: 'ok', data: token, role: 'admin' });
+        } else {
+          // Réponse pour un utilisateur standard
+          res.status(200).json({ status: 'ok', data: token, role: 'user' });
+        }
       } else {
-        console.log('Passwords do not match');
         res.status(401).json({ status: 'Invalid Password' });
       }
     } catch (error) {

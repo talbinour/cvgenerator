@@ -1,7 +1,8 @@
 const express = require('express');
 const UserController = require('../userController');
 const AuthController= require('../authController'); 
-const Passwordreset= require('../passwordreset');// Import 
+const Passwordreset= require('../passwordreset');
+const Authentificationadmin= require('../authentificationadmin');// Import 
 const router = express.Router();
 
 // Define your routes

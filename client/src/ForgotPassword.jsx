@@ -140,14 +140,14 @@ const ForgotPassword = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      console.log("Effect triggered with ID:", id);
+    if (id && token) {
+      console.log("Effect triggered with ID and Token:", id, token);
       userValid();
       setTimeout(() => {
         setDataLoaded(true);
       }, 3000);
     }
-  }, [id]);
+  }, [id, token]);
   
   return (
     <>

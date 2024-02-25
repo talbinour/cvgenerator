@@ -33,7 +33,7 @@ const Login = () => {
       const responseData = response.data;
 
       if (responseData.status === 'ok' && responseData.role === 'admin') {
-        navigate('/admin');
+        navigate('/Admin');
       } else if (responseData.status === 'ok' && responseData.role === 'user') {
         navigate('/dashboard');
       } else {
