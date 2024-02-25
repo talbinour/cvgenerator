@@ -38,9 +38,10 @@ class AuthController {
   initializeRoutes() {
     this.router.options('/loginuser', cors());
     this.router.post('/loginuser', cors(), this.loginUser.bind(this));
-    // ... Ajoutez d'autres routes ici
-  }
-
+    this.router.get('/forgotpassword/:identifier', (req, res) => this.getUserByIdOrEmail(req, res));
+    // ... Add other routes here
+     }
+ 
   initializePassport() {
     passport.use(
       new GoogleStrategy(
@@ -182,111 +183,6 @@ class AuthController {
   }
  
  
-
-async sendVerificationCode(req, res) {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(401).json({ status: 401, message: "Enter Your Email" });
-  }
-
-  try {
-    const user = await UserInfo.findOne({ email });
-
-    // Générez un code de vérification
-    const verificationCode = generateVerificationCode();
-
-    // Enregistrez le code de vérification dans la base de données
-    user.verificationCode = verificationCode;
-    await user.save();
-
-    // Options du courrier électronique
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: email,
-      subject: "Verification Code for Password Reset",
-      text: `Your verification code is: ${verificationCode}`,
-      html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`
-    };
-
-    // Utilisez votre transporter nodemailer ici
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return console.error('Error sending email:', error);
-      }
-      console.log('Email sent:', info.response);
-    });
-
-    res.status(201).json({ status: 201, message: "Verification code sent successfully" });
-  } catch (error) {
-    console.error('Error sending verification code:', error);
-    res.status(401).json({ status: 401, message: "Invalid user or server error" });
-  }
-}
-
-  
-  async verifyForgotPasswordToken(req, res) {
-    const { id, token } = req.params;
-
-    try {
-      const user = await UserInfo.findOne({ _id: id, resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-
-      if (user) {
-        res.status(201).json({ status: 201, user });
-      } else {
-        res.status(401).json({ status: 401, message: "Invalid user or expired token" });
-      }
-    } catch (error) {
-      console.error('Error verifying forgot password token:', error);
-      res.status(401).json({ status: 401, error });
-    }
-  }
-
-  async changePassword(req, res) {
-    const { id, token } = req.params;
-    const { password } = req.body;
-
-    try {
-      const user = await UserInfo.findOne({ _id: id, resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-
-      if (user) {
-        // Update the user's password
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.mot_passe = hashedPassword;
-
-        // Invalidate the reset token
-        user.resetToken = null;
-        user.resetTokenExpiration = null;
-
-        // Save the updated user
-        await user.save();
-
-        res.status(201).json({ status: 201, message: 'Password reset successfully' });
-      } else {
-        res.status(401).json({ status: 401, message: "Invalid user or expired token" });
-      }
-    } catch (error) {
-      console.error('Error resetting password:', error);
-      res.status(401).json({ status: 401, error });
-    }
-  }
-  async verifyResetCode(req, res) {
-    try {
-      const { verificationCode } = req.body;
-      const user = await UserInfo.findOne({ verificationCode });
-  
-      if (user) {
-        // Verification successful
-        res.status(201).json({ status: 201, message: 'Verification successful' });
-      } else {
-        // Verification failed
-        res.status(401).json({ status: 401, message: "Invalid verification code" });
-      }
-    } catch (error) {
-      console.error('E  rror verifying reset code:', error);
-      res.status(500).json({ status: 500, error: 'Internal server error' });
-    }
-  }
   
 }
 

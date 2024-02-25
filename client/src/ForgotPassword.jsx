@@ -67,22 +67,25 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [dataLoaded, setDataLoaded] = useState(false);
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [passwordChanged, setPasswordChanged] = useState(false);
 
   const userValid = async () => {
     try {
-      const res = await fetch(`/ForgotPassword/${id}/${token}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      console.log("User ID:", id); // Log the value of id
+      const res = await fetch(`http://localhost:8080/validateUser/${id}`, {
+      method: "GET",
+     headers: {
+      "Content-Type": "application/json"
+    }
+   });
+
 
       const data = await res.json();
 
       if (data.status === 201) {
-        console.log("user valid");
+        console.log("User valid");
       } else {
+        console.error('Invalid user or expired token. Navigating...');
         navigate("*");
       }
     } catch (error) {
@@ -108,20 +111,20 @@ const ForgotPassword = () => {
       });
     } else {
       try {
-        const res = await fetch('/sendpasswordlink', {
+        const res = await fetch(`http://localhost:8080/change-password/${id}/${token}`, {
           method: 'POST',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ id, token, password }),
+          body: JSON.stringify({ password }),
         });
 
         const data = await res.json();
 
         if (data.status === 201) {
           setPassword("");
-          setMessage(true);
+          setPasswordChanged(true);
         } else {
           toast.error("Token expired. Generate a new link.", {
             position: "top-center"
@@ -137,12 +140,15 @@ const ForgotPassword = () => {
   };
 
   useEffect(() => {
-    userValid();
-    setTimeout(() => {
-      setDataLoaded(true);
-    }, 3000);
-  }, []);
-
+    if (id) {
+      console.log("Effect triggered with ID:", id);
+      userValid();
+      setTimeout(() => {
+        setDataLoaded(true);
+      }, 3000);
+    }
+  }, [id]);
+  
   return (
     <>
       {dataLoaded ? (
@@ -152,7 +158,7 @@ const ForgotPassword = () => {
           </FormHeading>
 
           <form>
-            {message ? (
+            {passwordChanged ? (
               <MessageParagraph style={{ color: "green", fontWeight: "bold" }}>
                 Password successfully updated
               </MessageParagraph>

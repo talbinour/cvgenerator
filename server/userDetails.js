@@ -42,8 +42,9 @@ const userDetailsSchema = new mongoose.Schema({
     default: false,
   },
   emailToken: String,
-  verificationCode: String,  
+  verificationCode: String,
 });
+
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.mot_passe);

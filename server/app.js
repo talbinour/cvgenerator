@@ -75,15 +75,8 @@ const authController = new AuthController();
 /// Route for email verification
 app.get('/verify-email/:emailToken', authController.verifyEmail.bind(authController));
 
-/// Route for password link
-router.options('/sendpasswordlink', cors()); // Add this route for OPTIONS
-router.post('/sendpasswordlink', authController.sendVerificationCode.bind(authController));
-// Route to verify verification code
-router.post('/verify-reset-code', authController.verifyResetCode.bind(authController));
-// Assuming you have a method like this in AuthController
-router.get('/forgotpassword/:id/:token', authController.verifyForgotPasswordToken.bind(authController));
-
 app.post('/loginuser', authController.loginUser.bind(authController));
+// Importez la méthode
 
 // Error handling middleware
 app.use((err, req, res, next) => {

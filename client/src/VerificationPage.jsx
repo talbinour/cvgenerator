@@ -23,7 +23,7 @@ const VerificationPage = () => {
 
       if (data.status === 201) {
         // Verification successful, navigate to the next page
-        navigate("/ForgotPassword");
+        navigate("/ForgotPassword/*");
       } else {
         // Verification failed, show error toast
         toast.error("Invalid verification code!", {
