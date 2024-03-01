@@ -91,7 +91,7 @@ const SignUp = () => {
         }, 2000);
       } else {
         console.error('Erreur d\'inscription:', response.data.message);
-        alert('!', response.data.message);
+        alert(response.data.message); // corrected this line
       }
     } catch (error) {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
@@ -117,71 +117,80 @@ const SignUp = () => {
     <div className='signup_page'>
       <h2 style={{ textAlign: 'center' }}>Inscription</h2>
       <form onSubmit={handleSubmit}>
-        <label className="required-label">Nom:</label>
-        <input
-          type="text"
-          name="nom"
-          placeholder='Entre votre nom ..  '
-          value={formData.nom}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.nom && <p style={{ color: 'red' }}>{errorMessages.nom}</p>}
+        <div className="form-group">
+          <label className="required-label">Nom:</label>
+          <input
+            type="text"
+            name="nom"
+            placeholder='Entre votre nom ..  '
+            value={formData.nom}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.nom && <p style={{ color: 'red' }}>{errorMessages.nom}</p>}
+        </div>
 
-        <label className="required-label">Prénom:</label>
-        <input
-          type="text"
-          name="prenom"
-          placeholder='Entre votre prénom ..'
-          value={formData.prenom}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.prenom && <p style={{ color: 'red' }}>{errorMessages.prenom}</p>}
+        <div className="form-group">
+          <label className="required-label">Prénom:</label>
+          <input
+            type="text"
+            name="prenom"
+            placeholder='Entre votre prénom ..'
+            value={formData.prenom}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.prenom && <p style={{ color: 'red' }}>{errorMessages.prenom}</p>}
+        </div>
 
-        <label className="required-label">Email:</label>
-        <input
-          type="email"
-          name="email"
-          placeholder='Entre votre Email .. '
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.email && <p style={{ color: 'red' }}>{errorMessages.email}</p>}
+        <div className="form-group">
+          <label className="required-label">Email:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder='Entre votre Email .. '
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.email && <p style={{ color: 'red' }}>{errorMessages.email}</p>}
+        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <label className="required-label" style={{ marginRight: '10px' }}>Pays:</label>
+        <div className="form-group">
           <CountryDropdown
             value={formData.country}
             onChange={(val) => setFormData({ ...formData, country: val })}
             required
             className="country-dropdown"
           />
+          {errorMessages.country && <p style={{ color: 'red' }}>{errorMessages.country}</p>}
         </div>
-        {errorMessages.country && <p style={{ color: 'red' }}>{errorMessages.country}</p>}
 
-        <label className="required-label">Numéro de téléphone:</label>
-        <input
-          type="tel"
-          name="Nbphone"
-          placeholder='Entre votre numéro de téléphone  '
-          value={formData.Nbphone}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.Nbphone && <p style={{ color: 'red' }}>{errorMessages.Nbphone}</p>}
+        <div className="form-group">
+          <label className="required-label">Numéro de téléphone:</label>
+          <input
+            type="tel"
+            name="Nbphone"
+            placeholder='Entre votre numéro de téléphone  '
+            value={formData.Nbphone}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.Nbphone && <p style={{ color: 'red' }}>{errorMessages.Nbphone}</p>}
+        </div>
 
-        <label className="required-label">Mot de passe:</label>
-        <input
-          type="password"
-          name="mot_passe"
-          placeholder='Entre votre mot de passe '
-          value={formData.mot_passe}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.mot_passe && <p style={{ color: 'red' }}>{errorMessages.mot_passe}</p>}
+        <div className="form-group">
+          <label className="required-label">Mot de passe:</label>
+          <input
+            type="password"
+            name="mot_passe"
+            placeholder='Entre votre mot de passe '
+            value={formData.mot_passe}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.mot_passe && <p style={{ color: 'red' }}>{errorMessages.mot_passe}</p>}
+        </div>
 
         <button type="submit">S&apos;inscrire</button>
         <p>Déjà un compte ? <Link to="/login">Connectez-vous ici</Link></p>
