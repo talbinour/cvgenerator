@@ -5,8 +5,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 router.post('/', async (req, res) => {
-  const { nom, prenom, email, date_naissance, mot_passe, Nbphone } = req.body;
-  console.log('Requête POST reçue:', req.body);
+  const { nom, prenom, email, date_naissance, mot_passe, Nbphone, genre, pays } = req.body;
 
   try {
     let user = await UserInfo.findOne({ email });
@@ -21,9 +20,7 @@ router.post('/', async (req, res) => {
     if (age < 18) {
       return res.status(400).json({ error: 'Vous devez avoir au moins 18 ans pour vous inscrire.' });
     }
-    // Validate password complexity  }
-
-
+    
     const emailToken = crypto.randomBytes(64).toString('hex');
 
     user = new UserInfo({
@@ -33,6 +30,8 @@ router.post('/', async (req, res) => {
       date_naissance,
       mot_passe,
       Nbphone,
+      genre, // Added gender
+      pays,  // Added country
       emailToken,
       isVerified: false
     });
@@ -57,7 +56,8 @@ router.post('/', async (req, res) => {
       <form action="http://localhost:8080/verify-email/${emailToken}" method="get">
         <button type="submit">Confirmer mon adresse e-mail</button>
       </form>
-    `,    };
+    `,    
+    };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {

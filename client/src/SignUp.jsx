@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './SignUp.css';
 import { Link } from 'react-router-dom';
 import { CountryDropdown } from 'react-country-region-selector';
+import './SignUp.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -15,7 +15,8 @@ const SignUp = () => {
     mot_passe: '',
     date_naissance: '',
     Nbphone: '',
-    country: '', // New state for country
+    country: '', // Nouvel état pour le pays
+    genre: '', // Nouvel état pour le genre
   });
 
   const [errorMessages, setErrorMessages] = useState({
@@ -25,7 +26,8 @@ const SignUp = () => {
     date_naissance: '',
     Nbphone: '',
     mot_passe: '',
-    country: '', // New state for country
+    country: '',
+    genre: '', // Nouvel état pour le genre
   });
 
   const handleInputChange = (e) => {
@@ -67,6 +69,9 @@ const SignUp = () => {
       } else if (key === 'country' && value === '') {
         newErrorMessages[key] = 'Veuillez sélectionner votre pays';
         valid = false;
+      } else if (key === 'genre' && value === '') {
+        newErrorMessages[key] = 'Veuillez sélectionner votre genre';
+        valid = false;
       }
     });
 
@@ -82,8 +87,17 @@ const SignUp = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/register', formData);
-
+      const { nom, prenom, email, date_naissance, mot_passe, Nbphone, genre, country } = formData;
+      const response = await axios.post('http://localhost:8080/register', {
+        nom,
+        prenom,
+        email,
+        date_naissance,
+        mot_passe,
+        Nbphone,
+        genre,
+        pays: country,
+      });
       if (response.status === 200) {
         alert('Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
         setTimeout(() => {
@@ -91,7 +105,7 @@ const SignUp = () => {
         }, 2000);
       } else {
         console.error('Erreur d\'inscription:', response.data.message);
-        alert(response.data.message); // corrected this line
+        alert(response.data.message);
       }
     } catch (error) {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
@@ -157,6 +171,20 @@ const SignUp = () => {
         </div>
 
         <div className="form-group">
+          <label className="required-label">Mot de passe:</label>
+          <input
+            type="password"
+            name="mot_passe"
+            placeholder='Entre votre mot de passe '
+            value={formData.mot_passe}
+            onChange={handleInputChange}
+            required
+          />
+          {errorMessages.mot_passe && <p style={{ color: 'red' }}>{errorMessages.mot_passe}</p>}
+        </div>
+
+        <div className="form-group">
+          <label className="required-label">Pays:</label>
           <CountryDropdown
             value={formData.country}
             onChange={(val) => setFormData({ ...formData, country: val })}
@@ -180,16 +208,30 @@ const SignUp = () => {
         </div>
 
         <div className="form-group">
-          <label className="required-label">Mot de passe:</label>
+          <label className="required-label">Date de naissance:</label>
           <input
-            type="password"
-            name="mot_passe"
-            placeholder='Entre votre mot de passe '
-            value={formData.mot_passe}
+            type="date"
+            name="date_naissance"
+            value={formData.date_naissance}
             onChange={handleInputChange}
             required
           />
-          {errorMessages.mot_passe && <p style={{ color: 'red' }}>{errorMessages.mot_passe}</p>}
+          {errorMessages.date_naissance && <p style={{ color: 'red' }}>{errorMessages.date_naissance}</p>}
+        </div>
+
+        <div className="form-group">
+          <label className="required-label">Genre:</label>
+          <select
+            name="genre"
+            value={formData.genre}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Sélectionner le genre</option>
+            <option value="homme">Homme</option>
+            <option value="femme">Femme</option>
+          </select>
+          {errorMessages.genre && <p style={{ color: 'red' }}>{errorMessages.genre}</p>}
         </div>
 
         <button type="submit">S&apos;inscrire</button>

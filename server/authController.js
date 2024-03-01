@@ -140,28 +140,15 @@ class AuthController {
       console.log('Database Password:', user.mot_passe);
   
       // Temporairement ignorez la comparaison de mot de passe
-      //const passwordMatch = await user.comparePassword(trimmedPassword);
-      const passwordMatch = await user.comparePassword(mot_passe);  
-      if (!user) {
-        return res.status(401).json({ status: 'Utilisateur n existe pas' });
-      }
-      // Ajo                                                                                                                                                                                                                          utez cette vérification pour vous assurer que l'utilisateur a vérifié son email
-      if (!user.isVerified) {
-        return res.status(401).json({ status: 'Account not verified', message: 'Veuiller vérifier votre compte avant de vous connecter' });
-      }
+      const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
+
       if (user && passwordMatch) {
         // Le mot de passe est correct ou la comparaison est ignorée
-        // Stocker l'utilisateur dans la session
-        req.session.user = user;
         const token = generateToken(user);
-        if (user.role === 'admin') {
-          // Réponse pour un admin
-          res.status(200).json({ status: 'ok', data: token, role: 'admin', username: user.nom }); // Ajout du nom d'utilisateur
-        } else {
-          // Réponse pour un utilisateur standard
-          res.status(200).json({ status: 'ok', data: token, role: user.role, username: user.nom }); // Ajout du nom d'utilisateur
-        }
+        console.log('Passwords Match');
+        res.status(201).json({ status: 'ok', data: token, role: user.role });
       } else {
+        console.log('Passwords do not match');
         res.status(401).json({ status: 'Invalid Password' });
       }
     } catch (error) {
@@ -169,6 +156,7 @@ class AuthController {
       res.status(500).json({ status: 'Error', error: error.message });
     }
   }
+  
    
   async loginSuccess(req, res) {
     if (req.user) {

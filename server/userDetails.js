@@ -1,58 +1,64 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Schema = mongoose.Schema;
-const userDetailsSchema = new mongoose.Schema({
+const userInfoSchema = new mongoose.Schema({
   nom: {
     type: String,
-    required: true,
-    default: ".....",
+    required: true
   },
   prenom: {
     type: String,
-    required: true,
-    default: ".....",
+    required: true
   },
   email: {
     type: String,
     required: true,
-    unique: true,
-    lowercase: true,
-    match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'],
+    unique: true
   },
   date_naissance: {
     type: Date,
-    required: true,
-    default: Date.now
-  },
-  Nbphone: {
-    type: String,
-    required: true,
-    default: "...",
+    required: true
   },
   mot_passe: {
     type: String,
-    required: true,
+    required: true
+  },
+  Nbphone: {
+    type: String,
+    required: true
+  },
+  genre: {
+    type: String,
+    required: true
+  },
+  pays: {
+    type: String,
+    required: true
   },
   role: {
     type: String,
     default: 'user',
   },
+  emailToken: {
+    type: String,
+    required: true
+  },
   isVerified: {
     type: Boolean,
-    default: false,
+    required: true
   },
-  emailToken: String,
-  verificationCode: String,
+  verificationCode: String
 });
 
-userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
+userInfoSchema.methods.comparePassword = async function (candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.mot_passe);
   } catch (error) {
     throw new Error(error);
   }
 };
-userDetailsSchema.pre('save', async function (next) {
+
+userInfoSchema.pre('save', async function (next) {
   try {
     // Ne hacher le mot de passe que s'il a été modifié (nouveau mot de passe ou modification du mot de passe existant)
     if (!this.isModified('mot_passe')) {
@@ -67,7 +73,6 @@ userDetailsSchema.pre('save', async function (next) {
   }
 });
 
-
-const UserInfo = mongoose.model('UserInfo', userDetailsSchema);
+const UserInfo = mongoose.model('UserInfo', userInfoSchema);
 
 module.exports = UserInfo;
