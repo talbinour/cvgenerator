@@ -1,12 +1,12 @@
-import React, { useState ,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './SignUp.css';
 import { Link } from 'react-router-dom';
+import { CountryDropdown } from 'react-country-region-selector';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [confirmationMessage,] = useState('');
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -15,6 +15,7 @@ const SignUp = () => {
     mot_passe: '',
     date_naissance: '',
     Nbphone: '',
+    country: '', // New state for country
   });
 
   const [errorMessages, setErrorMessages] = useState({
@@ -24,29 +25,26 @@ const SignUp = () => {
     date_naissance: '',
     Nbphone: '',
     mot_passe: '',
+    country: '', // New state for country
   });
 
-  const [ageError, setAgeError] = useState('');
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    // Effacer les messages d'erreur lors de la saisie
     setErrorMessages({ ...errorMessages, [e.target.name]: '' });
 
-    // Vérifier le numéro de téléphone pour ne pas dépasser 8 chiffres
     if (e.target.name === 'Nbphone') {
-      const phoneNumber = e.target.value.replace(/\D/g, ''); // Retirer les caractères non numériques
+      const phoneNumber = e.target.value.replace(/\D/g, '');
       if (phoneNumber.length > 8) {
         e.target.value = phoneNumber.slice(0, 8);
         setFormData({ ...formData, Nbphone: phoneNumber.slice(0, 8) });
       }
     }
   };
+
   const validateForm = () => {
     let valid = true;
     const newErrorMessages = {};
 
-    // Validation pour chaque champ
     Object.entries(formData).forEach(([key, value]) => {
       if (value.trim() === '') {
         newErrorMessages[key] = 'Ce champ est obligatoire';
@@ -64,25 +62,20 @@ const SignUp = () => {
 
         if (age < 18) {
           newErrorMessages[key] = 'Vous devez avoir au moins 18 ans';
-          setAgeError('Vous devez avoir au moins 18 ans');
           valid = false;
         }
+      } else if (key === 'country' && value === '') {
+        newErrorMessages[key] = 'Veuillez sélectionner votre pays';
+        valid = false;
       }
     });
 
     setErrorMessages(newErrorMessages);
-
     return valid;
   };
 
- 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      console.error('Le formulaire contient des erreurs');
-      return;
-    }
-
     if (!validateForm()) {
       console.error('Le formulaire contient des erreurs');
       return;
@@ -92,17 +85,14 @@ const SignUp = () => {
       const response = await axios.post('http://localhost:8080/register', formData);
 
       if (response.status === 200) {
-        // Affichage du message de confirmation sur la page
         alert('Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
-
-        // Redirection vers la page de connexion après un court délai
         setTimeout(() => {
           navigate('/login');
-        }, 2000); // Redirection après 3 secondes
-    } else {
-      console.error('Erreur d\'inscription:', response.data.message);
-      alert('!', response.data.message);
-    } 
+        }, 2000);
+      } else {
+        console.error('Erreur d\'inscription:', response.data.message);
+        alert('!', response.data.message);
+      }
     } catch (error) {
       console.error('Erreur d\'inscription:', error.response ? error.response.data.message : error.message);
     }
@@ -119,15 +109,13 @@ const SignUp = () => {
     }
   };
 
-  // Appel de la fonction de vérification de l'e-mail lorsque le composant SignUp est monté
   useEffect(() => {
     handleEmailVerification();
   }, []);
 
   return (
-    <div className='signup_page '>
+    <div className='signup_page'>
       <h2 style={{ textAlign: 'center' }}>Inscription</h2>
-      {confirmationMessage && <p style={{ color: 'green' }}>{confirmationMessage}</p>}
       <form onSubmit={handleSubmit}>
         <label className="required-label">Nom:</label>
         <input
@@ -162,16 +150,16 @@ const SignUp = () => {
         />
         {errorMessages.email && <p style={{ color: 'red' }}>{errorMessages.email}</p>}
 
-        <label className="required-label">Date de naissance:</label>
-        <input
-          type="date"
-          name="date_naissance"
-          value={formData.date_naissance}
-          onChange={handleInputChange}
-          required
-        />
-        {errorMessages.date_naissance && <p style={{ color: 'red' }}>{errorMessages.date_naissance}</p>}
-        {ageError && <p style={{ color: 'red' }}>{ageError}</p>}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <label className="required-label" style={{ marginRight: '10px' }}>Pays:</label>
+          <CountryDropdown
+            value={formData.country}
+            onChange={(val) => setFormData({ ...formData, country: val })}
+            required
+            className="country-dropdown"
+          />
+        </div>
+        {errorMessages.country && <p style={{ color: 'red' }}>{errorMessages.country}</p>}
 
         <label className="required-label">Numéro de téléphone:</label>
         <input

@@ -1,42 +1,46 @@
 /* SignUp.css */
-.signup_page{
-  width:60%;
+.signup_page {
+  width: 60%;
   align-items: center;
   margin-top: 30px;
 }
+
 /* Container styling */
 div {
-    margin: auto;
-    width: 100%;
-  }
+  margin: auto;
+  width: 100%;
+}
+
 form {
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: self-start;
-    
-  }
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+}
+
 input {
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    border: 1px solid #d4d0d0;
-    border-radius: 5px;
-    outline: none;
-    margin-bottom: 14px;
-    margin-top: 9px;
-    font-size: 14px;   
-  }
-label{
-    font-weight: 500;
-    font-size: 16spx;
-    position: sticky;
-    margin-bottom: 5px;
-    padding: 5px;
-  }
-.signup_page button{
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  outline: none;
+  margin-bottom: 14px;
+  margin-top: 9px;
+  font-size: 14px;
+}
+
+label {
+  font-weight: 500;
+  font-size: 16px; /* Fixed typo in font size */
+  position: sticky;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.signup_page button {
   background-color: #1f4172;
   color: white;
   border-radius: 5px;
@@ -49,10 +53,21 @@ label{
 }
 
 .signup_page button:hover {
-    background-color: #4b6891;
-  }
-  .required-label::after {
-    content: ' *';
-    color: red;
-  }
-    
+  background-color: #4b6891;
+}
+
+.required-label::after {
+  content: ' *';
+  color: red;
+}
+
+/* Added styles for the country label and select box */
+.signup_page select {
+  width: 50%;
+  padding: 5px;
+  margin-top: 9px;
+}
+
+.signup_page label.required-label {
+  margin-right: 10px;
+}
