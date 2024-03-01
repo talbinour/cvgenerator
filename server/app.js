@@ -9,7 +9,6 @@ const { body, validationResult } = require('express-validator');
 
 // Import MongoDB models
 const UserInfo = require('./userDetails');
-const Admin = require('./admin');
 const AuthController = require('./authController');
 
 // Load environment variables
@@ -74,7 +73,6 @@ app.get('/auth/google/callback',
 const authController = new AuthController();
 /// Route for email verification
 app.get('/verify-email/:emailToken', authController.verifyEmail.bind(authController));
-
 app.post('/loginuser', authController.loginUser.bind(authController));
 // Importez la méthode
 

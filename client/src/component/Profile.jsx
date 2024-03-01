@@ -15,8 +15,8 @@ const Profile = () => {
   };
 
   const menuItems = [
-    { label: 'Profile', link: '/profile' },
-    { label: 'Settings', link: '/settings' },
+    { label: 'Profile', link: '/userprofile' },
+    
     // Add more menu items as needed
   ];
 

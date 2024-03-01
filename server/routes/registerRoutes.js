@@ -21,6 +21,8 @@ router.post('/', async (req, res) => {
     if (age < 18) {
       return res.status(400).json({ error: 'Vous devez avoir au moins 18 ans pour vous inscrire.' });
     }
+    // Validate password complexity  }
+
 
     const emailToken = crypto.randomBytes(64).toString('hex');
 

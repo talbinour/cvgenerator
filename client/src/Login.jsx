@@ -33,10 +33,11 @@ const Login = () => {
       const responseData = response.data;
 
       if (responseData.status === 'ok' && responseData.role === 'admin') {
-        navigate('/Admin');
+        navigate('/admin');
       } else if (responseData.status === 'ok' && responseData.role === 'user') {
+        
         navigate('/dashboard');
-      } else {
+      } else {                                                                      
         navigate('/default-route');
       }
     } catch (error) {
@@ -44,6 +45,7 @@ const Login = () => {
       console.log('Response Data:', error.response ? error.response.data : 'No response data');
 
       if (error.response && error.response.status === 401) {
+        setError(error.response.data.message);
         setError('Mot de passe incorrect ou utilisateur inexistant.');
         setAttemptCount(attemptCount + 1);
 

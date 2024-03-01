@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'; // Importez useNavigate depuis react-router-dom
 import './PasswordReset_ForgotPassword.css';
+import { Link } from 'react-router-dom';
 
 const PasswordReset = () => {
   const [email, setEmail] = useState("");
@@ -39,7 +40,7 @@ const PasswordReset = () => {
           setEmail("");
           setMessage(true);
           // Redirigez vers la page de vérification
-          navigate("/VerificationPage"); // Assurez-vous que "/verification" est le chemin approprié
+          navigate(`/VerificationPage/${email}`); // Assurez-vous que "/verification" est le chemin approprié
         } else {
           toast.error(data.message || "Failed to send the password reset link.", {
             position: "top-center"
@@ -59,17 +60,20 @@ const PasswordReset = () => {
     <>
       <div className="form_data">
         <div className="form_heading">
-          <h2 style={{ textAlign: 'center' }}>Entrez votre Email</h2>
+          <h2 style={{ textAlign: 'center' }}>Réinitialisez votre mot de pass</h2>
+          <p style={{ textAlign: 'initial' }}>Saisissez votre adresse e-mail et nous vous enverrons un code pour réinitialiser votre mot de passe.</p>
         </div>
 
-        {message ? <p style={{ color: "green", fontWeight: "bold" }}>Password reset link sent successfully in your email</p> : ""}
+        {message ? <p style={{ color: "green", fontWeight: "bold" }}>Le lien de réinitialisation du mot de passe a été envoyé avec succès dans votre e-mail.</p> : ""}
         <form>
           <div className="form_input">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Adresse E-mail:</label>
             <input type="email" value={email} onChange={setVal} name="email" id="email" placeholder='Entrez votre Email' />
           </div>
 
-          <button className='btn' onClick={sendLink}>Send</button>
+          <button className='btn' onClick={sendLink}>continuer</button>
+          <p><Link to="/">Retour a l&apos;accuiel</Link></p>
+
         </form>
         <ToastContainer />
       </div>

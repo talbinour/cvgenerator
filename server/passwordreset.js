@@ -10,7 +10,8 @@ const transporter = nodemailer.createTransport({
     },
   });
   
-  const generateToken = (user) => {
+  const generateToken = (userId,user) => {
+    return true;
     // Implémentez votre logique de génération de token ici
     // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
     // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
@@ -44,9 +45,9 @@ class Passwordreset {
           const mailOptions = {
             from: process.env.EMAIL,
             to: email,
-            subject: "Verification Code for Password Reset",
-            text: `Your verification code is: ${verificationCode}`,
-            html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`
+            subject: "Code de vérification pour réinitialisation du mot de passe",
+            text: `Votre code de vérification est :${verificationCode}`,
+            html: `<p>Votre code de vérification est :<strong>${verificationCode}</strong></p>`
           };
       
           // Utilisez votre transporter nodemailer ici
@@ -57,7 +58,7 @@ class Passwordreset {
             console.log('Email sent:', info.response);
           });
       
-          res.status(201).json({ status: 201, message: "Verification code sent successfully" });
+          res.status(201).json({ status: 201, message: "code de  Verification envoyer avec succée" });
         } catch (error) {
           console.error('Error sending verification code:', error);
           res.status(401).json({ status: 401, message: "Invalid user or server error" });
@@ -83,35 +84,6 @@ class Passwordreset {
           res.status(500).json({ status: 500, message: 'Internal server error' });
         }
       }
-      
-        async changePassword(req, res) {
-          const { id, token } = req.params;
-          const { password } = req.body;
-      
-          try {
-            const user = await UserInfo.findOne({ _id: id, resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
-      
-            if (user) {
-              // Update the user's password
-              const hashedPassword = await bcrypt.hash(password, 10);
-              user.mot_passe = hashedPassword;
-      
-              // Invalidate the reset token
-              user.resetToken = null;
-              user.resetTokenExpiration = null;
-      
-              // Save the updated user
-              await user.save();
-      
-              res.status(201).json({ status: 201, message: 'Password reset successfully' });
-            } else {
-              res.status(401).json({ status: 401, message: "Invalid user or expired token" });
-            }
-          } catch (error) {
-            console.error('Error resetting password:', error);
-            res.status(401).json({ status: 401, error });
-          }
-        }
         async verifyResetCode(req, res) {
           try {
             const { verificationCode } = req.body;
@@ -125,11 +97,53 @@ class Passwordreset {
               res.status(401).json({ status: 401, message: "Invalid verification code" });
             }
           } catch (error) {
-            console.error('E  rror verifying reset code:', error);
+            console.error('Error verifying reset code:', error);
             res.status(500).json({ status: 500, error: 'Internal server error' });
           }
         }
+        async changePassword(req, res) {
+          try {
+              const email = req.params.email;
+              const { newPassword } = req.body;
+      
+              // Find the user by email
+              const user = await UserInfo.findOne({ email });
+      
+              if (!user) {
+                  return res.status(401).json({ status: 401, message: 'Invalid user' });
+              }
+      
+              // Hash the new password
+              const saltRounds = 10;
+              const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      
+              // Update user's password
+              user.mot_passe = hashedPassword;
+      
+              // Set verificationCode to null after updating the password
+              user.verificationCode = null;
+      
+              // Save the updated user
+              await user.save();
+      
+              // Re-authenticate the user with the new credentials
+              req.login(user, (loginErr) => {
+                  if (loginErr) {
+                      console.error('Error re-authenticating user after password change:', loginErr);
+                      return res.status(500).json({ status: 500, message: 'Internal server error' });
+                  }
+      
+                  console.log('Password changed successfully');
+                  res.status(200).json({ status: 200, message: 'Password changed successfully' });
+              });
+          } catch (error) {
+              console.error('Error changing password:', error);
+              res.status(500).json({ status: 500, message: 'Internal server error' });
+          }
+      }
+      
         
-}
-
+        
+           
+      }
 module.exports = Passwordreset;

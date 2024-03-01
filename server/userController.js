@@ -139,35 +139,7 @@ class UserController {
             return res.status(500).json({ error: "Internal server error" });
         }
     }
-    static async validateUser(req, res) {
-        try {
-            const { identifier } = req.params;
-
-            // Vérifier si l'identificateur est un ID ou un email
-            const isValidEmail = (email) => {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            };
-
-            if (isValidEmail(identifier)) {
-                // Logique de validation basée sur l'e-mail
-                // Par exemple, envoi d'un code de vérification par e-mail
-                // Vous pouvez appeler votre méthode existante sendVerificationCode ou implémenter une logique spécifique ici
-                // ...
-
-                res.status(200).json({ status: 200, message: 'Validation de l\'email initiée' });
-            } else {
-                // Logique de validation basée sur l'ID
-                // Vous pouvez appeler votre méthode existante userValid ou implémenter une logique spécifique ici
-                // ...
-
-                res.status(200).json({ status: 200, message: 'Validation de l\'ID initiée' });
-            }
-        } catch (error) {
-            console.error('Erreur dans validateUser:', error);
-            res.status(500).json({ status: 500, error: error.message });
-        }
-    }
+    
 
     
 
