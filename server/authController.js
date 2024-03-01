@@ -9,6 +9,7 @@ const nodemailer = require('nodemailer');
 const session = require('express-session');
 const UserInfo = require('./userDetails');
 const { Strategy: LocalStrategy } = require('passport-local');
+const fs = require('fs').promises;
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -84,29 +85,42 @@ class AuthController {
       new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
         try {
           const user = await UserInfo.findOne({ email });
-  
+    
           if (!user) {
             return done(null, false, { message: 'User not found' });
           }
-  
+    
+          // Si l'utilisateur utilise Google OAuth, nous ne vérifions pas le mot de passe
+          if (user.googleId) {
+            return done(null, user);
+          }
+    
           const passwordMatch = await bcrypt.compare(password, user.mot_passe);
-  
+    
           if (!passwordMatch) {
             return done(null, false, { message: 'Incorrect password' });
           }
-  
+    
           return done(null, user);
         } catch (error) {
           return done(error);
         }
       })
     );
+    
+    // Sérialisation de l'utilisateur
     passport.serializeUser((user, done) => {
-      done(null, user);
+      done(null, user.id);
     });
-
-    passport.deserializeUser((user, done) => {
-      done(null, user);
+    
+    // Désérialisation de l'utilisateur
+    passport.deserializeUser(async (id, done) => {
+      try {
+        const user = await UserInfo.findById(id);
+        done(null, user);
+      } catch (error) {
+        done(error);
+      }
     });
   }
   async getCurrentUsername(req, res) {
@@ -229,7 +243,7 @@ class AuthController {
       res.status(500).json({ message: 'Erreur serveur' });
     }
   }
-  async verifyEmail(req, res) {
+  async  verifyEmail(req, res) {
     try {
       const emailToken = req.params.emailToken;
       const user = await UserInfo.findOne({ emailToken });
@@ -238,12 +252,16 @@ class AuthController {
         user.emailToken = null;
         user.isVerified = true; 
         await user.save();
-        res.status(200).json({ message: 'Email verified successfully' });
+  
+        const successHtml = await fs.readFile('verification-success.html', 'utf-8');
+        res.status(200).send(successHtml);
       } else {
-        res.status(404).json({ message: 'Email verification failed, invalid token' });
+        const failureHtml = await fs.readFile('verification-failure.html', 'utf-8');
+        res.status(404).send(failureHtml);
       }
     } catch (error) {
-      res.status(500).json({ message: 'Error verifying email', error: error.message });
+      const errorHtml = await fs.readFile('error.html', 'utf-8');
+      res.status(500).send(errorHtml);
     }
   }
  
