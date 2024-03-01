@@ -18,15 +18,8 @@ const transporter = nodemailer.createTransport({
 });
 
 const generateToken = (user) => {
-  try {
-    // Implémentez votre logique de génération de token ici
-    // Assurez-vous d'utiliser une bibliothèque comme jsonwebtoken
-    // Exemple : return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
-  } catch (error) {
-    throw new Error(error);
-  }
+  return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
 };
-
 
 class AuthController {
   constructor() {
@@ -38,6 +31,9 @@ class AuthController {
   initializeRoutes() {
     this.router.options('/loginuser', cors());
     this.router.post('/loginuser', cors(), this.loginUser.bind(this));
+    this.router.get('/forgotpassword/:identifier', (req, res) => this.getUserByIdOrEmail(req, res));
+    this.router.get('/current-username', cors(), this.getCurrentUsername.bind(this));
+
     // ... Add other routes here
      }
  
@@ -73,12 +69,10 @@ class AuthController {
                 date_naissance: profile.birthdate || Date.now(),
                 Nbphone: profile.phonenumber || '..',
                 mot_passe: hashedPassword,
-                isVerified : true
+                role: 'user',
               });
               await user.save();
             }  
-
-
             return done(null, user);
           } catch (error) {
             return done(error, null);
@@ -86,30 +80,27 @@ class AuthController {
         }
       )
     );
-      passport.use(
-        new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
-          try {
-            const user = await UserInfo.findOne({ email });
-    
-            if (!user) {
-              return done(null, false, { message: 'utilisateur n existe pas ' });
-            }
-    
-            const passwordMatch = await bcrypt.compare(password, user.mot_passe);
-    
-            if (!passwordMatch) {
-              return done(null, false, { message: 'Incorrect password' });
-            }
-    
-            return done(null, user);
-          } catch (error) {
-            return done(error);
+    passport.use(
+      new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+        try {
+          const user = await UserInfo.findOne({ email });
+  
+          if (!user) {
+            return done(null, false, { message: 'User not found' });
           }
-        })
-      );
   
+          const passwordMatch = await bcrypt.compare(password, user.mot_passe);
   
-
+          if (!passwordMatch) {
+            return done(null, false, { message: 'Incorrect password' });
+          }
+  
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      })
+    );
     passport.serializeUser((user, done) => {
       done(null, user);
     });
@@ -118,46 +109,89 @@ class AuthController {
       done(null, user);
     });
   }
-
+  async getCurrentUsername(req, res) {
+    try {
+      const currentUser = req.user; 
+      const username = currentUser ? currentUser.nom : null; 
+      res.status(200).json({ username });
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nom d utilisateur :', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
+  }
   async loginUser(req, res) {
     try {
-      // Utilisation de express-validator pour valider et nettoyer les données d'entrée
-      await body('email').isEmail().run(req);
-      await body('mot_passe').isLength({ min: 6 }).trim().run(req);
-  
-      const errors = validationResult(req);
-  
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-  
-      const { email, mot_passe } = req.body;
-      console.log('Input Password:', mot_passe);
-      const trimmedPassword = mot_passe.trim();
-      console.log('Trimmed Password:', trimmedPassword);
-  
-      const user = await UserInfo.findOne({ email });
-      console.log('Database Password:', user.mot_passe);
-  
-      // Temporairement ignorez la comparaison de mot de passe
-      const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
+        // Utilisation de express-validator pour valider et nettoyer les données d'entrée
+        await body('email').isEmail().run(req);
+        await body('mot_passe').isLength({ min: 6 }).trim().run(req);
 
-      if (user && passwordMatch) {
-        // Le mot de passe est correct ou la comparaison est ignorée
-        const token = generateToken(user);
-        console.log('Passwords Match');
-        res.status(201).json({ status: 'ok', data: token, role: user.role });
-      } else {
-        console.log('Passwords do not match');
-        res.status(401).json({ status: 'Invalid Password' });
-      }
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email, mot_passe } = req.body;
+        console.log('Input Password:', mot_passe);
+        const trimmedPassword = mot_passe.trim();
+        console.log('Trimmed Password:', trimmedPassword);
+
+        const user = await UserInfo.findOne({ email });
+
+        if (!user) {
+            return res.status(401).json({ status: 'User not found' });
+        }
+
+        // Temporairement ignorez la comparaison de mot de passe
+        const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
+
+        if (passwordMatch) {
+            // Le mot de passe est correct ou la comparaison est ignorée
+            // Stocker l'utilisateur dans la session
+            req.session.user = user;
+
+            const token = generateToken(user);
+            if (user.role === 'admin') {
+                // Réponse pour un admin
+                res.status(200).json({ status: 'ok', data: token, role: 'admin', username: user.nom }); // Ajout du nom d'utilisateur
+            } else {
+                // Réponse pour un utilisateur standard
+                res.status(200).json({ status: 'ok', data: token, role: user.role, username: user.nom, user: {
+                    id: user._id,
+                    email: user.email,
+                    nom: user.nom,
+                    prenom: user.prenom,
+                    date_naissance: user.date_naissance,
+                    // Ajoutez d'autres champs requis ici
+                }}); 
+            }
+        } else {
+            res.status(401).json({ status: 'Invalid Password' });
+        }
     } catch (error) {
-      console.error('Error in loginUser:', error);
-      res.status(500).json({ status: 'Error', error: error.message });
+        console.error('Error in loginUser:', error);
+        res.status(500).json({ status: 'Error', error: error.message });
+    }
+}
+
+  
+  // Ajouter une route pour récupérer le nom d'utilisateur actuel
+  async getCurrentUsername(req, res) {
+    try {
+      // Récupérer l'utilisateur actuel à partir de la session ou de la base de données
+      const currentUser = req.user; // Supposons que vous stockiez l'utilisateur dans la session
+  
+      // Vérifier si l'utilisateur est défini et si oui, récupérer le nom d'utilisateur
+      const username = currentUser ? currentUser.nom : null; // Remplacez "username" par le champ approprié de votre modèle UserInfo
+  
+      // Renvoyer le nom d'utilisateur actuel dans la réponse
+      res.status(200).json({ username });
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nom d utilisateur :', error);
+      res.status(500).json({ message: 'Erreur serveur' });
     }
   }
   
-   
   async loginSuccess(req, res) {
     if (req.user) {
       res.status(200).json({ message: 'User Login', user: req.user });
@@ -171,9 +205,11 @@ class AuthController {
       if (err) {
         return next(err);
       }
+      localStorage.removeItem('userToken');
       res.redirect('http://localhost:3000');
     });
   }
+
   async protectedRouteHandler(req, res) {
     try {
       // Assurez-vous que l'utilisateur est authentifié avant d'accéder à cette route
@@ -210,22 +246,6 @@ class AuthController {
       res.status(500).json({ message: 'Error verifying email', error: error.message });
     }
   }
-  async getCurrentUsername(req, res) {
-    try {
-      // Récupérer l'utilisateur actuel à partir de la session ou de la base de données
-      const currentUser = req.user; // Supposons que vous stockiez l'utilisateur dans la session
-  
-      // Vérifier si l'utilisateur est défini et si oui, récupérer le nom d'utilisateur
-      const username = currentUser ? currentUser.nom : null; // Remplacez "username" par le champ approprié de votre modèle UserInfo
-  
-      // Renvoyer le nom d'utilisateur actuel dans la réponse
-      res.status(200).json({ username });
-    } catch (error) {
-      console.error('Erreur lors de la récupération du nom d utilisateur :', error);
-      res.status(500).json({ message: 'Erreur serveur' });
-    }
-  }
-  
  
  
   
