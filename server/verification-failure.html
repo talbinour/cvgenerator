@@ -5,22 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Échec de la vérification d'e-mail</title>
   <style>
-    /* Ajoutez ici votre CSS personnalisé */
     body {
       font-family: Arial, sans-serif;
-      background-color: #e0e0e0;
+      background-color: #f8f8f8;
       text-align: center;
       padding: 20px;
     }
+
+    .error-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
     .error-message {
-      color: red;
+      color: #d9534f;
       font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      width: 80px; /* Ajustez la taille du logo selon vos besoins */
     }
   </style>
 </head>
 <body>
-  <div class="error-message">
-    La vérification de l'e-mail a échoué. Le jeton est invalide.
+  <div class="error-container">
+    <img src="logo/x.jpg" alt="Logo" class="logo">
+    <div class="error-message">
+      La vérification de l'e-mail a échoué. Le jeton est invalide.
+    </div>
+    <!-- Ajoutez ici votre compteur de tentatives si nécessaire -->
   </div>
 </body>
 </html>
