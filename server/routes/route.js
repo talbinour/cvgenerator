@@ -3,6 +3,7 @@ const UserController = require('../userController');
 const AuthController = require('../authController');
 const Passwordreset = require('../passwordreset');
 const UserInfo = require('../userDetails'); // Import UserInfo
+const LogoutController = require('../LogoutController'); 
 const bcrypt = require('bcrypt'); // Import bcrypt
 const router = express.Router();
 const mongoose = require('mongoose');
@@ -47,7 +48,8 @@ router.post('/change-password/:email/:token', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
+const logoutControllerInstance = new LogoutController();
+router.get('/logout', (req, res) => logoutControllerInstance.logout(req, res));
 
 
 async function verifyTokenByEmail(email, token) {

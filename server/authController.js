@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const generateToken = (user) => {
-  return jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
+  return jwt.sign({ userId: user._id }, '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', { expiresIn: '1h' });
 };
 
 class AuthController {
