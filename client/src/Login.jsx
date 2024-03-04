@@ -32,11 +32,15 @@ const Login = () => {
 
       const responseData = response.data;
 
-      if (responseData.status === 'ok' && responseData.role === 'admin') {
-        navigate('/admin');
-      } else if (responseData.status === 'ok' && responseData.role === 'user') {
-        
-        navigate('/dashboard');
+      if (responseData.status === 'ok') {
+        // Stocker le token JWT dans le localStorage
+        localStorage.setItem('token', responseData.data);
+
+        if (responseData.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {                                                                      
         navigate('/default-route');
       }

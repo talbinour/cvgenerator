@@ -5,28 +5,21 @@ import './userprofile.css';
 import axios from 'axios'; 
 
 const UserProfile = () => {
-    // Simulez la fonction handleButtonClick pour ouvrir le sélecteur de fichiers
-     // Récupérer les informations de l'utilisateur depuis le backend
-     const [user, setUser] = useState(null);
-
-     useEffect(() => {
-         // Récupérer les informations de l'utilisateur depuis le backend
-         const token = localStorage.getItem('token');
- 
-         if (token) {
-             axios.get('/current-username', {
-                 headers: {
-                     Authorization: `Bearer ${token}`
-                 }
-             })
-             .then(response => {
-                 setUser(response.data.username);
-             })
-             .catch(error => {
-                 console.error('Erreur lors de la récupération du nom d\'utilisateur:', error);
-             });
-         }
-     }, []);
+    const [user, setUser] = useState(null);
+  
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+  
+      if (token) {
+        axios.get('http://localhost:8080/current-username', { withCredentials: true })
+          .then(response => {
+            setUser(response.data.user);
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération des informations utilisateur :', error);
+          });
+      }
+    }, []);
  
      return (
          <div className="container mx-auto">

@@ -46,7 +46,7 @@ const PasswordReset = () => {
             position: "top-center"
           });
         }
-
+ 
       } catch (error) {
         console.error('Error sending password reset email:', error);
         toast.error("Failed to send the password reset link.", {

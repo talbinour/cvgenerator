@@ -9,23 +9,24 @@ import './navbar.css';
 
 const Navbar = () => {
   const [mobile, setMobile] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/current-username', { withCredentials: true });
-        setCurrentUser(response.data.username);
-      } catch (error) {
-        console.error('Error fetching current user:', error);
+  const [currentUser, setCurrentUser] = useState(null);
+  
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+  
+      if (token) {
+        axios.get('http://localhost:8080/current-username', { withCredentials: true })
+          .then(response => {
+            setCurrentUser(response.data.user.nom);
+          })
+          .catch(error => {
+            console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
+          });
       }
-    };
-
-    fetchCurrentUser();
-  }, []);
+    }, []);
 
   const handleLogout = async () => {
     try {

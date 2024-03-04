@@ -33,7 +33,6 @@ router.post('/sendpasswordlink', (req, res) => passwordResetInstance.sendVerific
 router.post('/verify-reset-code', (req, res) => passwordResetInstance.verifyResetCode(req, res));
 
 // Route to change password
-// Route to change password
 // Utilisez l'instance déjà créée en haut du fichier
 router.post('/change-password/:email/:token', async (req, res) => {
     try {

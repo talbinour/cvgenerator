@@ -70,7 +70,8 @@ class AuthController {
                 date_naissance: profile.birthdate || Date.now(),
                 Nbphone: profile.phonenumber || '..',
                 mot_passe: hashedPassword,
-                role: 'user',
+                role: 'user', 
+                genre : profile.genre || '..',
               });
               await user.save();
             }  
@@ -82,38 +83,38 @@ class AuthController {
       )
     );
     passport.use(
-      new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
-        try {
-          const user = await UserInfo.findOne({ email });
-    
-          if (!user) {
-            return done(null, false, { message: 'User not found' });
-          }
-    
-          // Si l'utilisateur utilise Google OAuth, nous ne vérifions pas le mot de passe
-          if (user.googleId) {
-            return done(null, user);
-          }
-    
-          const passwordMatch = await bcrypt.compare(password, user.mot_passe);
-    
-          if (!passwordMatch) {
-            return done(null, false, { message: 'Incorrect password' });
-          }
-    
-          return done(null, user);
-        } catch (error) {
-          return done(error);
-        }
-      })
-    );
-    
-    // Sérialisation de l'utilisateur
+  new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+    try {
+      const user = await UserInfo.findOne({ email });
+
+      if (!user) {
+        return done(null, false, { message: 'User not found' });
+      }
+
+      // Check if the user is using Google OAuth
+      if (user.googleId) {
+        return done(null, user);
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.mot_passe);
+
+      if (!passwordMatch) {
+        return done(null, false, { message: 'Incorrect password' });
+      }
+
+      return done(null, user); // Passport gère automatiquement la session après l'authentification
+    } catch (error) {
+      return done(error);
+    }
+  })
+);
+
+  
+    // Serialize and deserialize user
     passport.serializeUser((user, done) => {
       done(null, user.id);
     });
-    
-    // Désérialisation de l'utilisateur
+
     passport.deserializeUser(async (id, done) => {
       try {
         const user = await UserInfo.findById(id);
@@ -122,17 +123,36 @@ class AuthController {
         done(error);
       }
     });
+  
   }
   async getCurrentUsername(req, res) {
     try {
-      const currentUser = req.user; 
-      const username = currentUser ? currentUser.nom : null; 
-      res.status(200).json({ username });
+      const currentUser = req.user;
+  
+      if (!currentUser || !currentUser._id) {
+        return res.status(401).json({ error: 'User not authenticated' });
+      }
+  
+      // Supposons que vous souhaitez renvoyer plus de données utilisateur
+      const user = {
+        id: currentUser._id,
+        nom: currentUser.nom,
+        prenom: currentUser.prenom,
+        email: currentUser.email,
+        Nbphone: currentUser.Nbphone,
+        date_naissance: currentUser.date_naissance,
+        role: currentUser.role,
+        // Ajoutez d'autres champs nécessaires
+      };
+  
+      res.status(200).json({ user });
     } catch (error) {
-      console.error('Erreur lors de la récupération du nom d utilisateur :', error);
-      res.status(500).json({ message: 'Erreur serveur' });
+      console.error('Error in getCurrentUsername:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
   }
+  
+  
   async loginUser(req, res) {
     try {
         // Utilisation de express-validator pour valider et nettoyer les données d'entrée
@@ -151,6 +171,7 @@ class AuthController {
         console.log('Trimmed Password:', trimmedPassword);
 
         const user = await UserInfo.findOne({ email });
+        
 
         if (!user) {
             return res.status(401).json({ status: 'User not found' });
@@ -160,25 +181,16 @@ class AuthController {
         const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
 
         if (passwordMatch) {
-            // Le mot de passe est correct ou la comparaison est ignorée
-            // Stocker l'utilisateur dans la session
-            req.session.user = user;
-
-            const token = generateToken(user);
+          const token = generateToken(user);
+          req.login(user, (err) => {
             if (user.role === 'admin') {
-                // Réponse pour un admin
-                res.status(200).json({ status: 'ok', data: token, role: 'admin', username: user.nom }); // Ajout du nom d'utilisateur
-            } else {
-                // Réponse pour un utilisateur standard
-                res.status(200).json({ status: 'ok', data: token, role: user.role, username: user.nom, user: {
-                    id: user._id,
-                    email: user.email,
-                    nom: user.nom,
-                    prenom: user.prenom,
-                    date_naissance: user.date_naissance,
-                    // Ajoutez d'autres champs requis ici
-                }}); 
-            }
+              // Réponse pour un admin
+              res.status(200).json({ status: 'ok', data: token, role: 'admin', username: user.nom }); // Ajout du nom d'utilisateur
+          } else {
+              // Réponse pour un utilisateur standard
+              res.status(200).json({ status: 'ok', data: token, role: user.role, username: user.nom}); 
+          }
+          });
         } else {
             res.status(401).json({ status: 'Invalid Password' });
         }
@@ -187,25 +199,6 @@ class AuthController {
         res.status(500).json({ status: 'Error', error: error.message });
     }
 }
-
-  
-  // Ajouter une route pour récupérer le nom d'utilisateur actuel
-  async getCurrentUsername(req, res) {
-    try {
-      // Récupérer l'utilisateur actuel à partir de la session ou de la base de données
-      const currentUser = req.user; // Supposons que vous stockiez l'utilisateur dans la session
-  
-      // Vérifier si l'utilisateur est défini et si oui, récupérer le nom d'utilisateur
-      const username = currentUser ? currentUser.nom : null; // Remplacez "username" par le champ approprié de votre modèle UserInfo
-  
-      // Renvoyer le nom d'utilisateur actuel dans la réponse
-      res.status(200).json({ username });
-    } catch (error) {
-      console.error('Erreur lors de la récupération du nom d utilisateur :', error);
-      res.status(500).json({ message: 'Erreur serveur' });
-    }
-  }
-  
   async loginSuccess(req, res) {
     if (req.user) {
       res.status(200).json({ message: 'User Login', user: req.user });
@@ -213,17 +206,7 @@ class AuthController {
       res.status(400).json({ message: 'Not Authorized' });
     }
   }
-
-  logout(req, res, next) {
-    req.logout(function (err) {
-      if (err) {
-        return next(err);
-      }
-      localStorage.removeItem('userToken');
-      res.redirect('http://localhost:3000');
-    });
-  }
-
+/*
   async protectedRouteHandler(req, res) {
     try {
       // Assurez-vous que l'utilisateur est authentifié avant d'accéder à cette route
@@ -242,7 +225,7 @@ class AuthController {
       console.error('Erreur dans protectedRouteHandler:', error);
       res.status(500).json({ message: 'Erreur serveur' });
     }
-  }
+  }*/
   async  verifyEmail(req, res) {
     try {
       const emailToken = req.params.emailToken;
