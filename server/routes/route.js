@@ -68,6 +68,6 @@ async function verifyTokenByEmail(email, token) {
         return false; // Assume token is invalid in case of an error
     }
 }
-  
+
 
 module.exports = router;

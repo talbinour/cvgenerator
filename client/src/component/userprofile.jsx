@@ -1,48 +1,128 @@
-import React , { useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import avatar from '../assets/profile.png';
 import { BsPlusCircle } from 'react-icons/bs';
 import './userprofile.css';
-import axios from 'axios'; 
+import axios from 'axios';
 
 const UserProfile = () => {
-    const [user, setUser] = useState(null);
-  
-    useEffect(() => {
+  const [userId, setUserId] = useState('');
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [Nbphone, setNbphone] = useState('');
+  const [email, setEmail] = useState('');
+  const [dateNaissance, setDateNaissance] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      axios
+        .get('http://localhost:8080/current-username', { withCredentials: true })
+        .then((response) => {
+          const userData = response.data.user;
+          console.log('User Data:', userData);
+          setUserId(userData.user_id);
+          setNom(userData.nom);
+          setPrenom(userData.prenom);
+          setNbphone(userData.Nbphone);
+          setEmail(userData.email);
+          setDateNaissance(userData.date_naissance);
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        });
+    }
+  }, []);
+
+  const handleUpdate = async () => {
+    try {
       const token = localStorage.getItem('token');
-  
-      if (token) {
-        axios.get('http://localhost:8080/current-username', { withCredentials: true })
-          .then(response => {
-            setUser(response.data.user);
-          })
-          .catch(error => {
-            console.error('Erreur lors de la récupération des informations utilisateur :', error);
-          });
+
+      if (!userId || !token) {
+        console.error('User ID or token is missing or undefined. Make sure they are set correctly.');
+        return;
       }
-    }, []);
- 
-     return (
-         <div className="container mx-auto">
-             <div className="flex justify-center items-center h-screen">
-                 <div className="glass-container w-70">
-                     <div className="profile flex items-center justify-center gap-4">
-                         <img src={avatar} className="profile_img" alt="avatar" />
-                         <button className="edit-image-button">
-                             <BsPlusCircle size={24} color="#1f4172" />
-                         </button>
-                     </div>
-                    <div className="textbox flex flex-wrap justify-center gap-4"> 
-                        <input className="input" type="text" value={user ? user.nom : ''} placeholder='Nom' />                        
-                        <input className="input" type="text" value={user ? user.prenom : ''}placeholder='Prénom' />
-                        <input className="input" type="text"  value={user ? user.Nbphone : ''}placeholder='Num téléphone' />
-                        <input className="input" type="text" value={user ? user.email : ''} placeholder='Email' />
-                        <input className="input full-width" value={user ? user.date_naissance : ''} type="text" placeholder='date de naissance ' />
-                        <button className="btn" type='submit'>Mettre à jour</button>
-                    </div>
-                </div>
-            </div>
+
+      const updatedUserData = {
+        nom,
+        prenom,
+        Nbphone,
+        email,
+        date_naissance: dateNaissance,
+        user_id: userId,
+      };
+
+      const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+console.log('Request Headers:', response.config.headers);
+// Mettez à jour l'état local avec les données mises à jour si nécessaire
+setNom(response.data.user.nom);
+setPrenom(response.data.user.prenom);
+      // You might want to update the local state with the updated data
+    } catch (error) {
+      console.error('Error updating user information:', error);
+    }
+  };
+
+  return (
+    <div className="container mx-auto">
+      <div className="flex justify-center items-center h-screen">
+        <div className="glass-container w-70">
+          <div className="profile flex items-center justify-center gap-4">
+            <img src={avatar} className="profile_img" alt="avatar" />
+            <button className="edit-image-button">
+              <BsPlusCircle size={24} color="#1f4172" />
+            </button>
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <h2>{`${prenom} ${nom}`}</h2>
+            <input
+              className="input"
+              type="text"
+              value={nom}
+              placeholder="Nom"
+              onChange={(e) => setNom(e.target.value)}
+            />
+            <input
+              className="input"
+              type="text"
+              value={prenom}
+              placeholder="Prénom"
+              onChange={(e) => setPrenom(e.target.value)}
+            />
+            <input
+              className="input"
+              type="text"
+              value={Nbphone}
+              placeholder="Num téléphone"
+              onChange={(e) => setNbphone(e.target.value)}
+            />
+            <input
+              className="input"
+              type="text"
+              value={email}
+              placeholder="Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              className="input full-width"
+              value={dateNaissance}
+              type="text"
+              placeholder="Date de naissance"
+              onChange={(e) => setDateNaissance(e.target.value)}
+            />
+            <button className="btn" type="button" onClick={handleUpdate}>
+              Mettre à jour
+            </button>
+          </div>
         </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default UserProfile;

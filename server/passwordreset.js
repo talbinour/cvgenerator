@@ -113,17 +113,13 @@ class Passwordreset {
                   return res.status(401).json({ status: 401, message: 'Invalid user' });
               }
       
-              // Hash the new password
-              const saltRounds = 10;
-              const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-      
               // Update user's password
-              user.mot_passe = hashedPassword;
+              user.mot_passe = newPassword; // Assuming the new password is already plaintext
       
               // Set verificationCode to null after updating the password
               user.verificationCode = null;
       
-              // Save the updated user
+              // Save the updated user (pre-save middleware will hash the password)
               await user.save();
       
               // Re-authenticate the user with the new credentials
@@ -141,6 +137,7 @@ class Passwordreset {
               res.status(500).json({ status: 500, message: 'Internal server error' });
           }
       }
+      
       
         
         
