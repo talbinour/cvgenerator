@@ -52,7 +52,6 @@ const Profile = () => {
               </Link>
             ))}
             <ListItemButton component="a" href="#" onClick={handleClose}>
-              <ListItemText primary="Logout" />
             </ListItemButton>
           </List>
         </Box>

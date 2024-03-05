@@ -42,7 +42,8 @@ class UserController {
         try {
             const userId = req.params.userId; // Extraire l'ID de l'URL
             const updateData = req.body; // Données de mise à jour du corps de la requête
-    
+            console.log('Received Data:', updateData);  // Ajoutez cette ligne pour imprimer les données reçues
+
             // Mettre à jour l'utilisateur par son ID
             const updatedUser = await UserInfo.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
     

@@ -14,14 +14,42 @@ const UserProfile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-
+  
     if (token) {
       axios
         .get('http://localhost:8080/current-username', { withCredentials: true })
         .then((response) => {
           const userData = response.data.user;
           console.log('User Data:', userData);
-          setUserId(userData.user_id);
+  
+          // Assurez-vous que l'ID de l'utilisateur est correctement extrait
+          const userId = userData.id || userData.user_id;
+  
+          setUserId(userId);
+          setNom(userData.nom);
+          setPrenom(userData.prenom);
+          setNbphone(userData.Nbphone);
+          setEmail(userData.email);
+          setDateNaissance(userData.date_naissance);
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        });
+    }
+  }, []);useEffect(() => {
+    const token = localStorage.getItem('token');
+  
+    if (token) {
+      axios
+        .get('http://localhost:8080/current-username', { withCredentials: true })
+        .then((response) => {
+          const userData = response.data.user;
+          console.log('User Data:', userData);
+  
+          // Assurez-vous que l'ID de l'utilisateur est correctement extrait
+          const userId = userData.id || userData.user_id;
+  
+          setUserId(userId);
           setNom(userData.nom);
           setPrenom(userData.prenom);
           setNbphone(userData.Nbphone);
@@ -33,11 +61,11 @@ const UserProfile = () => {
         });
     }
   }, []);
-
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('token');
-
+      console.log('UserID:', userId);
+      console.log('Token:', token);
       if (!userId || !token) {
         console.error('User ID or token is missing or undefined. Make sure they are set correctly.');
         return;
@@ -52,16 +80,16 @@ const UserProfile = () => {
         user_id: userId,
       };
 
-      const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+      const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData,
+       {headers: {
+          Authorization: `Bearer ${token}`,
+          },
+       });
 
-console.log('Request Headers:', response.config.headers);
-// Mettez à jour l'état local avec les données mises à jour si nécessaire
-setNom(response.data.user.nom);
-setPrenom(response.data.user.prenom);
+       console.log('Response Data:', response.data); 
+      // Mettez à jour l'état local avec les données mises à jour si nécessaire
+      setNom(response.data.user.nom);
+      setPrenom(response.data.user.prenom);
       // You might want to update the local state with the updated data
     } catch (error) {
       console.error('Error updating user information:', error);

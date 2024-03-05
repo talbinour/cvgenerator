@@ -62,12 +62,16 @@ const NewPassword = () => {
     <>
       <div className="form_data">
         <div className="form_heading">
+        
+        <h2 style={{ textAlign: 'center' }}>Réinitialisation du mot de passe </h2>
+        <p style={{ textAlign: 'initial' }}>Le mot de passe doit comporter au moins 8 caractères.</p>
+      
           <h2 style={{ textAlign: 'center' }}></h2>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form_input">
-            <label htmlFor="newPassword">New Password:</label>
+            <label htmlFor="newPassword">Nouvelle mot de passe:</label>
             <input
               type="password"
               value={newPassword}
@@ -79,7 +83,7 @@ const NewPassword = () => {
           </div>
 
           <button type="submit" className="btn">
-            Change Password
+            Valider
           </button>
         </form>
         <ToastContainer />
