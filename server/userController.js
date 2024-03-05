@@ -40,20 +40,31 @@ class UserController {
 
     static async updateUser(req, res) {
         try {
-            const userId = req.params.userId; // Extraire l'ID de l'URL
-            const updateData = req.body; // Données de mise à jour du corps de la requête
-            console.log('Received Data:', updateData);  // Ajoutez cette ligne pour imprimer les données reçues
-
-            // Mettre à jour l'utilisateur par son ID
-            const updatedUser = await UserInfo.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
-    
-            if (updatedUser) {
-                return res.status(200).send({ msg: "User updated successfully", user: updatedUser });
-            } else {
-                return res.status(404).send({ error: "User not found" });
-            }
+          const userId = req.params.userId;
+          const { nom, prenom, Nbphone, email, date_naissance } = req.body;
+      
+          let updatedUser;
+      
+          if (req.file) {
+            // Si une nouvelle image est téléchargée, mettez à jour également l'image
+            updatedUser = await UserInfo.findByIdAndUpdate(
+              userId,
+              { nom, prenom, Nbphone, email, date_naissance, photo: req.file.path },
+              { new: true } // Renvoie le nouvel utilisateur mis à jour
+            );
+          } else {
+            // Si aucune nouvelle image n'est téléchargée, mettez à jour les autres informations
+            updatedUser = await UserInfo.findByIdAndUpdate(
+              userId,
+              { nom, prenom, Nbphone, email, date_naissance },
+              { new: true } // Renvoie le nouvel utilisateur mis à jour
+            );
+          }
+      
+          res.status(200).json({ user: updatedUser });
         } catch (error) {
-            return res.status(500).send({ error: "Internal server error" });
+          console.error('Error updating user:', error);
+          res.status(500).json({ error: 'Internal server error' });
         }
     }
 

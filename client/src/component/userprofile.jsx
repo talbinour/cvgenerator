@@ -11,6 +11,7 @@ const UserProfile = () => {
   const [Nbphone, setNbphone] = useState('');
   const [email, setEmail] = useState('');
   const [dateNaissance, setDateNaissance] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -36,7 +37,8 @@ const UserProfile = () => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
         });
     }
-  }, []);useEffect(() => {
+  }, []);
+  useEffect(() => {
     const token = localStorage.getItem('token');
   
     if (token) {
@@ -61,6 +63,10 @@ const UserProfile = () => {
         });
     }
   }, []);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  };
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -78,6 +84,7 @@ const UserProfile = () => {
         email,
         date_naissance: dateNaissance,
         user_id: userId,
+        profileImage: selectedImage,
       };
 
       const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData,
@@ -103,8 +110,10 @@ const UserProfile = () => {
           <div className="profile flex items-center justify-center gap-4">
             <img src={avatar} className="profile_img" alt="avatar" />
             <button className="edit-image-button">
-              <BsPlusCircle size={24} color="#1f4172" />
+              <BsPlusCircle size={24} color="#1f4172" type="button" onClick={handleUpdate}/>
             </button>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+
           </div>
           <div className="textbox flex flex-wrap justify-center gap-4">
             <h2>{`${prenom} ${nom}`}</h2>

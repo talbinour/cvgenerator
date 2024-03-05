@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import logoImage from '../assets/cevor-high-resolution-logo-transparent (1).png';
-import Profile from "./Profile";
 import axios from 'axios';
 import './navbar.css';
 
@@ -60,11 +59,14 @@ const Navbar = () => {
             <li>Test </li>
           </Link>
           {currentUser && (
-            <li onClick={() => setShowProfileMenu(!showProfileMenu)}>
-              {currentUser}
-              {showProfileMenu && <Profile />}
-            </li>
-          )}
+  <li onClick={() => {
+    setShowProfileMenu(!showProfileMenu);
+    navigate('/userprofile'); // Ajoutez cette ligne pour la redirection
+  }}>
+    {currentUser}
+    {showProfileMenu }
+  </li>
+)}
           <li>
             {currentUser ? (
               <button onClick={handleLogout} disabled={loadingLogout}>
