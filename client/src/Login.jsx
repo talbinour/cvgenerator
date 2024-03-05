@@ -40,8 +40,12 @@ const Login = () => {
           navigate('/admin');
         } else {
           navigate('/dashboard');
-        }
-      } else {                                                                      
+        }   
+      } else if (response.status === 403) {
+        // Utilisateur non vérifié
+        setError('Votre compte n\'a pas été vérifié. Vérifiez votre e-mail et suivez les instructions de vérification.');
+      } 
+      else {                                                                      
         navigate('/default-route');
       }
     } catch (error) {
