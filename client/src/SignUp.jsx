@@ -103,7 +103,11 @@ const SignUp = () => {
         setTimeout(() => {
           navigate('/login');
         }, 2000);
-      } else {
+      } else if (response.status === 409) {
+        // L'utilisateur existe déjà dans la base de données
+        alert('L\'utilisateur avec cette adresse e-mail existe déjà.');
+      }
+       else {
         console.error('Erreur d\'inscription:', response.data.message);
         alert(response.data.message);
       }
