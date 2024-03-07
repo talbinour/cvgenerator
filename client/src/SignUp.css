@@ -4,6 +4,7 @@
   align-items: self-start;
   margin-top: 30px;
 }
+
 .glass-container {
   width: 80%; /* Le conteneur principal occupe 70% de la largeur de la page */
   min-width:  870px;
@@ -14,7 +15,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Exemple 'ombre */
   border-radius: 8px; /* Bordures arrondies */
   text-align: center; /* Centrage horizontal du contenu */
-  
 }
 
 /* Container styling */
@@ -31,6 +31,45 @@ form {
   display: flex;
   flex-direction: column;
   align-items: self-start;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #555;
+  pointer-events: none;
+  transition: font-size 0.3s ease, color 0.3s ease, top 0.3s ease;
+}
+
+.input-group input:focus,
+.input-group input:not(:placeholder-shown) {
+  border-color: #1f4172;
+  box-shadow: 0 0 5px rgba(31, 65, 114, 0.5);
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  font-size: 12px;
+  color: #1f4172;
+  top: 0;
 }
 
 input {
@@ -76,15 +115,15 @@ label {
 
 /* Added styles for the country label and select box */
 .signup_page select {
-  width: 50%;
+  width: 100%;
   padding: 5px;
   margin-top: 9px;
 }
 
-
 .signup_page label.required-label {
   margin-right: 10px;
 }
+
 .country-container {
   display: flex;
   align-items: center;
@@ -93,6 +132,7 @@ label {
 .country-dropdown {
   width: 100%;
 }
+
 .signup_page .phone-input-container {
   display: flex;
   align-items: center;
@@ -110,10 +150,13 @@ label {
 
 .signup_page .phone-input {
   flex: 1;
-  margin-left: 10px; 
-  width: 700px;
+  margin-left: 250px; 
+  width:600px;
+   /* Adjusted width for the phone input */
 }
 
 .signup_page .country-dropdown {
-  width:80px; 
+  width: 300px; /* Adjusted width for the country dropdown */
+  margin-right: 13px; 
+  
 }
