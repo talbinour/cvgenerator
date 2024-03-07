@@ -4,9 +4,33 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { CountryDropdown } from 'react-country-region-selector';
 import './SignUp.css';
-
+import ReactCountryFlag from 'react-country-flag';
+import { getCountryCallingCode, getCountries } from 'libphonenumber-js';
 const SignUp = () => {
   const navigate = useNavigate();
+  // Dynamically fetch phone codes
+  const getAllCountriesWithPhoneCodes = () => {
+  const countries = getCountries();
+  const countriesWithPhoneCodes = {};
+
+  countries.forEach((country) => {
+    const countryCode = country.alpha2;
+    try {
+      const phoneCode = getCountryCallingCode(countryCode);
+      countriesWithPhoneCodes[countryCode] = phoneCode !== undefined ? `+${phoneCode}` : '+';
+    } catch (error) {
+      console.error('Error fetching phone code for country:', country);
+      countriesWithPhoneCodes[countryCode] = '+'; // Provide a default value '+'
+    }
+  });
+
+  return countriesWithPhoneCodes;
+};
+
+
+// Initialize phoneCodes
+const phoneCodes = getAllCountriesWithPhoneCodes();
+
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -51,7 +75,7 @@ const SignUp = () => {
       if (value.trim() === '') {
         newErrorMessages[key] = 'Ce champ est obligatoire';
         valid = false;
-      } else if (key === 'Nbphone' && (!/^\d+$/.test(value) || value.length < 8)) {
+      } else if (key === 'Nbphone' && (!/^\d+$/.test(value) || value.length > 8)) {
         newErrorMessages[key] = 'Le numéro de téléphone doit avoir au moins 8 chiffres';
         valid = false;
       } else if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -133,6 +157,7 @@ const SignUp = () => {
 
   return (
     <div className='signup_page'>
+      <div className="glass-container w-70">
       <h2 style={{ textAlign: 'center' }}>Inscription</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -188,28 +213,58 @@ const SignUp = () => {
         </div>
 
         <div className="form-group">
-          <label className="required-label">Pays:</label>
-          <CountryDropdown
-            value={formData.country}
-            onChange={(val) => setFormData({ ...formData, country: val })}
-            required
-            className="country-dropdown"
-          />
-          {errorMessages.country && <p style={{ color: 'red' }}>{errorMessages.country}</p>}
-        </div>
+  <label className="required-label">Numéro de téléphone:</label>
+  <div className="phone-input-container">
+    {formData.country ? (
+      <div className="country-info">
+        <ReactCountryFlag
+          countryCode={formData.country}
+          svg
+          style={{
+            width: '2em',
+            height: '2em',
+            marginRight: '10px', // Adjust margin as needed
+          }}
+        />
+        <span className="phone-code">+{phoneCodes[formData.country]}</span>
+      </div>
+    ) : null}
+    <CountryDropdown
+      value={formData.country}
+      onChange={(val) => {
+        setFormData({ ...formData, country: val });
+        if (val) {
+          setFormData({
+            ...formData,
+            country: val,
+            Nbphone: `+${phoneCodes[val]}`
+          });
+        } else {
+          setFormData({
+            ...formData,
+            country: '',
+            Nbphone: ''
+          });
+        }
+      }}
+      valueType="short"
+      name="country"
+      required
+      className="country-dropdown"
+    />
+    <input
+      type="tel"
+      name="Nbphone"
+      placeholder='Entre votre numéro de téléphone'
+      value={formData.Nbphone}
+      onChange={handleInputChange}
+      required
+    />
+  </div>
 
-        <div className="form-group">
-          <label className="required-label">Numéro de téléphone:</label>
-          <input
-            type="tel"
-            name="Nbphone"
-            placeholder='Entre votre numéro de téléphone  '
-            value={formData.Nbphone}
-            onChange={handleInputChange}
-            required
-          />
-          {errorMessages.Nbphone && <p style={{ color: 'red' }}>{errorMessages.Nbphone}</p>}
-        </div>
+  {errorMessages.Nbphone && <p style={{ color: 'red' }}>{errorMessages.Nbphone}</p>}
+</div>
+
 
         <div className="form-group">
           <label className="required-label">Date de naissance:</label>
@@ -241,6 +296,7 @@ const SignUp = () => {
         <button type="submit">S&apos;inscrire</button>
         <p>Déjà un compte ? <Link to="/login">Connectez-vous ici</Link></p>
       </form>
+      </div>
     </div>
   );
 };

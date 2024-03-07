@@ -8,10 +8,24 @@ const bcrypt = require('bcrypt'); // Import bcrypt
 const router = express.Router();
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
+const multer = require('multer');
+const path = require('path');
+
+// Configure storage for multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set your upload directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+// Set up multer with the configured storage
+const upload = multer({ storage: storage });
 // Define your routes
 router.post('/createUser', UserController.createUser);
-router.put('/updateUser/:userId', UserController.updateUser);
-router.delete('/deleteUser/:userId', UserController.deleteUser);
+router.put('/updateUser/:userId', upload.single('profileImage'), UserController.updateUser);router.delete('/deleteUser/:userId', UserController.deleteUser);
 router.get('/getAllUsers', UserController.getAllUsers);
 router.put('/deleteAttribute/:userId', UserController.deleteAttribute);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);

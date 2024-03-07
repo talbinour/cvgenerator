@@ -38,8 +38,11 @@ const Login = () => {
 
         if (responseData.role === 'admin') {
           navigate('/admin');
+          window.location.reload();
+
         } else {
           navigate('/dashboard');
+          window.location.reload();
         }   
       } else if (response.status === 403) {
         // Utilisateur non vérifié
@@ -73,6 +76,7 @@ const Login = () => {
 
   return (
     <div className="login-page">
+      <div className="glass-container w-70">
       <h2 style={{ textAlign: 'center' }}>Connexion</h2>
       <p style={{ textAlign: 'center' }}>Veuillez vous authentifier</p>
       <div className="form">
@@ -109,6 +113,7 @@ const Login = () => {
         <p className="message">
           Vous n&apos;avez pas de compte ? <Link to="/signup">S&apos;inscrire</Link>
         </p>
+      </div>
       </div>
     </div>
   );

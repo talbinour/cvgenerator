@@ -61,6 +61,7 @@ const NewPassword = () => {
   return (
     <>
       <div className="form_data">
+      <div className="glass-container w-70">
         <div className="form_heading">
         
         <h2 style={{ textAlign: 'center' }}>Réinitialisation du mot de passe </h2>
@@ -87,6 +88,7 @@ const NewPassword = () => {
           </button>
         </form>
         <ToastContainer />
+      </div>
       </div>
     </>
   );

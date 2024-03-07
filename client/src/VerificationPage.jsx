@@ -51,6 +51,8 @@ const VerificationPage = () => {
 
   return (
     <div className="form_data">
+    <div className="glass-container w-70">
+
       <div className="form_heading">
         <h2 style={{ textAlign: 'center' }}>Saisir le Code de Validation</h2>
         <p style={{ textAlign: 'initial' }}>veuillez le saisir ci-dessous . Assurez-vous de le copier exactement comme il apparaît dans l&apos;e-mail, sans espaces supplémentaires.</p>
@@ -74,6 +76,7 @@ const VerificationPage = () => {
         </button>
       </form>
       <ToastContainer />
+    </div>
     </div>
   );
 }

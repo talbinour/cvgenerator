@@ -92,15 +92,15 @@ const UserProfile = () => {
             </button>
             {/* Champ de fichier caché */}
             <input
-              ref={inputRef}
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={(e) => {
-                const file = e.target.files[0];
-                setSelectedImage(file);
-              }}
-            />
+  ref={inputRef}
+  type="file"
+  accept="image/*"
+  style={{ display: 'none' }}
+  onChange={(e) => {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+  }}
+/>
           </div>
           <div className="textbox flex flex-wrap justify-center gap-4">
             <h2>{`${prenom} ${nom}`}</h2>
@@ -125,13 +125,15 @@ const UserProfile = () => {
               placeholder="Num téléphone"
               onChange={(e) => setNbphone(e.target.value)}
             />
-            <input
-              className="input"
-              type="text"
-              value={email}
-              placeholder="Email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
+             <input
+      className="input"
+      type="text"
+      value={email}
+      placeholder=" "
+      onChange={(e) => setEmail(e.target.value)}
+      readOnly  // Make the email input read-only
+      required
+    />
             <input
               className="input full-width"
               value={dateNaissance}

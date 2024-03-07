@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
       mot_passe,
       Nbphone,
       genre, // Added gender
-      pays,  // Added country
+      pays : 'TN',  // Added country
       emailToken,
       isVerified: false
     });
