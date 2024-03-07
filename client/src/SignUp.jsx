@@ -198,20 +198,6 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
           />
           {errorMessages.email && <p style={{ color: 'red' }}>{errorMessages.email}</p>}
         </div>
-
-        <div className="form-group">
-          <label className="required-label">Mot de passe:</label>
-          <input
-            type="password"
-            name="mot_passe"
-            placeholder='Entre votre mot de passe '
-            value={formData.mot_passe}
-            onChange={handleInputChange}
-            required
-          />
-          {errorMessages.mot_passe && <p style={{ color: 'red' }}>{errorMessages.mot_passe}</p>}
-        </div>
-
         <div className="form-group">
   <label className="required-label">Numéro de téléphone:</label>
   <div className="phone-input-container">
@@ -221,9 +207,9 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
           countryCode={formData.country}
           svg
           style={{
-            width: '2em',
-            height: '2em',
-            marginRight: '10px', // Adjust margin as needed
+            width: '1.5em', // Adjusted size of the country flag
+            height: '1.5em', // Adjusted size of the country flag
+            marginRight: '5px', // Adjusted margin as needed
           }}
         />
         <span className="phone-code">+{phoneCodes[formData.country]}</span>
@@ -259,11 +245,12 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
       value={formData.Nbphone}
       onChange={handleInputChange}
       required
+      className="phone-input"
     />
   </div>
-
   {errorMessages.Nbphone && <p style={{ color: 'red' }}>{errorMessages.Nbphone}</p>}
 </div>
+
 
 
         <div className="form-group">

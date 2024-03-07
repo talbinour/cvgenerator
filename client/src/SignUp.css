@@ -93,8 +93,27 @@ label {
 .country-dropdown {
   width: 100%;
 }
+.signup_page .phone-input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
 
-.form-group input[type="tel"] {
-  width: calc(100% - 70px); /* Adjust width as needed */
-  margin-top: 10px; /* Add margin-top to create space between the fields */
+.signup_page .country-info {
+  display: flex;
+  align-items: center;
+}
+
+.signup_page .country-info .phone-code {
+  margin-left: 5px;
+}
+
+.signup_page .phone-input {
+  flex: 1;
+  margin-left: 10px; 
+  width: 700px;
+}
+
+.signup_page .country-dropdown {
+  width:80px; 
 }
