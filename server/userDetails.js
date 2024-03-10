@@ -44,7 +44,7 @@ const userDetailsSchema = new mongoose.Schema({
   pays :{
     type: String,
     required: true ,
-    default : 'TN',
+    default : '...',
   },
   role: {
     type: String,

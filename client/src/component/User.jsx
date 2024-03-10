@@ -4,7 +4,7 @@ const User = () => {
   return (
     <>
     <section className='hero'>
-      <h1>Welcome, User!</h1>
+      <h1>Bienvenue, Utilisateur !</h1>
     </section>
   </>
   );

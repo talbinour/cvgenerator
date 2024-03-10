@@ -10,6 +10,8 @@ const UserProfile = () => {
   const [prenom, setPrenom] = useState('');
   const [Nbphone, setNbphone] = useState('');
   const [email, setEmail] = useState('');
+  const [pays, setpays] = useState('');
+  
   const [dateNaissance, setDateNaissance] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -31,6 +33,7 @@ const UserProfile = () => {
           setNbphone(userData.Nbphone);
           setEmail(userData.email);
           setDateNaissance(userData.date_naissance);
+          setpays(userData.pays);
         })
         .catch((error) => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
@@ -54,6 +57,7 @@ const UserProfile = () => {
         date_naissance: dateNaissance,
         user_id: userId,
         profileImage: selectedImage,
+        pays: pays,
       };
 
       const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData, {
@@ -85,71 +89,102 @@ const UserProfile = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center h-screen">
         <div className="glass-container w-70">
-          <div className="profile flex items-center justify-center gap-4">
+          <div>
+          <div className="profile_img_container">
             <img src={avatar} className="profile_img" alt="avatar" />
+          </div>
+
+          <div className="profile flex items-center justify-center gap-4">
+            <h2>{`${prenom} ${nom}`}</h2>
+            <h5>{`${email}`}</h5>
             <button className="edit-image-button" onClick={() => inputRef.current.click()}>
               <BsPlusCircle size={24} color="#1f4172" type="button" />
             </button>
             {/* Champ de fichier caché */}
             <input
-  ref={inputRef}
-  type="file"
-  accept="image/*"
-  style={{ display: 'none' }}
-  onChange={(e) => {
-    const file = e.target.files[0];
-    setSelectedImage(file);
-  }}
-/>
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setSelectedImage(file);
+              }}
+            />
           </div>
+          </div>
+          <div>
           <div className="textbox flex flex-wrap justify-center gap-4">
-            <h2>{`${prenom} ${nom}`}</h2>
+            <label htmlFor="nom" className="label">
+              Nom :
+            </label>
             <input
+              id="nom"
               className="input"
               type="text"
               value={nom}
               placeholder="Nom"
               onChange={(e) => setNom(e.target.value)}
             />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="prenom" className="label">
+              Prénom :
+            </label>
             <input
+              id="prenom"
               className="input"
               type="text"
               value={prenom}
               placeholder="Prénom"
               onChange={(e) => setPrenom(e.target.value)}
             />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="Nbphone" className="label">
+              Numéro de téléphone :
+            </label>
             <input
+              id="Nbphone"
               className="input"
               type="text"
               value={Nbphone}
               placeholder="Num téléphone"
               onChange={(e) => setNbphone(e.target.value)}
             />
-             <input
-      className="input"
-      type="text"
-      value={email}
-      placeholder=" "
-      onChange={(e) => setEmail(e.target.value)}
-      readOnly  // Make the email input read-only
-      required
-    />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="pays" className="label">
+              pays :
+            </label>
             <input
+              id="Nbphone"
+              className="input"
+              type="text"
+              value={pays}
+              placeholder="pays"
+              onChange={(e) => setpays(e.target.value)}
+            />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="dateNaissance" className="label">
+              Date de naissance :
+            </label>
+            <input
+              id="dateNaissance"
               className="input full-width"
               value={dateNaissance}
               type="text"
               placeholder="Date de naissance"
               onChange={(e) => setDateNaissance(e.target.value)}
             />
-            <button className="btn" type="button" onClick={handleUpdate}>
-              Mettre à jour
-            </button>
           </div>
-          {updateSuccess && (
-            <div className="alert success">
-              Mise à jour réussie !
-            </div>
-          )}
+
+          <button className="btn" type="button" onClick={handleUpdate}>
+            Mettre à jour
+          </button>
+          {updateSuccess && <div className="alert success">Mise à jour réussie !</div>}
+          </div>
         </div>
       </div>
     </div>

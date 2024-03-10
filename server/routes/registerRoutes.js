@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
       mot_passe,
       Nbphone,
       genre, // Added gender
-      pays : 'TN',  // Added country
+      pays ,  // Added country
       emailToken,
       isVerified: false
     });
@@ -42,20 +42,20 @@ router.post('/', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'nt0506972@gmail.com',
-        pass: 'evrz qnsg pume fhdf'
+        user: 'verif.cevor@gmail.com',
+        pass: 'bslf cnyx hudg sllz'
       }
     });
 
     const mailOptions = {
-      from: 'nt0506972@gmail.com',
+      from: 'verif.cevor@gmail.com',
       to: email,
       subject: 'Confirmation de votre adresse e-mail',
       html: `
       <p>Bonjour ${prenom},</p>
       <p>Merci de vous être inscrit. Veuillez cliquer sur le bouton ci-dessous pour confirmer votre adresse e-mail :</p>
       <form action="http://localhost:8080/verify-email/${emailToken}" method="get">
-        <button type="submit">Confirmer mon adresse e-mail</button>
+        <button type="submit"style={{ backgroundColor: '#1f4172', color: 'white' }}>Confirmer mon adresse e-mail</button>
       </form>
     `,    };
 

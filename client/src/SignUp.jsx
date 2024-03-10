@@ -12,7 +12,6 @@ const SignUp = () => {
   const getAllCountriesWithPhoneCodes = () => {
   const countries = getCountries();
   const countriesWithPhoneCodes = {};
-
   countries.forEach((country) => {
     const countryCode = country.alpha2;
     try {
@@ -60,11 +59,9 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
 
     if (e.target.name === 'Nbphone') {
       const phoneNumber = e.target.value.replace(/\D/g, '');
-      if (phoneNumber.length > 8) {
-        e.target.value = phoneNumber.slice(0, 8);
-        setFormData({ ...formData, Nbphone: phoneNumber.slice(0, 8) });
-      }
+      setFormData({ ...formData, Nbphone: phoneNumber });
     }
+    
   };
 
   const validateForm = () => {
@@ -74,9 +71,6 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
     Object.entries(formData).forEach(([key, value]) => {
       if (value.trim() === '') {
         newErrorMessages[key] = 'Ce champ est obligatoire';
-        valid = false;
-      } else if (key === 'Nbphone' && (!/^\d+$/.test(value) || value.length > 8)) {
-        newErrorMessages[key] = 'Le numéro de téléphone doit avoir au moins 8 chiffres';
         valid = false;
       } else if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         newErrorMessages[key] = 'Adresse e-mail invalide';
@@ -127,9 +121,9 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
         setTimeout(() => {
           navigate('/login');
         }, 2000);
-      } else if (response.status === 409) {
+      } else if (response.status === 400) {
         // L'utilisateur existe déjà dans la base de données
-        alert('L\'utilisateur avec cette adresse e-mail existe déjà.');
+        setErrorMessages({ ...errorMessages, email: 'L\'utilisateur avec cette adresse e-mail existe déjà.' });
       }
        else {
         console.error('Erreur d\'inscription:', response.data.message);
@@ -159,6 +153,8 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
     <div className='signup_page'>
       <div className="glass-container w-70">
       <h2 style={{ textAlign: 'center' }}>Inscription</h2>
+   
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="required-label">Nom:</label>

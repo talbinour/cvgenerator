@@ -16,7 +16,6 @@ import Admin from "./component/Admin";
 import Userprofile from "./component/userprofile";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerificationPage from './VerificationPage';
-import PhoneNumberValidation from './component/PhoneNumberValidation'; // Import PhoneNumberValidation component
 
 function App() {
   return (
@@ -33,7 +32,6 @@ function App() {
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} />           
           <Route path='/userprofile' element={<Userprofile/>} />
-          <Route path='/PhoneNumberValidation' element={<PhoneNumberValidation/>} />
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/Profile" element={<Profile />} />
           <Route path="/VerificationPage/:email" element={<VerificationPage />} />

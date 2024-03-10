@@ -41,7 +41,7 @@ class UserController {
     static async updateUser(req, res) {
         try {
           const userId = req.params.userId;
-          const { nom, prenom, Nbphone, email, date_naissance } = req.body;
+          const { nom, prenom, Nbphone, email, date_naissance,pays } = req.body;
       
           let updatedUser;
       
@@ -49,14 +49,14 @@ class UserController {
             // If a new image is uploaded, update the image path as well
             updatedUser = await UserInfo.findByIdAndUpdate(
               userId,
-              { nom, prenom, Nbphone, email, date_naissance, photo: req.file.path },
+              { nom, prenom, Nbphone, email, date_naissance,pays, photo: req.file.path },
               { new: true } // Return the updated user
             );
           } else {
             // If no new image is uploaded, update other information
             updatedUser = await UserInfo.findByIdAndUpdate(
               userId,
-              { nom, prenom, Nbphone, email, date_naissance },
+              { nom, prenom, Nbphone, email, date_naissance,pays },
               { new: true } // Return the updated user
             );
           }

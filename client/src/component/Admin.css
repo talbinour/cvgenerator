@@ -1,0 +1,43 @@
+/* Admin.css */
+
+/* Styles spécifiques au composant Admin */
+/* Vous pouvez personnaliser les couleurs, marges, etc. ici : */
+
+.w-full {
+    width: 100%;
+}
+
+.px-4 {
+    padding: 1rem;
+}
+
+.lg\:px-10 {
+    @media (min-width: 1024px) {
+        padding: 2.5rem;
+    }
+}
+
+.grid {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.bg-gray-300 {
+    flex: 1;
+    padding: 1rem;
+    max-width: 400px;
+    padding: 1rem 0.5rem;
+    margin-left: -30px; /* Set a maximum width for the left column */
+}
+.flex-paragraphs {
+    display: flex;
+    align-items: center;
+     /* Align items vertically in the center */
+}
+
+/* Styles for individual paragraphs */
+.flex-paragraphs p {
+    margin-right: 2rem; /* Add some spacing between paragraphs if needed */
+}
+/* Ajoutez d'autres styles en fonction de vos besoins */

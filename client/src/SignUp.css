@@ -1,23 +1,22 @@
 /* SignUp.css */
 .signup_page {
-  width: 60%;
+  width: 80%;
   align-items: self-start;
   margin-top: 30px;
 }
 
 .glass-container {
-  width: 80%; /* Le conteneur principal occupe 70% de la largeur de la page */
-  min-width:  870px;
+  width: 90%;
+  min-width: 890px;
   align-items: self-start;
-  margin: 20px auto; /* Centrage du conteneur avec une marge autour */
-  background: rgba(255, 255, 255, 0.8); /* Exemple de fond semi-transparent */
-  padding: 20px; /* Ajustez selon le besoin */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Exemple 'ombre */
-  border-radius: 8px; /* Bordures arrondies */
-  text-align: center; /* Centrage horizontal du contenu */
+  margin: 20px auto;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
 }
 
-/* Container styling */
 div {
   margin: auto;
   width: 100%;
@@ -28,8 +27,6 @@ form {
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
   align-items: self-start;
 }
 
@@ -56,7 +53,25 @@ form {
   font-size: 16px;
   color: #555;
   pointer-events: none;
-  transition: font-size 0.3s ease, color 0.3s ease, top 0.3s ease;
+  transition: all 0.3s ease;
+  align-self: flex-start; /* Aligner le libellé à gauche */
+  margin-bottom: 5px; /* Added transition for smoother animation */
+}
+
+.input-group label::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #1f4172; /* Change this color to your desired animation color */
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus + label::after,
+.input-group input:not(:placeholder-shown) + label::after {
+  width: 100%;
 }
 
 .input-group input:focus,
@@ -86,10 +101,11 @@ input {
 
 label {
   font-weight: 500;
-  font-size: 16px; /* Fixed typo in font size */
-  position: sticky;
+  font-size: 16px;
   margin-bottom: 5px;
   padding: 5px;
+  align-self: flex-start; /* Aligner le libellé à gauche */
+  margin-bottom: 5px;
 }
 
 .signup_page button {
@@ -118,6 +134,9 @@ label {
   width: 100%;
   padding: 5px;
   margin-top: 9px;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  height: 100%;
 }
 
 .signup_page label.required-label {
@@ -127,6 +146,7 @@ label {
 .country-container {
   display: flex;
   align-items: center;
+  
 }
 
 .country-dropdown {
@@ -142,6 +162,8 @@ label {
 .signup_page .country-info {
   display: flex;
   align-items: center;
+  margin-right: -400px;
+  margin-right: 1px;
 }
 
 .signup_page .country-info .phone-code {
@@ -149,14 +171,24 @@ label {
 }
 
 .signup_page .phone-input {
-  flex: 1;
-  margin-left: 250px; 
-  width:600px;
-   /* Adjusted width for the phone input */
+ 
+  margin-left: 15px;
+  width:800%;
+  position: sticky;
 }
 
 .signup_page .country-dropdown {
-  width: 300px; /* Adjusted width for the country dropdown */
-  margin-right: 13px; 
-  
+  width: 300px;
+  margin-right: -10px;
+  position: initial;
+  margin-left:1px ;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  height: 100%;
+}
+.form-group {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligner les éléments à gauche */
 }
