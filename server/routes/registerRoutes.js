@@ -42,13 +42,13 @@ router.post('/', async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'nt0506972@gmail.com',
-        pass: 'evrz qnsg pume fhdf'
+        user: 'verif.cevor@gmail.com',
+        pass: 'bslf cnyx hudg sllz'
       }
     });
 
     const mailOptions = {
-      from: 'nt0506972@gmail.com',
+      from: 'verif.cevor@gmail.com',
       to: email,
       subject: 'Confirmation de votre adresse e-mail',
       html: `

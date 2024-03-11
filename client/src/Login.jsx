@@ -38,8 +38,11 @@ const Login = () => {
 
         if (responseData.role === 'admin') {
           navigate('/admin');
+          window.location.reload();
         } else {
           navigate('/dashboard');
+          window.location.reload();
+ 
         }   
       } else if (response.status === 403) {
         // Utilisateur non vérifié
