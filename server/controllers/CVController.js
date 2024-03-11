@@ -4,8 +4,17 @@ const CVModel = require('../CVModel');
 class CVController {
   async createCV(req, res) {
     try {
-      const { title, imageURL, content } = req.body;
-      const newCV = new CVModel({ title, imageURL, content });
+      const { title, imageURL } = req.body;
+      const file = req.files && req.files.file;
+
+      const newCV = new CVModel({ title, imageURL });
+
+      if (file) {
+        newCV.fileURL = `/uploads/${file.name}`;
+        newCV.fileName = file.name;
+        await file.mv(`./public/uploads/${file.name}`);
+      }
+
       const savedCV = await newCV.save();
       res.status(201).json(savedCV);
     } catch (error) {

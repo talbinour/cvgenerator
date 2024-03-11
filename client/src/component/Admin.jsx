@@ -1,5 +1,7 @@
+// Admin.jsx
+
 import React, { useState, useRef, useEffect } from "react";
-import "./Admin.css";
+import "./Admin.css";  // Assurez-vous d'importer le fichier de styles correct
 import { PuffLoader } from "react-spinners";
 import { FaUpload, FaEdit, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -17,7 +19,6 @@ const Admin = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Fetch data when component mounts (e.g., for updating CV list)
     fetchData();
   }, []);
 
@@ -26,7 +27,7 @@ const Admin = () => {
       const response = await fetch("http://localhost:3000/cv/getCVs");
       if (response.ok) {
         const data = await response.json();
-        setCVList(data); // Update CV list
+        setCVList(data);
       } else {
         toast.error("Failed to fetch CVs");
       }
@@ -45,7 +46,6 @@ const Admin = () => {
   };
 
   const handleLabelClick = () => {
-    // Trigger the hidden file input
     fileInputRef.current.click();
   };
 
@@ -99,13 +99,11 @@ const Admin = () => {
       const formData = new FormData();
       formData.append("title", formData.title);
       formData.append("imageURL", formData.imageURL);
+      formData.append("file", fileInputRef.current.files[0]);
 
       const response = await fetch("http://localhost:3000/cv/createCV", {
         method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        body: formData,
       });
 
       if (response.ok) {
@@ -119,7 +117,6 @@ const Admin = () => {
         }));
 
         toast.success("CV created successfully!");
-        // Refresh the CV list after creating a new CV
         fetchData();
       } else {
         toast.error("Failed to create CV");
@@ -135,6 +132,7 @@ const Admin = () => {
       const formData = new FormData();
       formData.append("title", formData.title);
       formData.append("imageURL", formData.imageURL);
+      formData.append("file", fileInputRef.current.files[0]);
 
       const response = await fetch(`http://localhost:3000/cv/updateCV/${cvId}`, {
         method: "PUT",
@@ -155,7 +153,6 @@ const Admin = () => {
         }));
 
         toast.success("CV updated successfully!");
-        // Refresh the CV list after updating the CV
         fetchData();
       } else {
         toast.error("Failed to update CV");
@@ -174,7 +171,6 @@ const Admin = () => {
 
       if (response.ok) {
         toast.success("CV deleted successfully!");
-        // Refresh the CV list after deleting the CV
         fetchData();
       } else {
         toast.error("Failed to delete CV");
@@ -186,8 +182,8 @@ const Admin = () => {
   };
 
   return (
-    <div className="w-full px-4 lg:px-10 2xl:px-32 py-4 grid grid-cols-1 lg:grid-cols-2">
-      <div className="col-span-1 lg:col-span-1 bg-gray-300 p-4 max-w-full">
+    <div className="container">
+      <div className="upload-container bg-gray-300 p-4 max-w-full">
         <div className="w-full">
           <p>Create a new Template</p>
           <div className="flex-paragraphs">
@@ -216,29 +212,28 @@ const Admin = () => {
               </div>
             ) : (
               <label className="w-full cursor-pointer h-full flex flex-col items-center justify-center">
-              <FaUpload className="text-2xl mb-2" />
-              <p className="text-lg text-txtLight mb-2">Click to upload</p>
-              {/* Hide the file input */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept=".jpeg, .jpg, .png"
-                onChange={handleFileSelect}
-              />
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
-                onClick={handleUploadClick}
-                style={{ alignSelf: 'center', maxWidth: '200px' }}
-              >
-                Create CV
-              </button>
-            </label>
+                <FaUpload className="text-2xl mb-2" />
+                <p className="text-lg text-txtLight mb-2">Click to upload</p>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept=".jpeg, .jpg, .png, .pdf" 
+                  onChange={handleFileSelect}
+                />
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
+                  onClick={handleUploadClick}
+                  style={{ alignSelf: 'center', maxWidth: '200px' }}
+                >
+                  Create CV
+                </button>
+              </label>
             )}
           </div>
         </div>
       </div>
-      <div className="col-span-1 lg:col-span-1 bg-gray-300 p-4">
+      <div className="cv-list-container bg-gray-300 p-4">
         <p>CV List</p>
         <ul>
           {cvList.map((cv) => (
@@ -248,6 +243,7 @@ const Admin = () => {
               </div>
               <div>
                 <p>Title: {cv.title}</p>
+                <p>File: <a href={`http://localhost:3000${cv.fileURL}`} target="_blank" rel="noopener noreferrer">{cv.fileName}</a></p>
               </div>
               <div>
                 <button
