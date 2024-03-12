@@ -16,6 +16,7 @@ import Admin from "./component/Admin";
 import Userprofile from "./component/userprofile";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerificationPage from './VerificationPage';
+import Model from "./Cv/model";
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
           <Route path="/Profile" element={<Profile />} />
           <Route path="/VerificationPage/:email" element={<VerificationPage />} />
           <Route path='/Admin' element={<Admin />} />
+          <Route path='/Model' element={<Model />} />
+
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
