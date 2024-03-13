@@ -4,6 +4,7 @@ import React from 'react';
 import avatar from '../assets/profile.png';
 import '@fortawesome/fontawesome-free/css/all.css';
 function Model() {
+    
   return (
     <>
       {/* Le reste de votre code JSX ici */}
@@ -60,6 +61,19 @@ function Model() {
                         </div>
                     </div>
                 </div>
+                <div className="languages">
+                    <h1>Languages</h1>
+                    <ul>
+                        <li>
+                            <strong>French:</strong> Fluent
+                        </li>
+                        <li>
+                            <strong>English:</strong> Advanced
+                        </li>
+                        {/* Ajoutez d'autres langues si nécessaire */}
+                    </ul>
+                </div>
+
                 <div className="follow">
                     <h1>FOLLOW ME</h1>
                     <h4>Facebook</h4>
@@ -135,8 +149,6 @@ function Model() {
         </div>
 
       </div>
-      <button className="button">Print CV</button>
-      {/* Le reste de votre code JSX ici */}
     </>
   );
 }
