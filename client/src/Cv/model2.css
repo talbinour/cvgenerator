@@ -27,7 +27,7 @@
 
 .container .left_Side {
     position: relative;
-    background: #003147;
+    background: hsl(199, 100%, 14%);
     padding: 40px;
     margin-top: -0px;
     height: 100%; /* Ajout de cette ligne */
@@ -51,8 +51,8 @@
 }
 
 .profilText .imgBx {
-    width: 100px;
-    height: 100px;
+    width: 150px; /* Augmenter la largeur de l'image */
+    height: 150px; /* Augmenter la hauteur de l'image */
     overflow: hidden;
     border-radius: 50%;
 }
@@ -95,6 +95,8 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+  
+
 }
 
 .contactInfo ul li .icon {
@@ -148,6 +150,7 @@
 .contactInfo.education ul li {
     margin-bottom: 20px; /* Augmente la marge entre les éléments de la liste */
     display: grid;
+    padding: 10px;
 
 }
 
@@ -157,6 +160,7 @@
     margin-bottom: 5px;
     color:#fff;
     text-align: left;
+    
 
 }
 
@@ -164,6 +168,7 @@
     font-size: 16px;
     font-weight: 400;
     color: #555;
+    
 }
 .contactInfo.education ul li h4 {
     font-size: 16px;
@@ -200,9 +205,11 @@
 
 .contactInfo.languages ul li .percent {
     position: relative;
-    width: 100%;
+    width: 200px;
     height: 10px;
-    background: #f0f0f0;
+    background: #0c0c0c;
+   
+
 }
 .contactInfo.languages .percent div{
    position: absolute;
@@ -210,6 +217,7 @@
    left: 0;
    height: 100%;
    background: #03a9f4;
+   
 }
 .about{
     margin-bottom: 50px;
@@ -233,11 +241,14 @@ p{
 }
 .about .box .year_company{
     min-width: 150px;
+    margin-top: 3px;
 }
 .about .box .year_company h5{
     text-transform: uppercase;
     color: #848c90;
-    font-weight: 600;
+    font-weight: 500;
+   
+
 }
 .about .box .text h4{
     text-transform: uppercase;
