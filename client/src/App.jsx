@@ -18,6 +18,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import VerificationPage from './VerificationPage';
 import Model from "./Cv/model";
 import Model2 from "./Cv/model2";
+import Model3 from "./Cv/model3";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path='/Admin' element={<Admin />} />
           <Route path='/Model' element={<Model />} />
           <Route path='/Model2' element={<Model2 />} />
+          <Route path='/Model3' element={<Model3 />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />

@@ -30,7 +30,9 @@
     background: hsl(199, 100%, 14%);
     padding: 40px;
     margin-top: -0px;
-    height: 100%; /* Ajout de cette ligne */
+    height: 100%;
+    width: 40%; /* Ajout de cette ligne */
+    margin-left: -60px;
 }
 
 .container .right_Side {
@@ -38,6 +40,10 @@
     background: #fff;
     padding: 40px;
     height: 100%; /* Ajout de cette ligne */
+    width: 60%; /* Ajout de cette ligne */
+    margin-right: 50px;
+    margin-top: -1400px;
+
 }
 
 
@@ -206,7 +212,7 @@
 .contactInfo.languages ul li .percent {
     position: relative;
     width: 200px;
-    height: 10px;
+    height: 5px;
     background: #0c0c0c;
    
 
@@ -230,6 +236,8 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 10px;
+    font-weight: 700;
+    padding: -10px;
 }
 p{
     color: #333;
@@ -237,7 +245,7 @@ p{
 .about .box{
     display: flex;
     flex-direction: row;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 .about .box .year_company{
     min-width: 150px;
