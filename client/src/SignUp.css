@@ -1,23 +1,90 @@
 /* SignUp.css */
 .signup_page {
-  width: 60%;
-  align-items: center;
+  width: 80%;
+  align-items: self-start;
   margin-top: 30px;
 }
 
-/* Container styling */
+.glass-container {
+  width: 90%;
+  min-width: 890px;
+  align-items: self-start;
+  margin: 20px auto;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
 div {
   margin: auto;
   width: 100%;
+  align-items: self-start;
 }
 
 form {
   display: flex;
   flex-direction: column;
   border-radius: 10px;
-  display: flex;
-  flex-direction: column;
   align-items: self-start;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #555;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  align-self: flex-start; /* Aligner le libellé à gauche */
+  margin-bottom: 5px; /* Added transition for smoother animation */
+}
+
+.input-group label::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #1f4172; /* Change this color to your desired animation color */
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus + label::after,
+.input-group input:not(:placeholder-shown) + label::after {
+  width: 100%;
+}
+
+.input-group input:focus,
+.input-group input:not(:placeholder-shown) {
+  border-color: #1f4172;
+  box-shadow: 0 0 5px rgba(31, 65, 114, 0.5);
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  font-size: 12px;
+  color: #1f4172;
+  top: 0;
 }
 
 input {
@@ -34,10 +101,11 @@ input {
 
 label {
   font-weight: 500;
-  font-size: 16px; /* Fixed typo in font size */
-  position: sticky;
+  font-size: 16px;
   margin-bottom: 5px;
   padding: 5px;
+  align-self: flex-start; /* Aligner le libellé à gauche */
+  margin-bottom: 5px;
 }
 
 .signup_page button {
@@ -63,11 +131,64 @@ label {
 
 /* Added styles for the country label and select box */
 .signup_page select {
-  width: 50%;
+  width: 100%;
   padding: 5px;
   margin-top: 9px;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  height: 100%;
 }
 
 .signup_page label.required-label {
   margin-right: 10px;
+}
+
+.country-container {
+  display: flex;
+  align-items: center;
+  
+}
+
+.country-dropdown {
+  width: 100%;
+}
+
+.signup_page .phone-input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.signup_page .country-info {
+  display: flex;
+  align-items: center;
+  margin-right: -400px;
+  margin-right: 1px;
+}
+
+.signup_page .country-info .phone-code {
+  margin-left: 5px;
+}
+
+.signup_page .phone-input {
+ 
+  margin-left: 15px;
+  width:800%;
+  position: sticky;
+}
+
+.signup_page .country-dropdown {
+  width: 300px;
+  margin-right: -10px;
+  position: initial;
+  margin-left:1px ;
+  border: 1px solid #d4d0d0;
+  border-radius: 5px;
+  height: 100%;
+}
+.form-group {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligner les éléments à gauche */
 }

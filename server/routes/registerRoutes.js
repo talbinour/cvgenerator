@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
       mot_passe,
       Nbphone,
       genre, // Added gender
-      pays,  // Added country
+      pays ,  // Added country
       emailToken,
       isVerified: false
     });
@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
       <p>Bonjour ${prenom},</p>
       <p>Merci de vous être inscrit. Veuillez cliquer sur le bouton ci-dessous pour confirmer votre adresse e-mail :</p>
       <form action="http://localhost:8080/verify-email/${emailToken}" method="get">
-        <button type="submit">Confirmer mon adresse e-mail</button>
+        <button type="submit"style={{ backgroundColor: '#1f4172', color: 'white' }}>Confirmer mon adresse e-mail</button>
       </form>
     `,    };
 

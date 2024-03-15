@@ -4,7 +4,7 @@ const DashboardPage = () => {
   return (
     <>
       <section className='hero'>
-        <h1>Welcome, DashboardPage!</h1>
+        <h1>Bienvenue </h1>
       </section>
     </>
   )

@@ -8,15 +8,42 @@ const bcrypt = require('bcrypt'); // Import bcrypt
 const router = express.Router();
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
+const multer = require('multer');
+const path = require('path');
+const CVController = require('../controllers/CVController');
+// Configure storage for multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set your upload directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+// Set up multer with the configured storage
+const upload = multer({ storage: storage });
 // Define your routes
 router.post('/createUser', UserController.createUser);
-router.put('/updateUser/:userId', UserController.updateUser);
-router.delete('/deleteUser/:userId', UserController.deleteUser);
+router.put('/updateUser/:userId', upload.single('profileImage'), UserController.updateUser);router.delete('/deleteUser/:userId', UserController.deleteUser);
 router.get('/getAllUsers', UserController.getAllUsers);
 router.put('/deleteAttribute/:userId', UserController.deleteAttribute);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);
 router.get('/getUserById/:id', UserController.getUserById);
+//crud cv 
+const bodyParser = require('body-parser');
+// Configurez le middleware bodyParser pour gérer les données JSON avec une limite de taille personnalisée
+router.use(bodyParser.json({ limit: '50mb' })); // Vous pouvez ajuster la limite selon vos besoins
+router.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // Vous pouvez ajuster la limite selon vos besoins
 
+
+const cvController = new CVController();
+
+router.post('/createCV', cvController.createCV.bind(cvController));
+router.get('/getCVs', cvController.getCVs.bind(cvController));
+router.get('/getCVById/:id', cvController.getCVById.bind(cvController));
+router.put('/updateCV/:id', cvController.updateCV.bind(cvController));
+router.delete('/deleteCV/:id', cvController.deleteCV.bind(cvController));
 // Create an instance of AuthController
 const authControllerInstance = new AuthController();
 

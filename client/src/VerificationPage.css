@@ -1,5 +1,15 @@
 /* VerificationPage.css */
-
+.glass-container {
+  width: 80%;
+  min-width: 870px;
+  align-items: self-start;
+  margin: 20px auto;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  box-shadow: none; /* Remove the shadow */
+  border-radius: 8px; /* Remove rounded corners */
+  text-align: center;
+}
 .verification_page {
     display: flex;
     flex-direction: column;

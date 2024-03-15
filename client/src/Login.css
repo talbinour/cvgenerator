@@ -9,6 +9,16 @@
   flex-direction: column;
   align-items: self-start;
 }
+.glass-container {
+  width: 80%; /* Le conteneur principal occupe 70% de la largeur de la page */
+  min-width:800px;
+  margin: 20px auto; /* Centrage du conteneur avec une marge autour */
+  background: rgba(255, 255, 255, 0.8); /* Exemple de fond semi-transparent */
+  padding: 20px; /* Ajustez selon le besoin */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Exemple 'ombre */
+  border-radius: 8px; /* Bordures arrondies */
+  text-align: center; /* Centrage horizontal du contenu */
+}
 .login-page p{
   color: #718096;
   font-size: 15px;

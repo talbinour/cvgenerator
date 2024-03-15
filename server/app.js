@@ -6,8 +6,9 @@ const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
 const { body, validationResult } = require('express-validator');
-const multer = require('multer');
-const path = require('path');
+const bodyParser = require('body-parser'); // Importez le module bodyParser
+const CVRoutes = require('./routes/route'); // Importez vos routes CV
+
 // Import MongoDB models
 const UserInfo = require('./userDetails');
 const AuthController = require('./authController');
@@ -35,9 +36,14 @@ app.use(session({
   saveUninitialized: true,
 }));
 
+app.use('/uploads', express.static('uploads'));
+
 // Initialize Passport after session
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use('/cv', CVRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
@@ -53,6 +59,8 @@ mongoose.connect(process.env.MONGO_URI, {
     console.error('Error connecting to MongoDB:', err);
     process.exit(1);
   });
+
+
 
 // Import routes
 const postRoutes = require('./routes/postRoutes');
@@ -88,35 +96,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, '..\cvgenerator\client\src\assets'); // Remplacez par le chemin réel où vous souhaitez stocker les images
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-  },
-});
 
-const upload = multer({ storage: storage });
-
-app.put('/updateUser/:userId', upload.single('profileImage'), async (req, res) => {
-  try {
-    // ...
-    const updatedUserData = {
-      nom,
-      prenom,
-      Nbphone,
-      email,
-      date_naissance: dateNaissance,
-      user_id: userId,
-      profileImage: req.file ? req.file.filename : null,
-    };
-    // ...
-  } catch (error) {
-    console.error('Error updating user information:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {

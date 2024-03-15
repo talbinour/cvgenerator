@@ -59,6 +59,7 @@ const PasswordReset = () => {
   return (
     <>
       <div className="form_data">
+      <div className="glass-container w-70">
         <div className="form_heading">
           <h2 style={{ textAlign: 'center' }}>Réinitialisez votre mot de pass</h2>
           <p style={{ textAlign: 'initial' }}>Saisissez votre adresse e-mail et nous vous enverrons un code pour réinitialiser votre mot de passe.</p>
@@ -76,6 +77,7 @@ const PasswordReset = () => {
 
         </form>
         <ToastContainer />
+      </div>
       </div>
     </>
   );

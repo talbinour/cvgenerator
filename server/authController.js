@@ -142,6 +142,7 @@ class AuthController {
         Nbphone: currentUser.Nbphone,
         date_naissance: currentUser.date_naissance,
         role: currentUser.role,
+        pays: currentUser.pays,
         // Ajoutez d'autres champs nécessaires
       };
   

@@ -41,6 +41,11 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  pays :{
+    type: String,
+    required: true ,
+    default : '...',
+  },
   role: {
     type: String,
     default: 'user',
@@ -50,7 +55,8 @@ const userDetailsSchema = new mongoose.Schema({
     default: false,
   },
   emailToken: String,
-  verificationCode: String,  
+  verificationCode: String,
+  photo: String, 
 });
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
   try {
