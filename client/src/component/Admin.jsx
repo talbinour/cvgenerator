@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Admin.css";
+import styles from './Admin.module.css';
 import { FaUpload, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { PuffLoader } from "react-spinners";
@@ -126,13 +126,13 @@ const Admin = () => {
   };
 
   return (
-    <div className="container">
-      <div className="upload-container">
+    <div className={styles.container}>
+      <div className={styles['upload-container']}>
         <div>
           <p>Créer un nouveau modèle</p>
           <input
             name="title"
-            className="input-title"
+            className={styles['input-title']}
             type="text"
             placeholder="Titre de template"
             value={formData.title}
@@ -140,50 +140,49 @@ const Admin = () => {
           />
           <textarea
             name="content"
-            className="input-content"
+            className={styles['input-content']}
             placeholder="Categorie du CV"
             value={formData.content}
             onChange={handleInputChange}
           />
         </div>
-        <div className="image-upload-container">
+        <div className={styles['image-upload-container']}>
           {formData.imageURL ? (
-            <img src={formData.imageURL} alt="Preview" className="image-preview" />
+            <img src={formData.imageURL} alt="Preview" className={styles['image-preview']} />
           ) : (
-            <label className="upload-label">
-              <FaUpload className="upload-icon" />
-              <p>Clicker pour importer</p>
+            <label className={styles['upload-label']}>
+              <FaUpload className={styles['upload-icon']} />
+              <p>Cliquer pour importer</p>
               <input
                 type="file"
                 name="image"
-                className="file-input"
+                className={styles['file-input']}
                 accept="image/jpeg, image/jpg, image/png"
                 onChange={handleFileSelect}
               />
             </label>
           )}
           {formData.imageURL && !isCreatingCV && (
-            <button className="upload-btn" onClick={handleUploadClick}>
+            <button className={styles['upload-btn']} onClick={handleUploadClick}>
               Créer le CV
             </button>
           )}
           {isCreatingCV && (
-            <div className="loading-container">
+            <div className={styles['loading-container']}>
               <PuffLoader color="#4A90E2" size={60} />
               <p>Creating CV...</p>
             </div>
           )}
         </div>
       </div>
-      <div className="cv-list grid-view">
+      <div className={styles['cv-list'] + " " + styles['grid-view']}>
         {cvList.map((cv) => (
-          <div key={cv._id} className="cv-item grid-item">
-            <img src={cv.imageURL} alt={cv.title} className="cv-image" />
-            <div className="cv-details">
-              <p className="cv-title">{cv.title}</p>
-              <div className="cv-actions">
-                {/* <FaEdit className="action-icon" onClick={() => handleUpdateClick(cv._id)} /> */}
-                <FaTrash className="action-icon" onClick={() => handleDeleteClick(cv._id)} />
+          <div key={cv._id} className={styles['cv-item'] + " " + styles['grid-item']}>
+            <img src={cv.imageURL} alt={cv.title} className={styles['cv-image']} />
+            <div className={styles['cv-details']}>
+              <p className={styles['cv-title']}>{cv.title}</p>
+              <div className={styles['cv-actions']}>
+                <FaTrash className={styles['action-icon']} onClick={() => handleDeleteClick(cv._id)} />
               </div>
             </div>
           </div>

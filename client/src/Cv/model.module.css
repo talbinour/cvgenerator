@@ -27,7 +27,6 @@
     box-shadow: 3px 3px 10px rgb(0,0,0,.5);
     cursor: pointer;
     transition: .5s;
-    user-select: none;
     filter: grayscale(100%);
 }
 .header img:hover{
