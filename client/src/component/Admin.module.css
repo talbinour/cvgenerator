@@ -1,4 +1,4 @@
-/* Global Styles */
+/*Admin.modules.css*/
 .container {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -131,7 +131,7 @@
 
 /* Supprimer l'espace vide à gauche */
 .upload-container {
-  margin-left: -50px;
+  margin-left: 0px;
 }
 .image-preview {
   max-width: 100%; /* assurez-vous que la largeur ne dépasse pas le conteneur */
