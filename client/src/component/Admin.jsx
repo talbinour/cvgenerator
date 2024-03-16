@@ -1,22 +1,21 @@
-// Admin.jsx
-
-import React, { useState, useRef, useEffect } from "react";
-import "./Admin.css";  // Assurez-vous d'importer le fichier de styles correct
-import { PuffLoader } from "react-spinners";
-import { FaUpload, FaEdit, FaTrash } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import "./Admin.css";
+import { FaUpload, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { PuffLoader } from "react-spinners";
 
 const Admin = () => {
   const [formData, setFormData] = useState({
     title: "",
-    imageURL: null,
+    imageURL: "",
+    content: "", // Ajout du champ content
     isImageLoading: false,
     progress: 0,
+    image: null, // Ajout du champ image
   });
 
   const [cvList, setCVList] = useState([]);
-
-  const fileInputRef = useRef(null);
+  const [isCreatingCV, setIsCreatingCV] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -24,7 +23,7 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/cv/getCVs");
+      const response = await fetch("http://localhost:8080/getCVs");
       if (response.ok) {
         const data = await response.json();
         setCVList(data);
@@ -45,127 +44,72 @@ const Admin = () => {
     }));
   };
 
-  const handleLabelClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileSelect = async (e) => {
+  const handleFileSelect = (e) => {
     const selectedFile = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      isImageLoading: true,
-    }));
-
-    if (selectedFile && isAllowed(selectedFile)) {
-      try {
-        const formData = new FormData();
-        formData.append("image", selectedFile);
-
-        const response = await fetch("http://localhost:3000/cv/uploadImage", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-
-          setFormData((prevData) => ({
-            ...prevData,
-            isImageLoading: false,
-            progress: 100,
-            imageURL: data.imageURL,
-          }));
-
-          toast.success("Image uploaded successfully!");
-        } else {
-          toast.error("Failed to upload image");
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Error uploading image");
-      }
-    } else {
-      toast.error("Invalid File Format");
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result.split(',')[1]; // Obtenez la partie base64 des données de l'image
+        console.log('Base64 image:', base64Image); // Ajoutez cette ligne pour vérifier les données de l'image
+        setFormData((prevData) => ({
+          ...prevData,
+          imageURL: reader.result,
+          image: base64Image, // Mettez à jour le champ image avec la partie base64 des données de l'image
+        }));
+      };
+      reader.readAsDataURL(selectedFile);
     }
-  };
-
-  const isAllowed = (file) => {
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
-    return allowedTypes.includes(file.type);
   };
 
   const handleUploadClick = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("title", formData.title);
-      formData.append("imageURL", formData.imageURL);
-      formData.append("file", fileInputRef.current.files[0]);
+    console.log('Form data before sending:', formData); // Ajoutez cette ligne pour vérifier le contenu de formData
 
-      const response = await fetch("http://localhost:3000/cv/createCV", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-
-        setFormData((prevData) => ({
-          ...prevData,
-          isImageLoading: false,
-          progress: 100,
-          imageURL: data.imageURL,
-        }));
-
-        toast.success("CV created successfully!");
-        fetchData();
-      } else {
-        toast.error("Failed to create CV");
-      }
-    } catch (error) {
-      console.error("Error creating CV:", error);
-      toast.error("Error creating CV");
+    if (!formData.title || !formData.imageURL || !formData.content || !formData.image) {
+      toast.error("Title, image, content, and image URL are required");
+      return;
     }
-  };
 
-  const handleUpdateClick = async (cvId) => {
+    setIsCreatingCV(true); // Démarrez le chargement
+
     try {
-      const formData = new FormData();
-      formData.append("title", formData.title);
-      formData.append("imageURL", formData.imageURL);
-      formData.append("file", fileInputRef.current.files[0]);
-
-      const response = await fetch(`http://localhost:3000/cv/updateCV/${cvId}`, {
-        method: "PUT",
-        body: JSON.stringify(formData),
+      const response = await fetch("http://localhost:8080/createCV", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(formData), // Envoyez les données du formulaire sous forme de JSON
       });
 
-      if (response.ok) {
-        const data = await response.json();
-
-        setFormData((prevData) => ({
-          ...prevData,
-          isImageLoading: false,
-          progress: 100,
-          imageURL: data.imageURL,
-        }));
-
-        toast.success("CV updated successfully!");
-        fetchData();
-      } else {
-        toast.error("Failed to update CV");
+      if (!response.ok) {
+        throw new Error("Failed to create CV");
       }
+
+      toast.success("CV created successfully!");
+      fetchData();
+      setFormData({
+        title: "",
+        imageURL: "",
+        content: "",
+        isImageLoading: false,
+        progress: 0,
+        image: null,
+      });
     } catch (error) {
-      console.error("Error updating CV:", error);
-      toast.error("Error updating CV");
+      console.error("Error creating CV:", error);
+      toast.error("Error creating CV");
+    } finally {
+      setIsCreatingCV(false); // Arrêtez le chargement
     }
   };
 
+ /*  const handleUpdateClick = async (cvId) => {
+    // Update logic here. This is a placeholder.
+    console.log("Update CV:", cvId);
+  }; */
+
   const handleDeleteClick = async (cvId) => {
     try {
-      const response = await fetch(`http://localhost:3000/cv/deleteCV/${cvId}`, {
+      const response = await fetch(`http://localhost:8080/deleteCV/${cvId}`, {
         method: "DELETE",
       });
 
@@ -183,87 +127,67 @@ const Admin = () => {
 
   return (
     <div className="container">
-      <div className="upload-container bg-gray-300 p-4 max-w-full">
-        <div className="w-full">
-          <p>Create a new Template</p>
-          <div className="flex-paragraphs">
-            <p className="text-base text-txtLight uppercase font-semibold mr-2">
-              TempID:
-            </p>
-            <p className="text-sm text-txtDark capitalize font-bold mr-2">
-              Template1
-            </p>
-          </div>
+      <div className="upload-container">
+        <div>
+          <p>Créer un nouveau modèle</p>
           <input
             name="title"
-            className={`w-full px-4 py-3 rounded-md bg-transparent border border-gray-300 text-lg text-txtPrimary focus:text-txtDark focus:shadow-md outline-none ${formData.isImageLoading ? 'pointer-events-none' : ''}`}
+            className="input-title"
             type="text"
-            placeholder="Template Title"
+            placeholder="Titre de template"
             value={formData.title}
             onChange={handleInputChange}
           />
+          <textarea
+            name="content"
+            className="input-content"
+            placeholder="Categorie du CV"
+            value={formData.content}
+            onChange={handleInputChange}
+          />
         </div>
-        <div className="w-full border border-gray-300 rounded-md p-4">
-          <div className="w-full bg-gray-400 backdrop-blur-nd h-[420px] lg:h-[620px] 2xl:h-[740px] rounded-md cursor-pointer flex items-center justify-center" onClick={handleLabelClick}>
-            {formData.isImageLoading ? (
-              <div className="flex flex-col items-center justify-center gap-4">
-                <PuffLoader color="#849BFCD" size={40} />
-                <p>{formData.progress.toFixed(2)}%</p>
-              </div>
-            ) : (
-              <label className="w-full cursor-pointer h-full flex flex-col items-center justify-center">
-                <FaUpload className="text-2xl mb-2" />
-                <p className="text-lg text-txtLight mb-2">Click to upload</p>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept=".jpeg, .jpg, .png, .pdf" 
-                  onChange={handleFileSelect}
-                />
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
-                  onClick={handleUploadClick}
-                  style={{ alignSelf: 'center', maxWidth: '200px' }}
-                >
-                  Create CV
-                </button>
-              </label>
-            )}
-          </div>
+        <div className="image-upload-container">
+          {formData.imageURL ? (
+            <img src={formData.imageURL} alt="Preview" className="image-preview" />
+          ) : (
+            <label className="upload-label">
+              <FaUpload className="upload-icon" />
+              <p>Clicker pour importer</p>
+              <input
+                type="file"
+                name="image"
+                className="file-input"
+                accept="image/jpeg, image/jpg, image/png"
+                onChange={handleFileSelect}
+              />
+            </label>
+          )}
+          {formData.imageURL && !isCreatingCV && (
+            <button className="upload-btn" onClick={handleUploadClick}>
+              Créer le CV
+            </button>
+          )}
+          {isCreatingCV && (
+            <div className="loading-container">
+              <PuffLoader color="#4A90E2" size={60} />
+              <p>Creating CV...</p>
+            </div>
+          )}
         </div>
       </div>
-      <div className="cv-list-container bg-gray-300 p-4">
-        <p>CV List</p>
-        <ul>
-          {cvList.map((cv) => (
-            <li key={cv._id} className="mb-4">
-              <div>
-                <img src={cv.imageURL} alt="CV Template" className="mt-2" />
+      <div className="cv-list grid-view">
+        {cvList.map((cv) => (
+          <div key={cv._id} className="cv-item grid-item">
+            <img src={cv.imageURL} alt={cv.title} className="cv-image" />
+            <div className="cv-details">
+              <p className="cv-title">{cv.title}</p>
+              <div className="cv-actions">
+                {/* <FaEdit className="action-icon" onClick={() => handleUpdateClick(cv._id)} /> */}
+                <FaTrash className="action-icon" onClick={() => handleDeleteClick(cv._id)} />
               </div>
-              <div>
-                <p>Title: {cv.title}</p>
-                <p>File: <a href={`http://localhost:3000${cv.fileURL}`} target="_blank" rel="noopener noreferrer">{cv.fileName}</a></p>
-              </div>
-              <div>
-                <button
-                  className="bg-yellow-500 text-white px-2 py-1 rounded-md mr-2"
-                  onClick={() => handleUpdateClick(cv._id)}
-                >
-                  <FaEdit className="mr-1" />
-                  Update
-                </button>
-                <button
-                  className="bg-red-500 text-white px-2 py-1 rounded-md"
-                  onClick={() => handleDeleteClick(cv._id)}
-                >
-                  <FaTrash className="mr-1" />
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

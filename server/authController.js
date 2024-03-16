@@ -180,8 +180,6 @@ class AuthController {
 
         // Temporairement ignorez la comparaison de mot de passe
         const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);
-        console.log('Password Match:', passwordMatch);
-        console.log('Hashed Password in Database:', user.mot_passe);
 
         if (passwordMatch) {
           const token = generateToken(user);

@@ -31,6 +31,12 @@ router.put('/deleteAttribute/:userId', UserController.deleteAttribute);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);
 router.get('/getUserById/:id', UserController.getUserById);
 //crud cv 
+const bodyParser = require('body-parser');
+// Configurez le middleware bodyParser pour gérer les données JSON avec une limite de taille personnalisée
+router.use(bodyParser.json({ limit: '50mb' })); // Vous pouvez ajuster la limite selon vos besoins
+router.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // Vous pouvez ajuster la limite selon vos besoins
+
+
 const cvController = new CVController();
 
 router.post('/createCV', cvController.createCV.bind(cvController));

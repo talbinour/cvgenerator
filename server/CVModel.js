@@ -13,7 +13,11 @@ const cvSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Ajoutez d'autres propriétés du CV selon vos besoins
+  image: {
+    type: String, // Path to the image file
+    required: true,
+  },
+  // Add other CV properties as needed
 });
 
 const CVModel = mongoose.model('CV', cvSchema);
