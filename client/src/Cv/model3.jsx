@@ -131,6 +131,45 @@ function Model() {
                   </div>
                 </div>
               </div>
+              <div className={styles.about_skills}>
+                <h3>Professional Skills</h3>
+                <div className={styles.box}>
+                  <h4>Html</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '95%' }}></div>
+                  </span>
+                </div>
+                <div className={styles.box}>
+                  <h4>CSS</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '85%' }}></div>
+                  </span>
+                </div>
+                <div className={styles.box}>
+                  <h4>Javascript</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '70%' }}></div>
+                  </span>
+                </div>
+                <div className={styles.box}>
+                  <h4>Photoshop</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '90%' }}></div>
+                  </span>
+                </div>
+                <div className={styles.box}>
+                  <h4>Illustrator</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '75%' }}></div>
+                  </span>
+                </div>
+                <div className={styles.box}>
+                  <h4>Adobe XD</h4>
+                  <span className={styles.percent}>
+                  <div style={{ width: '98%' }}></div>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
