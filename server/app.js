@@ -5,7 +5,6 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
-const { body, validationResult } = require('express-validator');
 const bodyParser = require('body-parser'); // Importez le module bodyParser
 const CVRoutes = require('./routes/route'); // Importez vos routes CV
 
@@ -60,16 +59,16 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
   });
 
-
-
 // Import routes
 const postRoutes = require('./routes/postRoutes');
 const registerRoutes = require('./routes/registerRoutes');
 const route = require('./routes/route');
+
 // Routes setup
 app.use('/post', postRoutes);
 app.use('/register', registerRoutes);
 app.use('/',route);
+
 // Google OAuth Callback
 app.get('/auth/google/callback',
   passport.authenticate('google', {
@@ -83,7 +82,6 @@ const authController = new AuthController();
 /// Route for email verification
 app.get('/verify-email/:emailToken', authController.verifyEmail.bind(authController));
 app.post('/loginuser', authController.loginUser.bind(authController));
-// Importez la méthode
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -95,8 +93,6 @@ app.use((err, req, res, next) => {
     res.status(500).send(`Something went wrong! Error: ${err.message}`);
   }
 });
-
-
 
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {

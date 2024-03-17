@@ -11,6 +11,7 @@ const { ObjectId } = mongoose.Types;
 const multer = require('multer');
 const path = require('path');
 const CVController = require('../controllers/CVController');
+
 // Configure storage for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -21,29 +22,40 @@ const storage = multer.diskStorage({
   },
 });
 
-// Set up multer with the configured storage
-const upload = multer({ storage: storage });
+// Set up multer with the configured storage and increased size limit to 100KB
+// Set up multer with the configured storage and increased file size limit to 2MB (2000000 bytes)
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 50000000 }, // 2 MB in bytes
+  });
+  
+
 // Define your routes
 router.post('/createUser', UserController.createUser);
-router.put('/updateUser/:userId', upload.single('profileImage'), UserController.updateUser);router.delete('/deleteUser/:userId', UserController.deleteUser);
+router.put('/updateUser/:userId', upload.single('profileImage'), UserController.updateUser);
+router.delete('/deleteUser/:userId', UserController.deleteUser);
 router.get('/getAllUsers', UserController.getAllUsers);
 router.put('/deleteAttribute/:userId', UserController.deleteAttribute);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);
 router.get('/getUserById/:id', UserController.getUserById);
-//crud cv 
-const bodyParser = require('body-parser');
-// Configurez le middleware bodyParser pour gérer les données JSON avec une limite de taille personnalisée
-router.use(bodyParser.json({ limit: '50mb' })); // Vous pouvez ajuster la limite selon vos besoins
-router.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // Vous pouvez ajuster la limite selon vos besoins
 
+// CRUD CV 
+const bodyParser = require('body-parser');
+
+// Configure bodyParser middleware to handle JSON data with an increased size limit
+router.use(bodyParser.json({ limit: '50mb' }));
+
+// You may adjust the limit as needed
+router.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 const cvController = new CVController();
 
-router.post('/createCV', cvController.createCV.bind(cvController));
-router.get('/getCVs', cvController.getCVs.bind(cvController));
-router.get('/getCVById/:id', cvController.getCVById.bind(cvController));
-router.put('/updateCV/:id', cvController.updateCV.bind(cvController));
-router.delete('/deleteCV/:id', cvController.deleteCV.bind(cvController));
+router.post('/createCV', upload.single('image'), cvController.createCV);
+router.get('/getCVs', cvController.getCVs);
+router.get('/getCVById/:id', cvController.getCVById);
+router.put('/updateCV/:id', cvController.updateCV);
+router.delete('/deleteCV/:id', cvController.deleteCV);
+
 // Create an instance of AuthController
 const authControllerInstance = new AuthController();
 
@@ -60,23 +72,23 @@ router.post('/sendpasswordlink', (req, res) => passwordResetInstance.sendVerific
 router.post('/verify-reset-code', (req, res) => passwordResetInstance.verifyResetCode(req, res));
 
 // Route to change password
-// Utilisez l'instance déjà créée en haut du fichier
+// Utilize the already created instance at the top of the file
 router.post('/change-password/:email/:token', async (req, res) => {
     try {
         console.log('Change Password Route Hit');
         const email = req.params.email;
         const { oldPassword, newPassword } = req.body;
 
-        // Utilisez la même instance de Passwordreset
+        // Utilize the same instance of Passwordreset
         await passwordResetInstance.changePassword(req, res);
     } catch (error) {
         console.error('Error changing password:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 const logoutControllerInstance = new LogoutController();
 router.get('/logout', (req, res) => logoutControllerInstance.logout(req, res));
-
 
 async function verifyTokenByEmail(email, token) {
     try {
@@ -95,6 +107,5 @@ async function verifyTokenByEmail(email, token) {
         return false; // Assume token is invalid in case of an error
     }
 }
-
 
 module.exports = router;

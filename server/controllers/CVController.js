@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const CVModel = require('../CVModel');
+const multer = require('multer');
 
 // Function to save base64 image to file
 function saveBase64Image(base64String, filename) {
@@ -23,6 +24,21 @@ function isValidBase64(str) {
   return true; // Bypass validation temporarily
 
 }
+// Configure storage for multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set your upload directory
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+// Set up multer with the configured storage and increased file size limit to 2MB (2000000 bytes)
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 50000000 }, // 2 MB in bytes
+});
 
 class CVController {
   async createCV(req, res) {
