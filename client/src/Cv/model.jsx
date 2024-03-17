@@ -75,12 +75,16 @@ function Model() {
             <div className={styles.follow}>
               <h1>FOLLOW ME</h1>
               <h4>Facebook</h4>
+              <i className="fab fa-facebook-square"></i>
               <p>facebook.com/username</p>
               <h4>Instagram</h4>
+              <i className="fab fa-instagram-square"></i>
               <p>Instagram.com/username</p>
               <h4>Twitter</h4>
+              <i className="fab fa-twitter-square"></i>
               <p>Twitter.com/username</p>
               <h4>Youtube</h4>
+              <i className="fab fa-youtube"></i>
               <p>Youtube.com/username</p>
             </div>
           </div>

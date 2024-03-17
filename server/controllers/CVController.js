@@ -135,5 +135,4 @@ class CVController {
   
 }
 
-
 module.exports = CVController;

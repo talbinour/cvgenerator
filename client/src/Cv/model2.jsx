@@ -39,7 +39,7 @@ function Model() {
               </ul>
               <ul>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-linkedin"></i></span>
+                  <span className={styles.icon}><i className="fab fa-linkedin"></i></span>
                   <span className={styles.text}>www.linkedin.com/me</span>
                 </li>
               </ul>

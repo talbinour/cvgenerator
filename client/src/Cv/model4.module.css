@@ -1,0 +1,173 @@
+/* Style global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.print-area {
+    background: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.App {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    margin: 50px;
+    box-shadow: 0 50px 75px rgba(0, 0, 0, 0.1);
+    border-left: 50px solid #fff;
+    border-right: 50px solid #fff;
+    display: flex; /* Modifier en flex */
+    flex-direction: column; /* Aligner les enfants verticalement */
+}
+
+/* Contenu gauche et droit */
+.content {
+    display: flex; /* Utilisation de flexbox pour aligner les éléments gauche et droit */
+    gap: 20px; /* Ajout d'une marge entre les colonnes */
+}
+
+/* Left side content styles */
+.leftSide {
+    background: hsl(199, 100%, 14%);
+    padding: 40px;
+    width: 40%;
+}
+
+/* Right side content styles */
+.rightSide {
+    background: rgb(105, 16, 16);
+    padding: 40px;
+    width: 60%;
+}
+
+/* En-tête */
+.App-header {
+    background-color: #2196F3;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+h1,
+h2 {
+    margin: 0;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+/* Contact */
+.contact {
+    padding: 20px 0;
+}
+
+.contact h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.contact ul {
+    list-style: none;
+    padding: 0;
+}
+
+.contact li {
+    margin-bottom: 10px;
+}
+
+.contact span {
+    font-weight: bold;
+}
+
+/* Profil */
+.profile {
+    padding: 20px 0;
+}
+
+.profile h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.profile p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Expérience professionnelle */
+.experience {
+    padding: 20px 0;
+}
+
+.experience h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.job {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.job h3,
+.job h4,
+.job h5 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.job ul {
+    list-style: none;
+    padding: 0;
+}
+
+.job li {
+    margin-bottom: 10px;
+}
+
+/* Formation */
+.education {
+    padding: 20px 0;
+}
+
+.education h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.degree {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.degree h3,
+.degree h4,
+.degree h5 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Icones Font Awesome */
+.fa {
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+/* Style personnalisé pour l'icône du titre */
+.App-header h2.fa::before {
+    content: "\f2c7";
+}

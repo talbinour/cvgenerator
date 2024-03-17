@@ -19,7 +19,9 @@ import VerificationPage from './VerificationPage';
 import Model from "./Cv/model";
 import Model2 from "./Cv/model2";
 import Model3 from "./Cv/model3";
-
+import Model4 from "./Cv/model4";
+import Model5 from "./Cv/model5";
+import Model6 from "./Cv/model6";
 function App() {
   return (
     <>
@@ -42,6 +44,9 @@ function App() {
           <Route path='/Model' element={<Model />} />
           <Route path='/Model2' element={<Model2 />} />
           <Route path='/Model3' element={<Model3 />} />
+          <Route path='/Model4' element={<Model4 />} />
+          <Route path='/Model5' element={<Model5 />} />
+          <Route path='/Model6' element={<Model6 />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
