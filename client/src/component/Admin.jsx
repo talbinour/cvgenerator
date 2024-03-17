@@ -141,7 +141,7 @@ const Admin = () => {
           <textarea
             name="content"
             className={styles['input-content']}
-            placeholder="Categorie du CV"
+            placeholder="lien de cv "
             value={formData.content}
             onChange={handleInputChange}
           />

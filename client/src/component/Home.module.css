@@ -9,9 +9,11 @@
 }
 
 /* Style pour la section hero */
+/* Réduction de l'espace autour de la section .hero */
 .hero {
   text-align: center;
-  padding: 20px 0;
+  padding: 20px 0; /* Ajustez ici si nécessaire */
+  margin-bottom: 0px; /* Réduire ou supprimer la marge du bas pour diminuer l'espace */
 }
 
 .hero h1 {
@@ -46,7 +48,8 @@
   background-color: #f3f4f6;
   border-radius: 10px;
   padding: 10px;
-  margin: 20px 0;
+  margin: 20px ;
+  margin-top: 0;
 }
 
 .cvItem {
@@ -74,6 +77,10 @@
   padding: 10px;
   color: #333;
   font-weight: bold;
+}
+.models {
+  padding: 20px 0; /* Maintenez un padding cohérent mais réduit */
+  margin-top: -300px; /* Réduire ou supprimer la marge du haut */
 }
 
 /* Réduction des espaces entre les sections */
