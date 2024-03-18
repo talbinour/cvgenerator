@@ -1,4 +1,4 @@
-/* Style général du conteneur */
+/* General container style */
 .container {
   display: flex;
   flex-direction: column;
@@ -8,21 +8,19 @@
   padding: 20px;
 }
 
-/* Style pour la section hero */
-/* Réduction de l'espace autour de la section .hero */
+/* Hero section style */
 .hero {
   text-align: center;
-  padding: 20px 0; /* Ajustez ici si nécessaire */
-  margin-bottom: 0px; /* Réduire ou supprimer la marge du bas pour diminuer l'espace */
+  padding: 20px 0;
 }
 
 .hero h1 {
   color: #132043;
-  margin-bottom: 20px; /* Réduit l'espace après le titre */
+  margin-bottom: 20px;
 }
 
 .hero p {
-  color: #1F4172; /* Couleur secondaire pour le paragraphe */
+  color: #1F4172;
 }
 
 .createButton {
@@ -39,27 +37,41 @@
   background-color: #1F4172;
 }
 
-/* Style pour la liste de CVs */
+/* CV list styles */
 .cvListHorizontal {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   gap: 20px;
-  background-color: #f3f4f6;
-  border-radius: 10px;
   padding: 10px;
-  margin: 20px ;
-  margin-top: 0;
+  margin-top: 5px;
+}
+
+.cvListHorizontal::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cvListHorizontal::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+.cvListHorizontal::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0;
+  border-radius: 10px;
 }
 
 .cvItem {
-  flex: 1 1 200px;
+  flex: 0 0 auto; /* Prévient l'agrandissement des items mais permet leur rétrécissement */
+  width: calc(25% - 20px); /* Réduit la largeur pour afficher 4 éléments dans une rangée, ajustez le -20px en fonction du 'gap' */
+  max-height: 400px; /* Ajustez cette valeur pour contrôler la hauteur */
   background-color: #f3f4f6;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.2s ease-in-out;
   text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .cvItem:hover {
@@ -78,56 +90,37 @@
   color: #333;
   font-weight: bold;
 }
+
 .models {
-  padding: 20px 0; /* Maintenez un padding cohérent mais réduit */
-  margin-top: -300px; /* Réduire ou supprimer la marge du haut */
-}
-
-/* Réduction des espaces entre les sections */
-.models, .howItWorks, .features, .testimonials, .faqs {
   padding: 20px 0;
-}
-
-/* Style uniformisé pour les titres des sections */
-.models h2, .howItWorks h2, .features h2, .testimonials h2, .faqs h2 {
-  color: #132043;
+  margin-top: -300px;
   text-align: center;
-  margin-bottom: 20px; /* Espacement après les titres */
 }
 
-/* Styles des autres sections réduisant les espaces inutiles */
-.steps, .featureList, .testimonialList, .faqList {
-  justify-content: center;
-  gap: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 20px; /* Espace sous chaque liste/section */
-}
-
-/* Style pour le footer */
+/* Footer styles */
 .footer {
   text-align: center;
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid #ccc; /* Ajoute une séparation */
+  border-top: 1px solid #ccc;
 }
 
 .footer p, .footer button {
   color: #132043;
-  margin: 10px 0; /* Réduit l'espace autour du texte et du bouton */
+  margin: 10px 0;
 }
 
-/* Adaptations pour mobiles et ajustements de marges */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .hero, .models, .howItWorks, .features, .testimonials, .faqs, .footer {
+  .hero, .models, .footer {
     padding: 10px;
   }
 
   .createButton, .downloadButton {
-    padding: 8px 16px; /* Légèrement plus petit sur les mobiles */
+    padding: 8px 16px;
   }
 
-  .cvListHorizontal, .steps, .featureList, .testimonialList, .faqList {
-    gap: 15px; /* Espaces réduits entre les éléments sur mobile */
+  .cvListHorizontal {
+    gap: 15px;
   }
 }
