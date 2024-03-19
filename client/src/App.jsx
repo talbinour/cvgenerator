@@ -9,7 +9,12 @@ import About from "./component/About";
 import Skills from "./component/Skills";
 import Services from "./component/Services";
 import Profile from "./component/Profile";
-import DashboardPage from './DashboardPage';
+import DashboardPage from './DashboardPage/DashboardPage';
+import ResumesPage from './DashboardPage/ResumesPage';
+import JobOffersPage from './DashboardPage/JobOffersPage';
+import ApplicationsPage from './DashboardPage/ApplicationsPage';
+import DashboardContent from './DashboardPage/DashboardContent';
+
 import NewPassword from './NewPassword';
 import PasswordReset from './PasswordReset';
 import Admin from "./component/Admin";
@@ -37,7 +42,11 @@ function App() {
           <Route path='/login' element={<Login />}  />
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
-          <Route path="/dashboard" element={<DashboardPage />} />           
+          <Route path="/dashboard" element={<DashboardPage />} /> 
+          <Route path="/DashboardContent" element={<DashboardContent />} /> 
+          <Route path="/resumes" element={<ResumesPage />} />           
+          <Route path="/JobOffers" element={<JobOffersPage />} />           
+          <Route path="/Applications" element={<ApplicationsPage />} />           
           <Route path='/userprofile' element={<Userprofile/>} />
           <Route path="/password-reset" element={<PasswordReset />} />
           <Route path="/Profile" element={<Profile />} />
