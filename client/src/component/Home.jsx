@@ -34,7 +34,7 @@ const handleCVClick = (cvcontent) => {
         <button className={styles.createButton} style={{ backgroundColor: '#F1B4BB', color: '#FDF0F0' }}>Créer un CV</button>
       </section>
       <section className={styles.models}>
-        <h2 style={{ color: '#132043' }}>Modèles de CV</h2>
+        <h1 style={{ color: '#132043' }}>Modèles de CV</h1>
         <div className={styles.cvListHorizontal}>
           {cvList.map((cv) => (
             <div key={cv._id} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}> {/* Ajoutez l'écouteur d'événement onClick ici */}

@@ -13,19 +13,19 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   
-    useEffect(() => {
-      const token = localStorage.getItem('token');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
   
-      if (token) {
-        axios.get('http://localhost:8080/current-username', { withCredentials: true })
-          .then(response => {
-            setCurrentUser(response.data.user.nom);
-          })
-          .catch(error => {
-            console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
-          });
-      }
-    }, []);
+    if (token) {
+      axios.get('http://localhost:8080/current-username', { withCredentials: true })
+        .then(response => {
+          setCurrentUser(response.data.user.nom);
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
+        });
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -59,14 +59,14 @@ const Navbar = () => {
             <li>Test </li>
           </Link>
           {currentUser && (
-  <li onClick={() => {
-    setShowProfileMenu(!showProfileMenu);
-    navigate('/userprofile'); // Ajoutez cette ligne pour la redirection
-  }}>
-    {currentUser}
-    {showProfileMenu }
-  </li>
-)}
+            <li onClick={() => {
+              setShowProfileMenu(!showProfileMenu);
+              navigate('/userprofile'); // Ajoutez cette ligne pour la redirection
+            }}>
+              {currentUser}
+              {showProfileMenu }
+            </li>
+          )}
           <li>
             {currentUser ? (
               <button onClick={handleLogout} disabled={loadingLogout}>
@@ -78,6 +78,11 @@ const Navbar = () => {
               </Link>
             )}
           </li>
+          {currentUser && (
+            <li>
+              <Link to='/dashboard'>Tableau de bord</Link>
+            </li>
+          )}
         </ul>
         <button className='mobile-menu-icon' onClick={() => setMobile(!mobile)}>
           {mobile ? <ImCross /> : <FaBars />}
