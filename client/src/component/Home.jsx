@@ -26,6 +26,7 @@ const Home = () => {
 const handleCVClick = (cvcontent) => {
   navigate(`/${cvcontent}`); // Remplacez `/cv/${cvId}` par votre chemin de route de détail
 };
+
   return (
     <div className={styles.container}>
       <section className={styles.hero}>

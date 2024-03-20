@@ -1,6 +1,29 @@
 const UserInfo = require('./userDetails');
 const bcrypt = require('bcrypt');
+const multer = require('multer'); 
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, 'uploads/'); // Vérifiez que le répertoire de destination existe et a les bonnes autorisations
+  },
+  filename: function (req, file, cb) {
+      cb(null, new Date().toISOString() + '-' + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+      cb(null, true);
+  } else {
+      cb(new Error('Invalid file type. Only JPEG and PNG files are allowed.'), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5000000 }, // Limite de taille du fichier (en octets)
+  fileFilter: fileFilter,
+}); 
 class UserController {
     static async createUser(req, res) {
         try {
@@ -37,6 +60,29 @@ class UserController {
             res.status(500).send({ error: "Internal server error" });
         }
     }
+    static async updateUserPhoto(req, res) {
+      try {
+          const userId = req.params.userId;
+          const user = await UserInfo.findById(userId);
+  
+          if (!user) {
+              return res.status(404).json({ error: 'User not found' });
+          }
+  
+          if (!req.file) {
+              return res.status(400).json({ error: 'No file uploaded' });
+          }
+  
+          user.photo = req.file.path;
+          await user.save();
+  
+          return res.status(200).json({ msg: 'Profile photo updated successfully', user });
+      } catch (error) {
+          console.error('Error updating user photo:', error);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+  }
+  
 
     static async updateUser(req, res) {
         try {

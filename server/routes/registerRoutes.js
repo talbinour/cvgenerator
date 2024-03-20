@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
   try {
     let user = await UserInfo.findOne({ email });
     if (user) {
-      return res.status(400).json("User already exists...");
+      return res.status(400).json("L'utilisateur avec cette adresse e-mail existe déjà.");
     }
 
     const birthDate = new Date(date_naissance);

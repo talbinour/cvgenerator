@@ -3,7 +3,7 @@ import styles from './Admin.module.css';
 import { FaUpload, FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { PuffLoader } from "react-spinners";
-
+import Swal from 'sweetalert2';
 const Admin = () => {
   const [formData, setFormData] = useState({
     title: "",
@@ -108,22 +108,48 @@ const Admin = () => {
   }; */
 
   const handleDeleteClick = async (cvId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/deleteCV/${cvId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        toast.success("CV deleted successfully!");
-        fetchData();
-      } else {
-        toast.error("Failed to delete CV");
+    // SweetAlert2 pour la confirmation de suppression
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Vous ne pourrez pas revenir en arrière !",
+      icon: 'warning',
+      width: '460px',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, supprimez-le !',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // L'utilisateur confirme la suppression
+        fetch(`http://localhost:8080/deleteCV/${cvId}`, {
+          method: "DELETE",
+        })
+        .then(response => {
+          if (response.ok) {
+            Swal.fire(
+              'Supprimé!',
+              'Le CV a été supprimé.',
+              'success'
+            )
+            fetchData(); // Rafraîchir les données
+          } else {
+            throw new Error('Failed to delete CV');
+          }
+        })
+        .catch(error => {
+          console.error("Erreur lors de la suppression du CV :", error);
+          Swal.fire(
+            'Erreur!',
+            'Une erreur est survenue lors de la suppression du CV.',
+            'error'
+          );
+        });
       }
-    } catch (error) {
-      console.error("Error deleting CV:", error);
-      toast.error("Error deleting CV");
-    }
+    });
   };
+  
+  
 
   return (
     <div className={styles.container}>

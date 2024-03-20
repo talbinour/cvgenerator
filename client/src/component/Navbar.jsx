@@ -13,19 +13,19 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
   
-    useEffect(() => {
-      const token = localStorage.getItem('token');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
   
-      if (token) {
-        axios.get('http://localhost:8080/current-username', { withCredentials: true })
-          .then(response => {
-            setCurrentUser(response.data.user.nom);
-          })
-          .catch(error => {
-            console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
-          });
-      }
-    }, []);
+    if (token) {
+      axios.get('http://localhost:8080/current-username', { withCredentials: true })
+        .then(response => {
+          setCurrentUser(response.data.user.nom);
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
+        });
+    }
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -56,33 +56,42 @@ const Navbar = () => {
             <li>Services</li>
           </Link>
           <Link to='/skills' className='skills'>
-            <li>Test </li>
+            <li>Test</li>
           </Link>
           {currentUser && (
-  <li onClick={() => {
-    setShowProfileMenu(!showProfileMenu);
-    navigate('/userprofile'); // Ajoutez cette ligne pour la redirection
-  }}>
-    {currentUser}
-    {showProfileMenu }
-  </li>
-)}
-          <li>
-            {currentUser ? (
-              <button onClick={handleLogout} disabled={loadingLogout}>
-                {loadingLogout ? 'Déconnexion...' : 'Déconnexion'}
-              </button>
-            ) : (
+            <li className="profile-menu">
+              <div className="user-info-container" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+              <span className="profile-icon" role="img" aria-label="User Icon">👤</span>
+              <span className="username">{currentUser}</span>
+              </div>
+            </li>
+          )}
+          {!currentUser && (
+            <li>
               <Link to='/login'>
                 <button>Connexion</button>
               </Link>
-            )}
-          </li>
+            </li>
+          )}
         </ul>
         <button className='mobile-menu-icon' onClick={() => setMobile(!mobile)}>
           {mobile ? <ImCross /> : <FaBars />}
         </button>
       </nav>
+
+      {showProfileMenu && currentUser && (
+        <div className="profile-menu-box">
+          <ul>
+            <li onClick={() => navigate('/userprofile')}>
+              <span className="dropdown-icon">👤</span> Profil personnel
+            </li>
+            <li onClick={handleLogout} disabled={loadingLogout}>
+              <span className="dropdown-icon">🚪</span>
+              {loadingLogout ? 'Déconnexion...' : 'Déconnexion'}
+            </li>
+          </ul>
+        </div>
+      )}
     </>
   );
 }

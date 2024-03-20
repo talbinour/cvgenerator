@@ -6,6 +6,8 @@ import { CountryDropdown } from 'react-country-region-selector';
 import './SignUp.css';
 import ReactCountryFlag from 'react-country-flag';
 import { getCountryCallingCode, getCountries } from 'libphonenumber-js';
+import Swal from 'sweetalert2'; // Importez SweetAlert2
+
 const SignUp = () => {
   const navigate = useNavigate();
   // Dynamically fetch phone codes
@@ -117,10 +119,13 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
         pays: country,
       });
       if (response.status === 200) {
-        alert('Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.');
-        setTimeout(() => {
+        Swal.fire({
+          title: 'Succès',
+          text: 'Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.',
+          icon: null // Supprime l'icône de l'alerte
+        }).then(() => {
           navigate('/login');
-        }, 2000);
+        });
       } else if (response.status === 400) {
         // L'utilisateur existe déjà dans la base de données
         setErrorMessages({ ...errorMessages, email: 'L\'utilisateur avec cette adresse e-mail existe déjà.' });

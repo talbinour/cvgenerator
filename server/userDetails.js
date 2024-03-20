@@ -57,6 +57,7 @@ const userDetailsSchema = new mongoose.Schema({
   emailToken: String,
   verificationCode: String,
   photo: String, 
+  
 });
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
   try {

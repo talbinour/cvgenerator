@@ -97,3 +97,56 @@ button {
     
   }
 }
+.profile-menu-box {
+  position: initial;
+  top: calc(100% + 10px); /* Place la boîte juste au-dessus de la barre de navigation */
+  right: 0;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 200px; 
+  margin-right: 10px;
+}
+
+.profile-menu-box ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-menu-box li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.profile-menu-box li:hover {
+  background-color: #f5f5f5;
+}
+
+.profile-menu-box .dropdown-icon {
+  margin-right: 5px;
+}
+
+
+/* Ajoutez ces styles pour la flèche de la boîte */
+.profile-menu-box::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 15px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+}
+.user-info-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-icon {
+  margin-right: 8px;
+  font-size: 20px;
+}
