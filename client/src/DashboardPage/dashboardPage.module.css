@@ -11,8 +11,8 @@
 }
 
 .left-area {
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: 14%;
   bottom: 0;
   left: 0;
   background: #000;
@@ -23,7 +23,7 @@
 
 .right-area {
   position: fixed; /* Fixez la partie droite à droite */
-  top: 0;
+  top: 14%;
   bottom: 0;
   right: 0;
   background: #fff;

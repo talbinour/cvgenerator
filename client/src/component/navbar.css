@@ -13,13 +13,14 @@ li {
   list-style-type: none;
 }
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
   justify-content: space-around;
   align-items: center;
   height:3%;
-  box-shadow: rgba(50, 50, 93, 0.23) 0px 30px 30px -20px;
-
-  /*box-shadow: rgba(50, 50, 93, 0.23) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;*/
+  box-shadow: rgba(50, 50, 93, 0.074) 0px 30px 30px -20px;
 }
 .logo {
   font-size: 30px;

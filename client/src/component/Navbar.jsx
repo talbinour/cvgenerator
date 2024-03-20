@@ -15,19 +15,7 @@ const Navbar = () => {
   
   useEffect(() => {
     const token = localStorage.getItem('token');
-  useEffect(() => {
-    const token = localStorage.getItem('token');
   
-    if (token) {
-      axios.get('http://localhost:8080/current-username', { withCredentials: true })
-        .then(response => {
-          setCurrentUser(response.data.user.nom);
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
-        });
-    }
-  }, []);
     if (token) {
       axios.get('http://localhost:8080/current-username', { withCredentials: true })
         .then(response => {
