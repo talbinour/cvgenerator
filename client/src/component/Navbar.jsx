@@ -46,30 +46,40 @@ const Navbar = () => {
         <img src={logoImage} alt="Logo-png" className='logo-png' style={{ position: "sticky", left: '2', width: '5%', height: '50px' }} />
 
         <ul className={mobile ? "nav-links-mobile" : "nav-links"} onClick={() => setMobile(false)}>
-          <Link to='/' className='home'>
-            <li>accueil</li>
-          </Link>
-          <Link to='/about' className='about'>
-            <li>à propos</li>
-          </Link>
-          <Link to='/services' className='services'>
-            <li>Services</li>
-          </Link>
-          <Link to='/skills' className='skills'>
-            <li>Test</li>
-          </Link>
+          <li>
+            <Link to='/' className='home'>
+              Accueil
+            </Link>
+          </li>
+          <li>
+            <Link to='/about' className='about'>
+              À propos
+            </Link>
+          </li>
+          <li>
+            <Link to='/services' className='services'>
+              Services
+            </Link>
+          </li>
+          {currentUser && (
+            <li>
+              <Link to='/dashboard' className='dashboard'>
+                Tableau de bord
+              </Link>
+            </li>
+          )}
           {currentUser && (
             <li className="profile-menu">
               <div className="user-info-container" onClick={() => setShowProfileMenu(!showProfileMenu)}>
-              <span className="profile-icon" role="img" aria-label="User Icon">👤</span>
-              <span className="username">{currentUser}</span>
+                <span className="profile-icon" role="img" aria-label="User Icon">👤</span>
+                <span className="username">{currentUser}</span>
               </div>
             </li>
           )}
           {!currentUser && (
             <li>
               <Link to='/login'>
-                <button>Connexion</button>
+                Connexion
               </Link>
             </li>
           )}

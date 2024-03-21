@@ -6,7 +6,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from "./component/Navbar"; // Make sure "component" spelling is correct in your directory structure
 import Home from "./component/Home";
 import About from "./component/About";
-import Skills from "./component/Skills";
 import Services from "./component/Services";
 import Profile from "./component/Profile";
 import DashboardPage from './DashboardPage/DashboardPage';
@@ -14,7 +13,8 @@ import ResumesPage from './DashboardPage/ResumesPage';
 import JobOffersPage from './DashboardPage/JobOffersPage';
 import ApplicationsPage from './DashboardPage/ApplicationsPage';
 import DashboardContent from './DashboardPage/DashboardContent';
-
+import Contact from './DashboardPage/contact';
+import Skills from "./DashboardPage/Skills";
 import NewPassword from './NewPassword';
 import PasswordReset from './PasswordReset';
 import Admin from "./component/Admin";
@@ -45,7 +45,8 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} /> 
           <Route path="/DashboardContent" element={<DashboardContent />} /> 
           <Route path="/resumes" element={<ResumesPage />} />           
-          <Route path="/JobOffers" element={<JobOffersPage />} />           
+          <Route path="/JobOffers" element={<JobOffersPage />} /> 
+          <Route path="/contact" element={<Contact />} />                     
           <Route path="/Applications" element={<ApplicationsPage />} />           
           <Route path='/userprofile' element={<Userprofile/>} />
           <Route path="/password-reset" element={<PasswordReset />} />

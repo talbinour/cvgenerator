@@ -1,18 +1,15 @@
-* { 
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+/* dashboardPage.module.css */
 
+/* Style for the print area */
 .print-area {
   display: grid;
   grid-template-columns: 1fr 3fr;
 }
 
+/* Style for the left area */
 .left-area {
-  position: absolute;
-  top: 14%;
+  position: fixed;
+  top: 11%;
   bottom: 0;
   left: 0;
   background: #000;
@@ -21,6 +18,7 @@
   width: 300px; /* Fixez la largeur de la partie gauche */
 }
 
+/* Style for the right area */
 .right-area {
   position: fixed; /* Fixez la partie droite à droite */
   top: 14%;
@@ -33,11 +31,15 @@
 }
 
 /* Style for the question mark icon */
+.question-icon {
+  margin-left: 225px;
+}
+
 .question-icon-style {
   color: white;
   border: 2px solid black;
   border-radius: 50%;
-  margin-left: 225px;
+  cursor: pointer;
 }
 
 /* Style for the new button */
@@ -77,4 +79,106 @@
 /* Style for the selected item */
 .selected {
   background-color: #333;
+  border-radius: 5px;
+}
+
+/* Style for the alert area */
+.alert-area {
+  position: fixed;
+  top: 11%; /* Maintenir la position similaire à la partie droite */
+  right: 0; /* Aligner à droite */
+  background-color: white;
+  overflow-y: auto;
+  width: 500px; /* Largeur fixe de la partie gauche */
+  height: calc(100% - 14%); /* Hauteur ajustée pour occuper la même hauteur que la partie droite */
+  border-left: 2px solid #000; /* Utiliser une bordure à gauche pour correspondre au style */
+}
+/* dashboardPage.module.css */
+/* dashboardPage.module.css */
+
+.alert-area .top-area {
+  padding: 20px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-between; /* Aligner le contenu à l'extrémité */
+  align-items: center; /* Centrer verticalement */
+}
+
+.alert-area button {
+  border: none;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.alert-area button:hover {
+  background-color: #0056b3;
+}
+
+/* Ajoutez cette règle pour aligner le bouton à droite */
+.alert-area .top-area button {
+  margin-left: auto;
+}
+/* dashboardPage.module.css */
+
+.alert-area .buttom-area {
+  padding: 20px;
+}
+.alert-area .buttom-area input {
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  width: calc(60% - 10px); /* Réduisez la largeur de l'entrée pour laisser de la place pour la marge */
+}
+
+.alert-area .buttom-area button {
+  border: none;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.alert-area .buttom-area button:hover {
+  background-color: #0056b3;
+}
+
+.alert-area .buttom-area h1 {
+  margin-top: 10px;
+  font-weight: bold;
+
+}
+.questions {
+  margin-top: 10px;
+  border: 1px solid #ccc; /* Bordure grise */
+  border-radius: 5px; /* Coins arrondis */
+  padding: 20px; /* Espace intérieur */
+  margin-bottom: 20px; /* Marge en bas */
+}
+
+.questions ul {
+  list-style: none; /* Pas de puces */
+  padding: 0; /* Supprimer le remplissage par défaut */
+}
+
+.questions li {
+  margin-bottom: 20px; /* Marge en bas pour chaque élément */
+  cursor: pointer; /* Curseur pointer pour montrer qu'ils sont cliquables */
+  border: 2px solid #f0f0f0; /* Utiliser une bordure à gauche pour correspondre au style */
+}
+
+.questions li:hover {
+  background-color: #f0f0f0; /* Changement de couleur au survol */
+}
+
+.questions h4 {
+  margin-top: 0; /* Supprimer la marge supérieure par défaut */
+}
+
+.questions p {
+  margin-bottom: 0; /* Supprimer la marge inférieure par défaut */
 }
