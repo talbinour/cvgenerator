@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
 * {
   padding: 0;
   margin: 0;
@@ -9,32 +10,35 @@
 a {
   text-decoration: none;
 }
+
 li {
   list-style-type: none;
 }
+
 .navbar {
   position: -ms-page;
   top: 0;
   z-index: 1000;
   display: flex;
   background-color: #fff;
-  justify-content: space-around;
+  justify-content: space-between; /* Alignement des éléments à l'extrémité */
   align-items: center;
-  height:3%;
+  height: 60px; /* Taille de la barre de navigation ajustée */
   box-shadow: rgba(50, 50, 93, 0.074) 0px 30px 30px -20px;
+  padding: 0 20px; /* Espacement des éléments à gauche et à droite */
 }
-.logo {
-  font-size: 30px;
-  color: #1f4172;
 
+.logo-png {
+  width: 50px; /* Taille du logo ajustée */
+  height: auto; /* Hauteur automatique pour maintenir les proportions */
 }
+
 .nav-links {
   display: flex;
-  justify-content: flex-end;
-  width: 75%;
+  align-items: center; /* Alignement vertical des éléments */
 }
 
-.nav-links li a{
+.nav-links li a {
   color: #132043;
   font-size: 20px;
   padding: 10px 20px;
@@ -43,72 +47,63 @@ li {
   text-transform: capitalize;
   text-decoration: none;
 }
-.hero {
-  text-align: center;
-  margin-top: 15%;
-}
-.hero h1 {
-  text-align: center;
-  font-size: 80px;
-  
-}
+
 .mobile-menu-icon {
   display: none;
 }
+
 button {
   border: none;
   text-decoration: none;
   font-size: 20px;
   background: none;
 }
+
 @media (max-width: 768px) {
-  .logo {
-    display: flex;
-    position: absolute;
-    top: 15px;
-    left: 35px;
-    color: #1f4172;
-    
+  .logo-png {
+    margin-right: 0; /* Supprime l'espacement du logo sur les petits écrans */
   }
+
   .nav-links {
     display: none;
   }
+
   .nav-links-mobile {
     position: absolute;
     display: block;
     list-style: none;
-    box-shadow: rgba(50, 50, 93, 0.23) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+    box-shadow: rgba(50, 50, 93, 0.23) 0px 50px 100px -20px,
+      rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
     left: 0;
     top: 10%;
     transition: all 0.5s ease-in-out;
     width: 100%;
     background-color: white;
   }
+
   ul li {
     padding: 32px;
     width: 100%;
     transition: all 0.5s ease-in-out;
     text-align: center;
   }
+
   .mobile-menu-icon {
     position: absolute;
     display: block;
     right: 20px;
   }
-  .hero h1 {
-    font-size: 50px;
-    
-  }
 }
+
 .profile-menu-box {
-  position: initial;
-  top: calc(100% + 10px); /* Place la boîte juste au-dessus de la barre de navigation */
+  position: absolute;
+  top: calc(100% + 10px);
   right: 0;
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: 200px; 
+  width: 200px;
   margin-right: 10px;
 }
 
@@ -132,7 +127,6 @@ button {
   margin-right: 5px;
 }
 
-
 /* Ajoutez ces styles pour la flèche de la boîte */
 .profile-menu-box::after {
   content: "";
@@ -143,6 +137,7 @@ button {
   border-style: solid;
   border-color: transparent transparent #fff transparent;
 }
+
 .user-info-container {
   display: flex;
   align-items: center;
@@ -152,4 +147,14 @@ button {
 .profile-icon {
   margin-right: 8px;
   font-size: 20px;
+}
+
+/* Styles pour l'avatar */
+.avatar {
+  width: 35px; /* Taille de l'avatar ajustée */
+  height: 35px; /* Taille de l'avatar ajustée */
+  border-radius: 50%; /* Bordure circulaire */
+  margin-right: 10px; /* Espacement de l'avatar par rapport aux autres éléments */
+  background-color: #f3f4f6;
+  padding: 1px;
 }

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import logoImage from '../assets/cevor-high-resolution-logo-transparent (1).png';
+import defaultAvatar from '../assets/user.png'; // Importer l'image par défaut
 import axios from 'axios';
 import './navbar.css';
 
@@ -12,7 +13,8 @@ const Navbar = () => {
   const [loadingLogout, setLoadingLogout] = useState(false);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
-  
+  const profileMenuRef = useRef(null); // Référence pour le menu de profil
+
   useEffect(() => {
     const token = localStorage.getItem('token');
   
@@ -27,6 +29,19 @@ const Navbar = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setShowProfileMenu(false); // Cacher le menu de profil si on clique à l'extérieur
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = async () => {
     try {
       setLoadingLogout(true);
@@ -37,13 +52,14 @@ const Navbar = () => {
     } finally {
       setLoadingLogout(false);
       setCurrentUser(null); // Set currentUser to null after logout
+      setShowProfileMenu(false); // Cacher le menu de profil après la déconnexion
     }
   };
 
   return (
     <>
       <nav className='navbar'>
-        <img src={logoImage} alt="Logo-png" className='logo-png' style={{ position: "sticky", left: '2', width: '5%', height: '50px' }} />
+        <img src={logoImage} alt="Logo-png" className='logo-png' style={{ width: '5%', height: '50px' }} />
 
         <ul className={mobile ? "nav-links-mobile" : "nav-links"} onClick={() => setMobile(false)}>
           <li>
@@ -69,10 +85,21 @@ const Navbar = () => {
             </li>
           )}
           {currentUser && (
-            <li className="profile-menu">
-              <div className="user-info-container" onClick={() => setShowProfileMenu(!showProfileMenu)}>
-                <span className="profile-icon" role="img" aria-label="User Icon">👤</span>
-                <span className="username">{currentUser}</span>
+            <li>
+              <div className="profile-menu" ref={profileMenuRef}>
+                <img src={defaultAvatar} alt="Avatar" className="avatar" onClick={() => setShowProfileMenu(!showProfileMenu)} />
+                {showProfileMenu && (
+                  <div className="profile-menu-box">
+                    <ul>
+                      <li onClick={() => { navigate('/userprofile'); setShowProfileMenu(false); }}>
+                        Profil personnel
+                      </li>
+                      <li onClick={handleLogout} disabled={loadingLogout}>
+                        {loadingLogout ? 'Déconnexion...' : 'Déconnexion'}
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
             </li>
           )}
@@ -88,20 +115,6 @@ const Navbar = () => {
           {mobile ? <ImCross /> : <FaBars />}
         </button>
       </nav>
-
-      {showProfileMenu && currentUser && (
-        <div className="profile-menu-box">
-          <ul>
-            <li onClick={() => navigate('/userprofile')}>
-              <span className="dropdown-icon">👤</span> Profil personnel
-            </li>
-            <li onClick={handleLogout} disabled={loadingLogout}>
-              <span className="dropdown-icon">🚪</span>
-              {loadingLogout ? 'Déconnexion...' : 'Déconnexion'}
-            </li>
-          </ul>
-        </div>
-      )}
     </>
   );
 }
