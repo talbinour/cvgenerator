@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import defaultAvatar from '../assets/profile.png'; // Importer l'image par défaut
 import { BsPlusCircle } from 'react-icons/bs';
 import axios from 'axios';
+import'./userprofile.css';
 
 const UserProfile = () => {
   const [userId, setUserId] = useState('');
@@ -107,8 +108,8 @@ const UserProfile = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center h-screen">
         <div className="glass-container w-70">
-          <div>
-            <div className="profile_img_container">
+          <div className="profile-container">
+            <div className="image-container">
               <img src={userPhoto || defaultAvatar} className="profile_img" alt="avatar" />
               <button className="edit-image-button" onClick={() => inputRef.current.click()}>
                 <BsPlusCircle size={24} color="#1f4172" type="button" />
@@ -121,84 +122,82 @@ const UserProfile = () => {
                 onChange={handleImageChange}
               />
             </div>
-
-            <div className="profile flex items-center justify-center gap-4">
-              <h2>{`${prenom} ${nom}`}</h2>
-              <h5>{`${email}`}</h5>
+            <div className="profile-details">
+              <div className="profile-info">
+                <h2>{`${prenom} ${nom}`}</h2>
+                <div className="email">{`${email}`}</div>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="textbox flex flex-wrap justify-center gap-4">
-              <label htmlFor="nom" className="label">
-                Nom :
-              </label>
-              <input
-                id="nom"
-                className="input"
-                type="text"
-                value={nom}
-                placeholder="Nom"
-                onChange={(e) => setNom(e.target.value)}
-              />
-            </div>
-            <div className="textbox flex flex-wrap justify-center gap-4">
-              <label htmlFor="prenom" className="label">
-                Prénom :
-              </label>
-              <input
-                id="prenom"
-                className="input"
-                type="text"
-                value={prenom}
-                placeholder="Prénom"
-                onChange={(e) => setPrenom(e.target.value)}
-              />
-            </div>
-            <div className="textbox flex flex-wrap justify-center gap-4">
-              <label htmlFor="Nbphone" className="label">
-                Numéro de téléphone :
-              </label>
-              <input
-                id="Nbphone"
-                className="input"
-                type="text"
-                value={Nbphone}
-                placeholder="Num téléphone"
-                onChange={(e) => setNbphone(e.target.value)}
-              />
-            </div>
-            <div className="textbox flex flex-wrap justify-center gap-4">
-              <label htmlFor="pays" className="label">
-                Pays :
-              </label>
-              <input
-                id="pays"
-                className="input"
-                type="text"
-                value={pays}
-                placeholder="Pays"
-                onChange={(e) => setPays(e.target.value)}
-              />
-            </div>
-            <div className="textbox flex flex-wrap justify-center gap-4">
-              <label htmlFor="dateNaissance" className="label">
-                Date de naissance :
-              </label>
-              <input
-                id="dateNaissance"
-                className="input full-width"
-                value={dateNaissance}
-                type="text"
-                placeholder="Date de naissance"
-                onChange={(e) => setDateNaissance(e.target.value)}
-              />
-            </div>
-
-            <button className="btn" type="button" onClick={handleUpdate}>
-              Mettre à jour
-            </button>
-            {updateSuccess && <div className="alert success">Mise à jour réussie !</div>}
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="nom" className="label">
+              Nom :
+            </label>
+            <input
+              id="nom"
+              className="input"
+              type="text"
+              value={nom}
+              placeholder="Nom"
+              onChange={(e) => setNom(e.target.value)}
+            />
           </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="prenom" className="label">
+              Prénom :
+            </label>
+            <input
+              id="prenom"
+              className="input"
+              type="text"
+              value={prenom}
+              placeholder="Prénom"
+              onChange={(e) => setPrenom(e.target.value)}
+            />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="Nbphone" className="label">
+              Numéro de téléphone :
+            </label>
+            <input
+              id="Nbphone"
+              className="input"
+              type="text"
+              value={Nbphone}
+              placeholder="Num téléphone"
+              onChange={(e) => setNbphone(e.target.value)}
+            />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="pays" className="label">
+              Pays :
+            </label>
+            <input
+              id="pays"
+              className="input"
+              type="text"
+              value={pays}
+              placeholder="Pays"
+              onChange={(e) => setPays(e.target.value)}
+            />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="dateNaissance" className="label">
+              Date de naissance :
+            </label>
+            <input
+              id="dateNaissance"
+              className="input full-width"
+              value={dateNaissance}
+              type="text"
+              placeholder="Date de naissance"
+              onChange={(e) => setDateNaissance(e.target.value)}
+            />
+          </div>
+          <button className="btn" type="button" onClick={handleUpdate}>
+            Mettre à jour
+          </button>
+          {updateSuccess && <div className="alert success">Mise à jour réussie !</div>}
         </div>
       </div>
     </div>

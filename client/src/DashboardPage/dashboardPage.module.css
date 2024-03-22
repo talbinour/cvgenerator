@@ -8,19 +8,21 @@
 
 /* Style for the left area */
 .left-area {
+  background: #070c17; 
+  padding: 10px; 
+  overflow-y: auto;
+  width: 200px; 
   position: fixed;
-  top: 11%;
+  top: 14%;
   bottom: 0;
   left: 0;
-  background: #000;
-  padding: 20px;
-  overflow-y: auto;
-  width: 300px; /* Fixez la largeur de la partie gauche */
+  overflow-x: hidden;
+  width: 300px;
+  border-radius: 10px;
 }
-
 /* Style for the right area */
 .right-area {
-  position: fixed; /* Fixez la partie droite à droite */
+  position: fixed;
   top: 14%;
   bottom: 0;
   right: 0;
@@ -36,7 +38,7 @@
 }
 
 .question-icon-style {
-  color: white;
+  color: rgba(255, 255, 255, 0.851);
   border: 2px solid black;
   border-radius: 50%;
   cursor: pointer;
@@ -45,8 +47,8 @@
 /* Style for the new button */
 .new-button {
   margin-top: 20px;
-  background-color: #007bff;
-  color: white;
+  background-color: #f1b4bb;
+  color: black;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
@@ -55,7 +57,7 @@
 }
 
 .new-button:hover {
-  background-color: #0056b3;
+  background-color: #d89ea4;
 }
 
 /* Style for the clickable list */
@@ -64,11 +66,13 @@
   padding: 0;
   margin: 20px 0;
 }
-
 .clickable-list li {
-  margin-bottom: 10px;
+  padding: 8px 30px; 
+  margin-bottom: 5px; 
   cursor: pointer;
   color: white;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
 }
 
 .clickable-list li i {
@@ -78,27 +82,26 @@
 
 /* Style for the selected item */
 .selected {
-  background-color: #333;
+  background-color: #4a4a4a5e;
   border-radius: 5px;
 }
 
 /* Style for the alert area */
 .alert-area {
   position: fixed;
-  top: 11%; /* Maintenir la position similaire à la partie droite */
-  right: 0; /* Aligner à droite */
+  top: 14%;
+  right: 0;
   background-color: white;
   overflow-y: auto;
-  width: 500px; /* Largeur fixe de la partie gauche */
-  height: calc(100% - 14%); /* Hauteur ajustée pour occuper la même hauteur que la partie droite */
-  border-left: 2px solid #000; /* Utiliser une bordure à gauche pour correspondre au style */
+  width: 400px; /* Réduire la largeur de l'alerte */
+  height: calc(100% - 14%);
+  border-radius: 10px; /* Ajouter des coins arrondis */
+  border: 2px solid #ccc; /* Ajouter une bordure */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Ajouter une ombre */
 }
-/* dashboardPage.module.css */
-/* dashboardPage.module.css */
 
 .alert-area .top-area {
-  padding: 20px;
-  border-bottom: 1px solid #ccc;
+  padding: 5px;
   display: flex;
   justify-content: space-between; /* Aligner le contenu à l'extrémité */
   align-items: center; /* Centrer verticalement */
@@ -106,15 +109,15 @@
 
 .alert-area button {
   border: none;
-  background-color: #007bff;
+  background-color:#132043;
   color: white;
-  padding: 8px 16px;
-  border-radius: 3px;
+  padding: 5px 8px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .alert-area button:hover {
-  background-color: #0056b3;
+  background-color: #1d3063;
 }
 
 /* Ajoutez cette règle pour aligner le bouton à droite */
@@ -124,27 +127,27 @@
 /* dashboardPage.module.css */
 
 .alert-area .buttom-area {
-  padding: 20px;
+  padding: 15px;
 }
 .alert-area .buttom-area input {
   margin-bottom: 10px;
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  border: 0.3px solid #ccc;
+  border-radius: 5px;
   width: calc(60% - 10px); /* Réduisez la largeur de l'entrée pour laisser de la place pour la marge */
 }
 
 .alert-area .buttom-area button {
   border: none;
-  background-color: #007bff;
+  background-color: #132043;
   color: white;
   padding: 8px 16px;
-  border-radius: 3px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .alert-area .buttom-area button:hover {
-  background-color: #0056b3;
+  background-color: #1d3063;
 }
 
 .alert-area .buttom-area h1 {

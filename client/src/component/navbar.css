@@ -13,10 +13,11 @@ li {
   list-style-type: none;
 }
 .navbar {
-  position: sticky;
+  position: -ms-page;
   top: 0;
   z-index: 1000;
   display: flex;
+  background-color: #fff;
   justify-content: space-around;
   align-items: center;
   height:3%;
@@ -33,13 +34,14 @@ li {
   width: 75%;
 }
 
-.nav-links li {
-  color: black;
+.nav-links li a{
+  color: #132043;
   font-size: 20px;
   padding: 10px 20px;
   margin: 0 10px;
   cursor: pointer;
   text-transform: capitalize;
+  text-decoration: none;
 }
 .hero {
   text-align: center;

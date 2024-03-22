@@ -56,7 +56,7 @@ const DashboardPage = () => {
             <i className="fas fa-tachometer-alt"></i> Tableau de bord
           </li>
           <li onClick={() => handleItemClick("resumes")} className={selectedItem === 'resumes' ? styles['selected'] : ''}>
-            <i className="fas fa-file-alt"></i> Curriculum Vitae
+            <i className="fas fa-file-alt"></i> Mes CV
           </li>
           <li onClick={() => handleItemClick("jobOffers")} className={selectedItem === 'jobOffers' ? styles['selected'] : ''}>
             <i className="fas fa-briefcase"></i> Offres d&apos;emplois
@@ -79,7 +79,7 @@ const DashboardPage = () => {
         <div className={styles['alert-area']}>
           <div className={`${styles['top-area']} ${styles['black-background']}`}>
             {/* Bouton pour fermer l'alerte */}
-            <button onClick={() => setShowAlert(false)}>Fermer</button>
+            <button onClick={() => setShowAlert(false)}>X</button>
           </div>
           <div className={styles['buttom-area']}>
             <input 
