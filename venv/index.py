@@ -1,35 +1,37 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer,ChatterBotCorpusTrainer
-import time
+from chatterbot.trainers import ChatterBotCorpusTrainer
+from chatterbot.storage import MongoDatabaseAdapter
 
-#chattrebot
-#chattrebot-corpus
-#pyyam!
-#spacy #python -mspacy download en
-#jupyter
-#motebook
-#pint
+app = Flask(__name__)
+CORS(app)  # Activer CORS pour tous les domaines
+
+
 # Create a ChatBot instance
 bot = ChatBot(
     "chatbot",
-    read_only=False,
+    storage_adapter="chatterbot.storage.MongoDatabaseAdapter",
+    database_uri="mongodb://localhost:27017/database",
     logic_adapters=[
         {
-            
-            "import_path":"chatterbot.logic.BestMatch",
-            "default_response":"Sorry I dont have an answer",
-            "maximun_similarity_threshold":0.9
-            }
-        ]
+            "import_path": "chatterbot.logic.BestMatch",
+            "default_response": "Désolé, je n'ai pas de réponse.",
+            "maximum_similarity_threshold": 0.9
+        }
+    ]
 )
 
-trainer=ChatterBotCorpusTrainer(bot)
+# Train the chatbot
+trainer = ChatterBotCorpusTrainer(bot)
 trainer.train("chatterbot.corpus.english")
-# Interaction loop
-while True:
-    user_input = input("You: ")
-    start_time = time.perf_counter()  # Start measuring time
+
+# Route for handling chat requests
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message")
     response = str(bot.get_response(user_input))
-    end_time = time.perf_counter()  # Stop measuring time
-    print("ChatBot:", response)
-    print("Response time:", end_time - start_time, "seconds")
+    return jsonify({"response": response})
+
+if __name__ == "__main__":
+    app.run(debug=True)

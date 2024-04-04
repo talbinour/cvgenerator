@@ -29,6 +29,7 @@ import Model5 from "./Cv/model5";
 import Model6 from "./Cv/model6";
 import Model7 from "./Cv/model7";
 import Model8 from "./Cv/model8";
+import Chatbot from "./chatbot";
 function App() {
   return (
     <>
@@ -61,6 +62,7 @@ function App() {
           <Route path='/Model6' element={<Model6 />} />
           <Route path='/Model7' element={<Model7/>} />
           <Route path='/Model8' element={<Model8/>} />
+          <Route path='/chatbot' element={<Chatbot/>} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
