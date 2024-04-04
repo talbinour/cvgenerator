@@ -12,7 +12,7 @@ function Model() {
           <img src={avatar} alt="Profile" />
           <div className={styles['header-text']}>
             <h1>Isra Nasri</h1>
-            <p>Graphic & Web Designer</p>
+            <p >Graphic & Web Designer</p>
           </div>
         </div>
         <div className={styles.content}>
