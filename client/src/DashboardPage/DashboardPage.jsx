@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Importer la balise Link depuis react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 import styles from './dashboardPage.module.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import DashboardContent from './DashboardContent'; // Importer le composant DashboardContent
@@ -12,7 +12,8 @@ const DashboardPage = () => {
   const [selectedItem, setSelectedItem] = useState("dashboard"); // État initial pour le tableau de bord
   const [showAlert, setShowAlert] = useState(false); // État pour afficher l'alerte
   const [searchInput, setSearchInput] = useState(""); // État pour le champ de recherche
-
+     // Récupérer l'objet navigate
+  const navigate = useNavigate();
   // Fonction pour gérer le clic sur un élément de la liste
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -40,6 +41,9 @@ const DashboardPage = () => {
   const showQuestionAlert = () => {
     setShowAlert(true);
   };
+  const navigateToChatbot = () => {
+    navigate("/chatbot"); // Naviguer vers la route "/chatbot"
+  };
 
   return (
     <div className={styles['print-area']}>
@@ -49,8 +53,7 @@ const DashboardPage = () => {
           <i className={`fas fa-question-circle fa-2x ${styles['question-icon-style']}`} onClick={showQuestionAlert}></i>
         </div>
         {/* Button */}
-        <button className={styles['new-button']}>+ Nouveau</button>
-        {/* List of clickable items */}
+        <button onClick={navigateToChatbot} className={styles['new-button']}>+ Nouveau</button>        {/* List of clickable items */}
         <ul className={styles['clickable-list']}>
           <li onClick={() => handleItemClick("dashboard")} className={selectedItem === 'dashboard' ? styles['selected'] : ''}>
             <i className="fas fa-tachometer-alt"></i> Tableau de bord
