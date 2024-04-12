@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
-from chatterbot.storage import MongoDatabaseAdapter
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -10,8 +9,6 @@ CORS(app)  # Allow Cross-Origin Resource Sharing (CORS)
 # Create a ChatBot instance
 bot = ChatBot(
     "chatbot",
-    storage_adapter="chatterbot.storage.MongoDatabaseAdapter",
-    database_uri="mongodb://localhost:27017/database",
     logic_adapters=[
         {
             "import_path": "chatterbot.logic.BestMatch",
@@ -23,7 +20,7 @@ bot = ChatBot(
 
 # Train the chatbot
 trainer = ChatterBotCorpusTrainer(bot)
-trainer.train("chatterbot.corpus.english")
+trainer.train("chatterbot.corpus.french")  # Train the chatbot in French
 
 # Route for handling chat requests
 @app.route("/chat", methods=["POST"])
