@@ -1,0 +1,4 @@
+Utilisateur: Comment devrais-je présenter mon expérience professionnelle dans mon CV ?
+Chatbot: Lorsque vous décrivez votre expérience professionnelle, assurez-vous de mettre en avant vos réalisations et les compétences que vous avez acquises dans chaque poste. Quels postes avez-vous occupés auparavant ?
+Utilisateur: J'ai travaillé en tant que responsable marketing dans une entreprise de technologie.
+Chatbot: Super! Assurez-vous de décrire vos réalisations spécifiques en tant que responsable marketing, telles que l'augmentation du nombre de prospects ou le lancement de campagnes réussies.

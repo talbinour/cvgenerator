@@ -1,0 +1,55 @@
+[
+    {
+        "tag": "greeting",
+        "patterns": ["Bonjour", "Salut", "Hello"],
+        "responses": ["Bonjour! Comment puis-je vous aider à préparer votre CV aujourd'hui?"]
+    },
+    {
+        "tag": "objectif_professionnel",
+        "patterns": [
+            "Comment rédiger mon objectif professionnel?",
+            "Quoi mettre dans l'objectif de mon CV?",
+            "Aide pour l'objectif professionnel"
+        ],
+        "responses": [
+            "Votre objectif professionnel devrait clairement indiquer vos ambitions et ce que vous apportez à la table. Pourriez-vous me dire quel genre de poste vous intéresse?"
+        ]
+    },
+    {
+        "tag": "competences",
+        "patterns": [
+            "Quelles compétences dois-je inclure dans mon CV?",
+            "Comment choisir les compétences pour mon CV?",
+            "Aide pour lister mes compétences"
+        ],
+        "responses": [
+            "Choisissez des compétences qui mettent en valeur vos capacités et qui sont pertinentes pour le poste que vous visez. Pouvez-vous me décrire le type de compétences que vous avez acquises jusqu'à présent?"
+        ]
+    },
+    {
+        "tag": "experience_professionnelle",
+        "patterns": [
+            "Comment présenter mon expérience professionnelle?",
+            "Aide pour décrire mes expériences antérieures",
+            "Format pour l'expérience professionnelle dans un CV"
+        ],
+        "responses": [
+            "Décrivez vos expériences professionnelles en commençant par le plus récent. Mentionnez votre titre, la période de travail, le nom de l'entreprise, et quelques points clés de vos responsabilités et réalisations. Avez-vous besoin d'aide pour formuler ces descriptions?"
+        ]
+    },
+    {
+        "tag": "education",
+        "patterns": [
+            "Comment lister ma formation dans mon CV?",
+            "Aide pour la section éducation de mon CV"
+        ],
+        "responses": [
+            "Listez vos diplômes dans l'ordre chronologique inverse, en commençant par le plus récent. Incluez le nom de l'institution, les dates de vos études, et votre spécialisation. Avez-vous des qualifications particulières que vous souhaitez discuter?"
+        ]
+    },
+    {
+        "tag": "farewell",
+        "patterns": ["Merci pour l'aide", "C'est tout pour aujourd'hui", "Au revoir"],
+        "responses": ["Vous êtes le bienvenu! N'hésitez pas à revenir si vous avez d'autres questions.", "Bonne chance avec votre CV! N'hésitez pas à revenir pour plus de conseils."]
+    }
+]

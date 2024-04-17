@@ -31,6 +31,7 @@ li {
 .logo-png {
   width: 50px; /* Taille du logo ajustée */
   height: auto; /* Hauteur automatique pour maintenir les proportions */
+
 }
 
 .nav-links {
@@ -105,6 +106,7 @@ button {
   z-index: 1000;
   width: 200px;
   margin-right: 10px;
+  
 }
 
 .profile-menu-box ul {
@@ -147,6 +149,7 @@ button {
 .profile-icon {
   margin-right: 8px;
   font-size: 20px;
+  
 }
 
 /* Styles pour l'avatar */
@@ -157,4 +160,5 @@ button {
   margin-right: 10px; /* Espacement de l'avatar par rapport aux autres éléments */
   background-color: #f3f4f6;
   padding: 1px;
+  
 }

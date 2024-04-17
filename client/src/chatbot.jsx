@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
 
 const Chat = () => {
@@ -6,7 +8,7 @@ const Chat = () => {
     const [input, setInput] = useState("");
 
     const sendMessage = async (message) => {
-        const response = await fetch("http://localhost:5000/chat", { // Modifier l'URL en fonction du port de votre serveur Flask
+        const response = await fetch("http://localhost:5000/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -25,17 +27,18 @@ const Chat = () => {
     };
 
     return (
-        <div className={styles.container}> {/* Applying className */}
-            <div className={styles.messageContainer}> {/* Applying className */}
+        <div className={styles.container}>
+            <div className={styles.messageContainer}>
                 {messages.map((message, index) => (
                     <div key={index} className={`${styles.message} ${message.user === 'me' ? styles.me : styles.bot}`}>
-                        {/* Applying className conditionally */}
                         {message.user}: {message.text}
                     </div>
                 ))}
             </div>
-            <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} /> {/* Applying className */}
-            <button className={styles.sendButton} onClick={handleSendMessage}>Send</button> {/* Applying className */}
+            <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} />
+            <button className={styles.sendButton} onClick={handleSendMessage}>
+                <FontAwesomeIcon icon={faPaperPlane} />
+            </button>
         </div>
     );
 };

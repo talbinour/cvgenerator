@@ -1,0 +1,4 @@
+Utilisateur: J'ai du mal à choisir les compétences à inclure dans la section compétences de mon CV.
+Chatbot: C'est une étape importante. Essayez de sélectionner des compétences qui sont pertinentes pour le poste que vous visez. Quels sont vos points forts dans le domaine professionnel ?
+Utilisateur: Je suis bon en analyse de données et en gestion de projet.
+Chatbot: Excellent choix! L'inclusion de compétences telles que l'analyse de données et la gestion de projet mettra en valeur vos atouts pour le poste.
