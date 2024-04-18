@@ -40,10 +40,8 @@
 /* CV list styles */
 .cvListHorizontal {
   display: flex;
-  overflow-x: auto;
   gap: 20px;
   padding: 10px;
-  margin-top: 10px;
   overflow-x: auto;
 }
 
@@ -53,19 +51,17 @@
 
 .cvListHorizontal::-webkit-scrollbar-track {
   background: #f0f0f0;
-  overflow-x: hidden;
 }
 
 .cvListHorizontal::-webkit-scrollbar-thumb {
   background-color: #c0c0c0;
   border-radius: 10px;
-  overflow-x: hidden;
 }
 
 .cvItem {
-  flex: 0 0 auto; /* Prévient l'agrandissement des items mais permet leur rétrécissement */
-  width: calc(25% - 20px); /* Réduit la largeur pour afficher 4 éléments dans une rangée, ajustez le -20px en fonction du 'gap' */
-  max-height: 400px; /* Ajustez cette valeur pour contrôler la hauteur */
+  flex: 0 0 auto;
+  width: calc(25% - 20px);
+  max-height: 400px;
   background-color: #f3f4f6;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -74,7 +70,6 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
 }
 
 .cvItem:hover {
@@ -96,9 +91,8 @@
 
 .models {
   padding: 20px 0;
-  margin-top: -300px;
+  margin-top: -5%; /* Adjust as needed */
   text-align: center;
-  overflow-x: hidden;
 }
 
 /* Footer styles */

@@ -11,7 +11,7 @@ const { ObjectId } = mongoose.Types;
 const multer = require('multer');
 const path = require('path');
 const CVController = require('../controllers/CVController');
-
+const editRouter = require('../editcv');
 // Configure storage for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -55,7 +55,7 @@ router.get('/getCVs', cvController.getCVs);
 router.get('/getCVById/:id', cvController.getCVById);
 router.put('/updateCV/:id', cvController.updateCV);
 router.delete('/deleteCV/:id', cvController.deleteCV);
-
+router.use('/', editRouter); // Use the edit router here
 // Create an instance of AuthController
 const authControllerInstance = new AuthController();
 
