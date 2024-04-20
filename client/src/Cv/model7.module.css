@@ -6,6 +6,7 @@
     font-family: 'Poppins', sans-serif;
 
 }
+
 .print-area
 {
     background: rgb(128, 138, 226);
@@ -245,4 +246,38 @@ background: rgb(31, 8, 148);
     width: 20px;
 }
 
+/* Ajoutez ces styles à votre fichier CSS */
 
+.editButton {
+    position: absolute;
+    top: 20px;
+    left:107%;
+    right: 10px;
+    opacity: 0.7;
+    font-size: 45px; /* Taille de l'icône */
+  }
+  
+  .editButton a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .editButton a:hover {
+    opacity: 1;
+  }
+  
+/* Styles pour les champs d'entrée */
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 16px;
+  }
+  
+  .input:focus {
+    border-color: #007bff; /* Couleur du bordure lorsqu'il est en focus */
+  }
+  
