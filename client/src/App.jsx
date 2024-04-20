@@ -4,6 +4,7 @@ import Login from './Login'; // Make sure the path is correct
 import SignUp from './SignUp'; // Make sure the path is correct
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from "./component/Navbar"; // Make sure "component" spelling is correct in your directory structure
+import Footer from './component/Footer'; // Importez le composant Footer
 import Home from "./component/Home";
 import About from "./component/About";
 import Services from "./component/Services";
@@ -30,6 +31,7 @@ import Model6 from "./Cv/model6";
 import Model7 from "./Cv/model7";
 import Model8 from "./Cv/model8";
 import Chatbot from "./chatbot";
+import TestUpdate from './TestUpdate';
 function App() {
   return (
     <>
@@ -39,6 +41,7 @@ function App() {
         <Routes>
         <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />}  />
+          <Route path='/test' element={<TestUpdate />}  />
           <Route path='/skills' element={<Skills />}  />
           <Route path='/login' element={<Login />}  />
           <Route path='/services' element={<Services />} />
@@ -68,6 +71,7 @@ function App() {
           {/* <Route path='/login' element={<Login />} exact />
               <Route path='/signup' element={<SignUp />} exact /> */}
         </Routes>
+        <Footer /> {/* Ajoutez le composant Footer ici */}
       </Router>
     </>
   );
