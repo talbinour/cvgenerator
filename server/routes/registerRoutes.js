@@ -34,7 +34,8 @@ router.post('/', async (req, res) => {
       genre, // Added gender
       pays ,  // Added country
       emailToken,
-      isVerified: false
+      isVerified: false,
+      photo
     });
 
     await user.save();
