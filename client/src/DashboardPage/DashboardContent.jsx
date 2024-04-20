@@ -1,42 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const DashboardContent = () => {
-  const { cvId } = useParams();
-  const [imageUrl, setImageUrl] = useState('');
+const DashboardContent = ({ cv }) => {
+  const navigate = useNavigate();
+  const { Id } = useParams(); // Récupérer cvId et _id depuis les paramètres de l'URL
 
-  useEffect(() => {
-    const fetchImageUrl = async () => {
-      try {
-        if (cvId) {
-          const response = await axios.get(`http://localhost:8080/getImage/${cvId}`);
-          if (response.data && response.data.imageUrl) {
-            setImageUrl(response.data.imageUrl);
-          } else {
-            console.error('Image URL not found in response data');
-          }
-        } else {
-          console.error('CV ID not provided in the URL');
-        }
-      } catch (error) {
-        console.error('Error fetching image URL:', error);
-      }
-    };
-  
-    fetchImageUrl();
-  }, [cvId]);
+  const handleEditCV = () => {
+    navigate(`/edit-cv/${Id}`); // Utiliser _id également dans la navigation
+  };
+
+  // Valider que cv est bien un objet et qu'il contient une propriété imageURL
+  const imageUrl = cv && typeof cv === 'object' && cv.imageURL ? cv.imageURL : '';
 
   return (
     <section className='hero'>
       <h1>DashboardContent</h1>
-      {imageUrl && (
-        <a href={imageUrl} target="_blank" rel="noopener noreferrer">
-          <img src={imageUrl} alt='CV' />
-        </a>
-      )}
+      {/* Image cliquable */}
+      <button onClick={handleEditCV}>
+        <img src={imageUrl} alt='CV' />
+      </button>
     </section>
   );
+};
+
+// Valider les props
+DashboardContent.propTypes = {
+  cv: PropTypes.shape({
+    imageURL: PropTypes.string // Assurez-vous que imageURL est une chaîne de caractères
+  }).isRequired, // Assurez-vous que cv est un objet contenant les données du CV
 };
 
 export default DashboardContent;
