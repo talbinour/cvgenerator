@@ -14,25 +14,22 @@ const CVController = require('../controllers/CVController');
 const editRouter = require('../editcv');
 // Configure storage for multer
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Set your upload directory
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Set your upload directory
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
 });
-
-// Set up multer with the configured storage and increased size limit to 100KB
-// Set up multer with the configured storage and increased file size limit to 2MB (2000000 bytes)
+  
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 50000000 }, // 2 MB in bytes
-  });
+    limits: { fileSize: 100000 }, // 100 KB in bytes
+});
   
-
 // Define your routes
 router.post('/createUser', UserController.createUser);
-router.put('/updateUser/:userId', upload.single('profileImage'), UserController.updateUser);
+router.put('/updateUser/:userId', upload.single('photo'), UserController.updateUser);
 router.delete('/deleteUser/:userId', UserController.deleteUser);
 router.get('/getAllUsers', UserController.getAllUsers);
 router.put('/deleteAttribute/:userId', UserController.deleteAttribute);

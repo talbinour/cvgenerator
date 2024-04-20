@@ -3,7 +3,12 @@ import React from 'react';
 import Login from './Login';
 import SignUp from './SignUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
+<<<<<<< HEAD
 import Navbar from "./component/Navbar";
+=======
+import Navbar from "./component/Navbar"; // Make sure "component" spelling is correct in your directory structure
+import Footer from './component/Footer'; // Importez le composant Footer
+>>>>>>> f2490cfc562017881760909fa9a949cc271cad5b
 import Home from "./component/Home";
 import About from "./component/About";
 import Services from "./component/Services";
@@ -32,17 +37,29 @@ import Model8 from "./Cv/model8";
 import Edit from "./Cv/edit";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
+<<<<<<< HEAD
 
+=======
+import TestUpdate from './TestUpdate';
+>>>>>>> f2490cfc562017881760909fa9a949cc271cad5b
 function App() {
   return (
     <>
       <Router>
         <Navbar currentUser={null} />
         <Routes>
+<<<<<<< HEAD
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
           <Route path='/skills' element={<Skills />} />
           <Route path='/login' element={<Login />} />
+=======
+        <Route path='/' element={<Home />} />
+          <Route path='/about' element={<About />}  />
+          <Route path='/test' element={<TestUpdate />}  />
+          <Route path='/skills' element={<Skills />}  />
+          <Route path='/login' element={<Login />}  />
+>>>>>>> f2490cfc562017881760909fa9a949cc271cad5b
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} /> 
@@ -71,6 +88,7 @@ function App() {
           {/* <Route path='/login' element={<Login />} exact />
               <Route path='/signup' element={<SignUp />} exact /> */}
         </Routes>
+        <Footer /> {/* Ajoutez le composant Footer ici */}
       </Router>
     </>
   );
