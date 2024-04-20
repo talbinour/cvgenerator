@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import defaultAvatar from '../assets/profile.png'; // Importer l'image par défaut
 import { BsPlusCircle } from 'react-icons/bs';
 import axios from 'axios';
-import'./userprofile.css';
+import './userprofile.css';
 
 const UserProfile = () => {
   const [userId, setUserId] = useState('');
@@ -12,37 +11,37 @@ const UserProfile = () => {
   const [email, setEmail] = useState('');
   const [pays, setPays] = useState('');
   const [dateNaissance, setDateNaissance] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
   const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [userPhoto, setUserPhoto] = useState(null); // État pour stocker l'image de l'utilisateur
-  const inputRef = useRef(null); // Référence pour le champ de fichier
-
+  const [userPhoto, setUserPhoto] = useState(null); 
+  const [selectedImage, setSelectedImage] = useState(null); 
+  const inputRef = useRef(null); 
+  
+ 
+// Modifier la fonction useEffect pour récupérer l'URL de l'image de profil de l'utilisateur
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     if (token) {
       axios
-        .get('http://localhost:8080/current-username', { withCredentials: true })
-        .then((response) => {
-          const userData = response.data.user;
-          const userId = userData.id || userData.user_id;
+          .get('http://localhost:8080/current-username', { withCredentials: true })
+          .then((response) => {
+              const userData = response.data.user;
+              const userId = userData.id || userData.user_id;
 
-          setUserId(userId);
-          setNom(userData.nom);
-          setPrenom(userData.prenom);
-          setNbphone(userData.Nbphone);
-          setEmail(userData.email);
-          setDateNaissance(userData.date_naissance);
-          setPays(userData.pays);
+              setUserId(userId);
+              setNom(userData.nom);
+              setPrenom(userData.prenom);
+              setNbphone(userData.Nbphone);
+              setEmail(userData.email);
+              setDateNaissance(userData.date_naissance);
+              setPays(userData.pays);
 
-          // Vérifier si l'utilisateur a une photo
-          if (userData.photo) {
-            setUserPhoto(userData.photo);
-          }
-        })
-        .catch((error) => {
-          console.error('Erreur lors de la récupération des informations utilisateur:', error);
-        });
+              // Récupérer l'URL de l'image de profil de l'utilisateur
+              setUserPhoto(userData.photo);
+          })
+          .catch((error) => {
+              console.error('Erreur lors de la récupération des informations utilisateur:', error);
+          });
     }
   }, []);
 
@@ -54,35 +53,26 @@ const UserProfile = () => {
         return;
       }
 
-      const updatedUserData = {
-        nom,
-        prenom,
-        Nbphone,
-        email,
-        date_naissance: dateNaissance,
-        user_id: userId,
-        pays: pays,
-      };
-
+      const formData = new FormData();
+      formData.append('userId', userId);
+      formData.append('nom', nom);
+      formData.append('prenom', prenom);
+      formData.append('Nbphone', Nbphone);
+      formData.append('email', email);
+      formData.append('date_naissance', dateNaissance);
+      formData.append('pays', pays);
       if (selectedImage) {
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-
-        await axios.post(`http://localhost:8080/updateUserPhoto/${userId}`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Mettre à jour l'image affichée après le téléchargement
-        setUserPhoto(URL.createObjectURL(selectedImage));
+        formData.append('photo', selectedImage);
       }
 
-      const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, updatedUserData, {
+      const response = await axios.put(`http://localhost:8080/updateUser/${userId}`, formData, {
         headers: {
+          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       });
+
+      setUserPhoto(response.data.user.photo);
 
       setNom(response.data.user.nom);
       setPrenom(response.data.user.prenom);
@@ -97,11 +87,20 @@ const UserProfile = () => {
     } catch (error) {
       console.error('Error updating user information:', error);
     }
+    console.log('New user photo:', userPhoto);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUserPhoto(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -110,7 +109,9 @@ const UserProfile = () => {
         <div className="glass-container w-70">
           <div className="profile-container">
             <div className="image-container">
-              <img src={userPhoto || defaultAvatar} className="profile_img" alt="avatar" />
+            {userPhoto && (
+              <img src="uploads\Capture d'Ã©cran 2024-03-18 120850 (1).png" alt="Nom de l'image" />
+            )}
               <button className="edit-image-button" onClick={() => inputRef.current.click()}>
                 <BsPlusCircle size={24} color="#1f4172" type="button" />
               </button>
@@ -120,6 +121,7 @@ const UserProfile = () => {
                 accept="image/jpeg, image/jpg, image/png"
                 style={{ display: 'none' }}
                 onChange={handleImageChange}
+                name="profileImage" 
               />
             </div>
             <div className="profile-details">
@@ -200,7 +202,17 @@ const UserProfile = () => {
           {updateSuccess && <div className="alert success">Mise à jour réussie !</div>}
         </div>
       </div>
+       {/* Affichage de l'image de profil dans un conteneur distinct */}
+       <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '10px' }}>
+        <h2>Profile Photo</h2>
+        {userPhoto ? (
+          <img src={userPhoto} alt="Profile" style={{ maxWidth: '300px' }} />
+        ) : (
+          <p>No profile photo available</p>
+        )}
+      </div>
     </div>
+    
   );
 };
 
