@@ -1,9 +1,9 @@
 import './App.css';
-import React from 'react';// Removed the commented-out import
-import Login from './Login'; // Make sure the path is correct
-import SignUp from './SignUp'; // Make sure the path is correct
+import React from 'react';
+import Login from './Login';
+import SignUp from './SignUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from "./component/Navbar"; // Make sure "component" spelling is correct in your directory structure
+import Navbar from "./component/Navbar";
 import Home from "./component/Home";
 import About from "./component/About";
 import Services from "./component/Services";
@@ -32,22 +32,21 @@ import Model8 from "./Cv/model8";
 import Edit from "./Cv/edit";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
+
 function App() {
   return (
     <>
       <Router>
-      <Navbar currentUser={null} />
-
+        <Navbar currentUser={null} />
         <Routes>
-        <Route path='/' element={<Home />} />
-          <Route path='/about' element={<About />}  />
-          <Route path='/skills' element={<Skills />}  />
-          <Route path='/login' element={<Login />}  />
+          <Route path='/' element={<Home />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/skills' element={<Skills />} />
+          <Route path='/login' element={<Login />} />
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} /> 
-          <Route path="/DashboardContent" element={<DashboardContent />} /> 
-          <Route path="/resumes" element={<ResumesPage />} />           
+          <Route path="/dashboard/:cvId" element={<DashboardContent />} />          <Route path="/resumes" element={<ResumesPage />} />           
           <Route path="/JobOffers" element={<JobOffersPage />} /> 
           <Route path="/contact" element={<Contact />} />                     
           <Route path="/Applications" element={<ApplicationsPage />} />           

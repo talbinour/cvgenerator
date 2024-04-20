@@ -21,7 +21,7 @@ bot = ChatBot(
     ]
 )
 
-# Function to load and train from custom JSON
+# Charger et entraîner à partir du JSON personnalisé
 def train_from_json(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
@@ -32,7 +32,7 @@ def train_from_json(file_path):
                     for response in entry["responses"]:
                         trainer.train([pattern, response])
 
-# Train from the provided conversations.json
+# Entraîner à partir du fichier conversations.json fourni
 train_from_json("conversations.json")
 
 @app.route("/chat", methods=["POST"])
@@ -44,8 +44,8 @@ def chat():
 @app.route("/profile", methods=["POST"])
 def profile():
     data = request.json
-    # Implement actual profile handling here
-    return jsonify({"message": "User profile data saved successfully."})
+    # Implémentez ici la gestion réelle des profils
+    return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8080)  # Assurez-vous que le serveur Flask écoute sur le port 8080
