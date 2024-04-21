@@ -33,6 +33,7 @@ import Model8 from "./Cv/model8";
 import Edit from "./Cv/edit";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
+import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
           <Route path='/login' element={<Login />} />
         <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />}  />
+          <Route path='/cvselection' element={<CVSelection />}  />
           <Route path='/test' element={<TestUpdate />}  />
           <Route path='/skills' element={<Skills />}  />
           <Route path='/login' element={<Login />}  />
@@ -72,7 +74,7 @@ function App() {
           <Route path='/Model8' element={<Model8/>} />
           <Route path='/edit-cv' element={<Edit/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
-          <Route path='/chatbot' element={<Chatbot/>} />
+          <Route path='/chatbot/:cvId' element={<Chatbot />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />

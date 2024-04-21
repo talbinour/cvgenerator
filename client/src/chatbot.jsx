@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
-import Edit from './Cv/edit'; // Importez le composant Edit
+import PropTypes from 'prop-types'; // Importez PropTypes pour la validation des props
 
-const Chat = () => {
+const Chat = ({ selectedCV }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
 
@@ -45,11 +45,22 @@ const Chat = () => {
                 </div>
             </div>
             <div className={styles.rightPanel}>
-                {/* Affichez le composant Edit ici */}
-                <Edit />
+                {/* Affichez le CV sélectionné ici */}
+                {selectedCV && (
+                    <img src={selectedCV.imageURL} alt={`CV ${selectedCV.cvId}`} className={styles.cvImage} />
+                )}
             </div>
         </div>
     );
+};
+
+// Validation des props
+Chat.propTypes = {
+    selectedCV: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        imageURL: PropTypes.string.isRequired,
+        cvId: PropTypes.string.isRequired
+    })
 };
 
 export default Chat;

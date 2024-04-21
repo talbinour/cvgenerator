@@ -1,34 +1,68 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-const DashboardContent = ({ cv }) => {
-  const navigate = useNavigate();
-  const { Id } = useParams(); // Récupérer cvId et _id depuis les paramètres de l'URL
+const Dashboard = () => {
+  const [currentUserCV, setCurrentUserCV] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [cvId, setCvId] = useState(null);
 
-  const handleEditCV = () => {
-    navigate(`/edit-cv/${Id}`); // Utiliser _id également dans la navigation
-  };
+  useEffect(() => {
+    const fetchCvId = async () => {
+      try {
+        if (!cvId) return; // Vérifiez que cvId n'est pas null
 
-  // Valider que cv est bien un objet et qu'il contient une propriété imageURL
-  const imageUrl = cv && typeof cv === 'object' && cv.imageURL ? cv.imageURL : '';
+        const response = await axios.get(`http://localhost:8080/getCVById/${cvId}`);
+        const data = response.data;
+        setCvId(data._id); // Suppose que votre réponse contient un champ cvId
+      } catch (error) {
+        console.error('Error fetching CV ID:', error);
+      }
+    };
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios
+        .get('http://localhost:8080/current-username', { withCredentials: true })
+        .then((response) => {
+          const userData = response.data.user;
+          const userId = userData.id || userData.user_id;
+          setUserId(userId);
+        })
+        .catch((error) => {
+          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        });
+    }
+
+    const fetchCurrentUserCV = async () => {
+      try {
+        if (!userId) return;
+
+        const response = await axios.get(`http://localhost:8080/user/${userId}/cv/${cvId}`);
+        const currentUserCVData = response.data;
+        setCurrentUserCV(currentUserCVData);
+      } catch (error) {
+        console.error('Error fetching current user CV:', error);
+      }
+    };
+
+    fetchCurrentUserCV();
+    fetchCvId(); // Correction de l'appel à fetchCvId
+  }, [userId, cvId]);
 
   return (
-    <section className='hero'>
-      <h1>DashboardContent</h1>
-      {/* Image cliquable */}
-      <button onClick={handleEditCV}>
-        <img src={imageUrl} alt='CV' />
-      </button>
-    </section>
+    <div>
+      <h1>Dashboard</h1>
+      {currentUserCV ? (
+        <div>
+          <h2>{currentUserCV.title}</h2>
+          <p>{currentUserCV.description}</p>
+          <img src={currentUserCV.imageUrl} alt="CV" />
+        </div>
+      ) : (
+        <p>No CV available for the current user</p>
+      )}
+    </div>
   );
 };
 
-// Valider les props
-DashboardContent.propTypes = {
-  cv: PropTypes.shape({
-    imageURL: PropTypes.string // Assurez-vous que imageURL est une chaîne de caractères
-  }).isRequired, // Assurez-vous que cv est un objet contenant les données du CV
-};
-
-export default DashboardContent;
+export default Dashboard;
