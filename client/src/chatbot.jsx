@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
+import Edit from './Cv/edit'; // Importez le composant Edit
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
@@ -27,18 +28,26 @@ const Chat = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.messageContainer}>
-                {messages.map((message, index) => (
-                    <div key={index} className={`${styles.message} ${message.user === 'me' ? styles.me : styles.bot}`}>
-                        {message.user}: {message.text}
+        <div className={styles.pageWrapper}>
+            <div className={styles.leftPanel}>
+                <div className={styles.container}>
+                    <div className={styles.messageContainer}>
+                        {messages.map((message, index) => (
+                            <div key={index} className={`${styles.message} ${message.user === 'me' ? styles.me : styles.bot}`}>
+                                {message.user}: {message.text}
+                            </div>
+                        ))}
                     </div>
-                ))}
+                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} />
+                    <button className={styles.sendButton} onClick={handleSendMessage}>
+                        <FontAwesomeIcon icon={faPaperPlane} />
+                    </button>
+                </div>
             </div>
-            <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} />
-            <button className={styles.sendButton} onClick={handleSendMessage}>
-                <FontAwesomeIcon icon={faPaperPlane} />
-            </button>
+            <div className={styles.rightPanel}>
+                {/* Affichez le composant Edit ici */}
+                <Edit />
+            </div>
         </div>
     );
 };

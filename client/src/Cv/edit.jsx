@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
-import styles from './model7.module.css'; 
-import axios from 'axios'; // Importer Axios pour effectuer des requêtes HTTP
+import styles from './model7.module.css';
+import axios from 'axios'; 
 
-const ParentComponent = () =>  {
-  const [currentCVId, setCurrentCVId] = useState(null); // Utiliser setCurrentCVId pour mettre à jour l'identifiant du CV
+const ParentComponent = () => {
+  const [currentCVId, setCurrentCVId] = useState(null);
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -16,7 +16,7 @@ const ParentComponent = () =>  {
     email: 'emmi@gmail.com',
     website: 'mywebsite.com',
     linkedin: 'www.linkedin.com',
-    address: '56th street, california',// Initialiser avec un tableau vide
+    address: '56th street, california',
     education: [
       { period: '2017 - 2019', degree: 'Matric in Science', institution: 'School Name' },
       { period: '2019 - 2021', degree: 'Intermediate in Maths', institution: 'College Name' },
@@ -27,73 +27,69 @@ const ParentComponent = () =>  {
       { name: 'Urdu', proficiency: 80 }
     ]
   });
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Charger le modèle de CV depuis le serveur lors du chargement du composant
-    loadCVFromServer();
-  }, []);
-  const getCurrentUserId = () => {
     const token = localStorage.getItem('token');
-  
+
     if (token) {
-      axios.get('http://localhost:8080/current-username', { withCredentials: true })
-        .then(response => {
-          setCurrentCVId(response.data.user.id); // Utiliser setCurrentCVId pour mettre à jour l'ID du CV
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
-        });
+      axios
+          .get('http://localhost:8080/current-username', { withCredentials: true })
+          .then((response) => {
+              const userData = response.data.user;
+              const userId = userData.id || userData.user_id;
+
+              setUserId(userId);
+              setCurrentCVId(userId); // Set currentCVId with userId
+              setCvModel({
+                ...cvModel,
+                name: userData.nom,
+                jobTitle: userData.prenom,
+                phone: userData.Nbphone,
+                email: userData.email,
+                address: userData.pays,
+                // Assuming other properties are similar
+              });
+          })
+          .catch((error) => {
+              console.error('Erreur lors de la récupération des informations utilisateur:', error);
+          });
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadCVFromServer();
+  }, [userId]);
+
   const loadCVFromServer = async () => {
     try {
-      // Obtenez de manière synchrone l'ID de l'utilisateur actuel
-      const userId = await getCurrentUserId();
-      if (!userId) {
-        console.error('User ID is undefined');
-        return;
-      }
-  
-      // Obtenez l'ID du CV (remplacez cette logique par votre propre méthode)
-      const cvId = getCurrentCVId(); // Utilisez getCurrentCVId pour obtenir l'ID du CV
+      const cvId = getCurrentCVId();
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
-  
-      // Faire une requête GET au serveur pour récupérer le CV
+
       const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
-      // Mettre à jour le state avec les données récupérées
       setCvModel(response.data);
     } catch (error) {
       console.error('Error loading CV:', error);
     }
   };
-  
 
-  const saveCVToServer = async (userId) => { // Ajoutez userId comme argument
-  try {
-    if (!userId) {
-      console.error('User ID is undefined');
-      return;
+  const saveCVToServer = async () => {
+    try {
+      const cvId = getCurrentCVId();
+      if (!cvId) {
+        console.error('CV ID is undefined');
+        return;
+      }
+
+      const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
+      console.log('CV saved successfully:', response.data);
+    } catch (error) {
+      console.error('Error saving CV:', error);
     }
-
-    const cvId = getCurrentCVId();
-    if (!cvId) {
-      console.error('CV ID is undefined');
-      return;
-    }
-
-    const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
-    console.log('CV saved successfully:', response.data);
-  } catch (error) {
-    console.error('Error saving CV:', error);
-  }
-};
-
-  
-  // Fonction pour récupérer l'ID de l'utilisateur actuellement connecté
-  
+  };
 
   const handleChangeLanguageName = (e, index) => {
     const newLanguages = [...cvModel.languages];
@@ -115,7 +111,7 @@ const ParentComponent = () =>  {
             onChange={(e) => setCurrentCVId(e.target.value)}
             placeholder="Enter CV ID"
           />
-          <button onClick={saveCVToServer}><i className="fas fa-save"></i> Save</button>
+          <button onClick={() => saveCVToServer(currentCVId)}><i className="fas fa-save"></i> Save</button>
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
@@ -296,4 +292,3 @@ const ParentComponent = () =>  {
 }
 
 export default ParentComponent;
-

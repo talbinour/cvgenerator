@@ -4,9 +4,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
+from pymongo import MongoClient
 
 app = Flask(__name__)
 CORS(app)
+
+# Connexion à MongoDB
+client = MongoClient("mongodb://localhost:27017/database")
+db = client["chat_db"]
+messages_collection = db["messages"]
 
 bot = ChatBot(
     "chatbot",
@@ -47,5 +53,6 @@ def profile():
     # Implémentez ici la gestion réelle des profils
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
+
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)  # Assurez-vous que le serveur Flask écoute sur le port 8080
+    app.run(debug=True)
