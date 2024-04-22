@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
-import PropTypes from 'prop-types'; // Importez PropTypes pour la validation des props
+import Edit from './Cv/edit'; // Importez le composant Edit
+import axios from 'axios';
 
-const Chat = ({ selectedCV }) => {
+const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
 
@@ -20,11 +21,38 @@ const Chat = ({ selectedCV }) => {
         return data.response;
     };
     
-
+    const saveUserResponseToBackend = async (response) => {
+        try {
+            const saveResponse = await axios.post("http://localhost:5000/profile", { response }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(saveResponse.data.message); // Affichez un message de confirmation
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement de la réponse utilisateur:", error);
+        }
+    };
+    
+    const saveResponseToBackend = async (userInput, botResponse) => {
+        try {
+            const response = await axios.post("http://localhost:5000/save-response", { userInput, botResponse }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response.data.message); // Afficher un message de confirmation
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement de la réponse :", error);
+        }
+    };
+    
     const handleSendMessage = async () => {
         const response = await sendMessage(input);
         setMessages([...messages, { text: input, user: "me" }, { text: response, user: "bot" }]);
         setInput("");
+        saveUserResponseToBackend(input); // Enregistrer la réponse de l'utilisateur vers le backend
+        saveResponseToBackend(input, response); // Enregistrer la réponse vers le backend
     };
 
     return (
@@ -45,22 +73,11 @@ const Chat = ({ selectedCV }) => {
                 </div>
             </div>
             <div className={styles.rightPanel}>
-                {/* Affichez le CV sélectionné ici */}
-                {selectedCV && (
-                    <img src={selectedCV.imageURL} alt={`CV ${selectedCV.cvId}`} className={styles.cvImage} />
-                )}
+                {/* Affichez le composant Edit ici */}
+                <Edit />
             </div>
         </div>
     );
-};
-
-// Validation des props
-Chat.propTypes = {
-    selectedCV: PropTypes.shape({
-        _id: PropTypes.string.isRequired,
-        imageURL: PropTypes.string.isRequired,
-        cvId: PropTypes.string.isRequired
-    })
 };
 
 export default Chat;
