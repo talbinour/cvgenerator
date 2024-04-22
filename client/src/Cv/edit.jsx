@@ -140,12 +140,6 @@ const ParentComponent = () => {
     <div className={`${styles['print-area']} ${styles.resume}`}>
       <div className={styles.container}>
         <div className={styles.editButton}>
-          <input
-            type="text"
-            value={currentCVId}
-            onChange={(e) => setCurrentCVId(e.target.value)}
-            placeholder="Enter CV ID"
-          />
           <button onClick={saveCVToServer}><i className="fas fa-save"></i> Save</button>
         </div>
         <div className={styles.left_Side}>
