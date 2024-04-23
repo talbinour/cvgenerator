@@ -3,7 +3,8 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import styles from './model7.module.css';
 import axios from 'axios'; 
-
+import html2pdf from 'html2pdf.js';
+import CvOrResume from './model7';
 const ParentComponent = () => {
   const [currentCVId, setCurrentCVId] = useState(null);
   const getCurrentCVId = () => {
@@ -111,6 +112,26 @@ const ParentComponent = () => {
       [field]: value
     }));
   };
+  const generatePDF = () => {
+    const element = document.getElementById('cv-content');
+    
+    if (!element) {
+      console.error('Element with id "cv-content" not found.');
+      return;
+    }
+  
+    // Options pour la génération du PDF
+    const opt = {
+      margin: 0.5,
+      filename: 'mon_cv.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Générer le PDF
+    html2pdf().from(element).set(opt).save();
+  };
 
   const handleChangeLanguageName = (e, index) => {
     const newLanguages = [...cvModel.languages];
@@ -135,12 +156,15 @@ const ParentComponent = () => {
     newEducation[index][field] = e.target.value;
     setCvModel({ ...cvModel, education: newEducation });
   };
-
+  if (!cvModel) {
+    return <CvOrResume />;
+  }
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
       <div className={styles.container}>
-        <div className={styles.editButton}>
+      <div className={styles.editButton}>
           <button onClick={saveCVToServer}><i className="fas fa-save"></i> Save</button>
+          <button onClick={generatePDF}><i className="fas fa-file-pdf"></i> Download PDF</button>
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
