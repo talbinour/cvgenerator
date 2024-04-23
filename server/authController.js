@@ -177,6 +177,9 @@ class AuthController {
         if (!user) {
             return res.status(401).json({ status: 'User not found' });
         }
+        if (!user.isVerified) {
+          return res.status(403).json({ status: 'Unverified', message: 'Votre compte n\'a pas été vérifié. Veuillez vérifier votre e-mail.' });
+      }
 
         // Temporairement ignorez la comparaison de mot de passe
         const passwordMatch = await bcrypt.compare(trimmedPassword, user.mot_passe);

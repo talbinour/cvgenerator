@@ -59,7 +59,7 @@ const Home = () => {
 
   const handleWriteCVClick = () => {
     if (currentUser) {
-      navigate("/chatbot");
+      navigate("/cvselection");
     } else {
       alert("Vous devez vous connecter pour accéder à cette fonctionnalité.");
       setTimeout(() => {

@@ -63,27 +63,39 @@ const Admin = () => {
 
   const handleUploadClick = async () => {
     console.log('Form data before sending:', formData); // Ajoutez cette ligne pour vérifier le contenu de formData
-
+  
     if (!formData.title || !formData.imageURL || !formData.content || !formData.image) {
       toast.error("Title, image, content, and image URL are required");
       return;
     }
-
+  
     setIsCreatingCV(true); // Démarrez le chargement
-
+  
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Token is missing or undefined. Make sure it is set correctly.');
+        return;
+      }
+  
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('imageURL', formData.imageURL);
+      formDataToSend.append('content', formData.content);
+      formDataToSend.append('image', formData.image);
+  
       const response = await fetch("http://localhost:8080/createCV", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData), // Envoyez les données du formulaire sous forme de JSON
+        body: formDataToSend,
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to create CV");
       }
-
+  
       toast.success("CV created successfully!");
       fetchData();
       setFormData({
@@ -101,6 +113,7 @@ const Admin = () => {
       setIsCreatingCV(false); // Arrêtez le chargement
     }
   };
+  
 
  /*  const handleUpdateClick = async (cvId) => {
     // Update logic here. This is a placeholder.

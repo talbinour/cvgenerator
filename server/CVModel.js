@@ -4,11 +4,11 @@ const { Schema } = mongoose;
 const cvSchema = new Schema({
   userId: {
     type: String,
-    required: true
+    
   },
   cvId: {
     type: String,
-    required: true
+    
   },
   name: String,
   jobTitle: String,

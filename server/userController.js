@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename: function(req, file, cb) {
-        cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
+        cb(null,file.originalname);
     }
 });
 
@@ -25,10 +25,11 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+
 class UserController {
     static async createUser(req, res) {
         try {
-            const { username, password, profile, email } = req.body;
+            const { username, password, profile, email ,photo } = req.body;
             const existingUser = await UserInfo.findOne({ username });
             if (existingUser) {
                 return res.status(400).send({ error: "Username already exists" });

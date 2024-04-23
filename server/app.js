@@ -22,10 +22,10 @@ const router = express.Router(); // Add this line to create an instance of expre
 app.use(express.json());
 app.use(morgan('dev'));
 // Configure bodyParser middleware to handle JSON data with an increased size limit
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50 mb' }));
 
 // You may adjust the limit as needed
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ parameterLimit:100000,limit: "50 mb", extended: true }));
 
 // Configure CORS before routes
 app.use(cors({

@@ -1,9 +1,9 @@
 import './App.css';
-import React from 'react';// Removed the commented-out import
-import Login from './Login'; // Make sure the path is correct
-import SignUp from './SignUp'; // Make sure the path is correct
+import React from 'react';
+import Login from './Login';
+import SignUp from './SignUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from "./component/Navbar"; // Make sure "component" spelling is correct in your directory structure
+import Navbar from "./component/Navbar";
 import Footer from './component/Footer'; // Importez le composant Footer
 import Home from "./component/Home";
 import About from "./component/About";
@@ -29,28 +29,35 @@ import Model4 from "./Cv/model4";
 import Model5 from "./Cv/model5";
 import Model6 from "./Cv/model6";
 import Model7 from "./Cv/model7";
+import ModelUser from "./Cv/model7-user";
 import Model8 from "./Cv/model8";
 import Edit from "./Cv/edit";
+import Edit5 from "./Cv/editmodel5";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
+import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
+
 function App() {
   return (
     <>
       <Router>
-      <Navbar currentUser={null} />
-
+        <Navbar currentUser={null} />
         <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/skills' element={<Skills />} />
+          <Route path='/login' element={<Login />} />
         <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />}  />
+          <Route path='/cvselection' element={<CVSelection />}  />
           <Route path='/test' element={<TestUpdate />}  />
           <Route path='/skills' element={<Skills />}  />
           <Route path='/login' element={<Login />}  />
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
           <Route path="/dashboard" element={<DashboardPage />} /> 
-          <Route path="/DashboardContent" element={<DashboardContent />} /> 
-          <Route path="/resumes" element={<ResumesPage />} />           
+          <Route path="/dashboard/:cvId" element={<DashboardContent />} />          <Route path="/resumes" element={<ResumesPage />} />           
           <Route path="/JobOffers" element={<JobOffersPage />} /> 
           <Route path="/contact" element={<Contact />} />                     
           <Route path="/Applications" element={<ApplicationsPage />} />           
@@ -66,10 +73,12 @@ function App() {
           <Route path='/Model5' element={<Model5 />} />
           <Route path='/Model6' element={<Model6 />} />
           <Route path='/Model7' element={<Model7/>} />
+          <Route path='/model7-user' element={<ModelUser/>} />
           <Route path='/Model8' element={<Model8/>} />
           <Route path='/edit-cv' element={<Edit/>} />
+          <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
-          <Route path='/chatbot' element={<Chatbot/>} />
+          <Route path='/chatbot/:cvId' element={<Chatbot />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />

@@ -35,7 +35,6 @@ router.post('/', async (req, res) => {
       pays ,  // Added country
       emailToken,
       isVerified: false,
-      photo
     });
 
     await user.save();

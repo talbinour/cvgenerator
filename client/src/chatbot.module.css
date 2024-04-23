@@ -1,6 +1,31 @@
 /* chatbot.css */
 
 /* Chat container */
+/* chatbot.css */
+
+/* Container pour la page entière */
+/* chatbot.module.css */
+
+/* Container pour la page entière */
+.pageWrapper {
+    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
+}
+
+/* Style de la partie gauche */
+.leftPanel {
+    flex: 1; /* La partie gauche prendra autant d'espace que possible */
+    padding: 20px;
+    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
+}
+
+/* Style de la partie droite */
+.rightPanel {
+    flex: 1; /* La partie droite prendra autant d'espace que possible */
+    padding: 20px;
+}
+
+
+/* Ajoutez vos styles spécifiques pour la partie gauche et la partie droite ici */
 
 .container {
     max-width: 600px;
