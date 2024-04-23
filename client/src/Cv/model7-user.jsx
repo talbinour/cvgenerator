@@ -3,11 +3,12 @@ import styles from './model7.module.css'; // Assurez-vous d'avoir le fichier mod
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios'; 
-//import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
+import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
 function CvOrResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
+  //const [imageUrl, setImageUrl] = useState('');
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -109,7 +110,52 @@ const generatePDF = () => {
 };
 const Download = () => {
   generatePDF(); // Naviguer vers la route "/chatbot"
+  handleDownload();
 };
+
+const saveImageToDatabase = (userId, imageUrl) => {
+  // Envoyer l'URL de l'image réduite au backend pour l'enregistrement dans la base de données
+  fetch('http://localhost:8080/api/save-image', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId, imageUrl }), // Envoyer également l'ID de l'utilisateur
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Image enregistrée avec succès dans la base de données.');
+      // Afficher un message de réussite à l'utilisateur si nécessaire
+    } else {
+      console.error('Erreur lors de l\'enregistrement de l\'image dans la base de données.');
+      // Afficher un message d'erreur à l'utilisateur si nécessaire
+    }
+  })
+  .catch(error => {
+    console.error('Erreur lors de la communication avec le serveur:', error);
+    // Afficher un message d'erreur à l'utilisateur si nécessaire
+  });
+};
+
+const handleDownload = () => {
+  const element = document.getElementById('cv-content');
+
+  if (!element) {
+    console.error('Element with id "cv-content" not found.');
+    return;
+  }
+
+  htmlToImage.toPng(element, { quality: 0.8, width: 800 }) // Réduire la qualité et les dimensions de l'image
+    .then((url) => {
+      // Enregistrer l'image réduite dans la base de données
+      saveImageToDatabase(userId, url);
+      //compareAndSaveImage(userId, url);
+    })
+    .catch((error) => {
+      console.error('Error converting HTML to image:', error);
+    });
+};
+
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
       <div  id="cv-content" className={styles.container}>

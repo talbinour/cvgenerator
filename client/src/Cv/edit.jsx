@@ -147,227 +147,227 @@ const ParentComponent = () => {
   }
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
-      <div   className={styles.container}>
-      <div className={styles.editButton}>
-          <button onClick={saveCVToServer}><i className="fas fa-save"></i> Terminer</button>
-        </div>
-        <div className={styles.left_Side}>
-          <div className={styles.profileText}>
-            <div className={styles.imgBx}>
-              <img src={avatar} alt="Profile" />  
+        <div   className={styles.container}>
+        <div className={styles.editButton}>
+            <button onClick={saveCVToServer}><i className="fas fa-save"></i> Terminer</button>
+          </div>
+          <div className={styles.left_Side}>
+            <div className={styles.profileText}>
+              <div className={styles.imgBx}>
+                <img src={avatar} alt="Profile" />  
+              </div>
+              <form>
+                <span 
+                  name="name" 
+                  onBlur={handleChange} 
+                  placeholder="Your Name" 
+                  className={styles.input}
+                  contentEditable
+                >{cvModel.name}</span>
+                <span 
+                  name="jobTitle" 
+                  onBlur={handleChange} 
+                  placeholder="Your Job Title" 
+                  className={styles.input}
+                  contentEditable
+                >{cvModel.jobTitle}</span>
+              </form>
             </div>
-            <form>
-              <span 
-                name="name" 
-                onBlur={handleChange} 
-                placeholder="Your Name" 
-                className={styles.input}
-                contentEditable
-              >{cvModel.name}</span>
-              <span 
-                name="jobTitle" 
-                onBlur={handleChange} 
-                placeholder="Your Job Title" 
-                className={styles.input}
-                contentEditable
-              >{cvModel.jobTitle}</span>
-            </form>
-          </div>
-          <div className={styles.contactInfo}>
-            <h3 className={styles.title}>Contact Info</h3>
-            <ul>
-              <li>
-                <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
-                <input
-                  type="text"
-                  value={cvModel.phone}
-                  onChange={(e) => handleChange(e, 'phone')}
-                  className={styles.input}
-                  placeholder="Phone"
-                />
-              </li>
-              <li>
-                <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
-                <input
-                  type="text"
-                  value={cvModel.email}
-                  onChange={(e) => handleChange(e, 'email')}
-                  className={styles.input}
-                  placeholder="Email"
-                />
-              </li>
-              <li>
-                <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
-                <input
-                  type="text"
-                  value={cvModel.website}
-                  onChange={(e) => handleChange(e, 'website')}
-                  className={styles.input}
-                  placeholder="Website"
-                />
-              </li>
-              <li>
-                <span className={styles.icon}><i className="fa fa-linkedin" aria-hidden="true"></i></span>
-                <input
-                  type="text"
-                  value={cvModel.linkedin}
-                  onChange={(e) => handleChange(e, 'linkedin')}
-                  className={styles.input}
-                  placeholder="LinkedIn"
-                />
-              </li>
-              <li>
-                <span className={styles.icon}><i className="fa fa-map-marker" aria-hidden="true"></i></span>
-                <input
-                  type="text"
-                  value={cvModel.address}
-                  onChange={(e) => handleChange(e, 'address')}
-                  className={styles.input}
-                  placeholder="Address"
-                />
-              </li>
-            </ul>
-          </div>
-          <div className={`${styles.contactInfo} ${styles.education}`}>
-            <h3 className={styles.title}>EDUCATION</h3>
-            <ul>
-              {cvModel.education.map((edu, index) => (
-                <li key={index}>
+            <div className={styles.contactInfo}>
+              <h3 className={styles.title}>Contact Info</h3>
+              <ul>
+                <li>
+                  <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
                   <input
                     type="text"
-                    value={edu.period}
-                    onChange={(e) => handleEducationChange(e, index, 'period')}
+                    value={cvModel.phone}
+                    onChange={(e) => handleChange(e, 'phone')}
                     className={styles.input}
-                    contentEditable
-                  />
-                  <input
-                    type="text"
-                    value={edu.degree}
-                    onChange={(e) => handleEducationChange(e, index, 'degree')}
-                    className={styles.input}
-                    contentEditable
-                  />
-                  <input
-                    type="text"
-                    value={edu.institution}
-                    onChange={(e) => handleEducationChange(e, index, 'institution')}
-                    className={styles.input}
-                    contentEditable
+                    placeholder="Phone"
                   />
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div className={`${styles.contactInfo} ${styles.languages}`}>
-            <h3 className={styles.title}>LANGUAGES</h3>
-            <ul>
-              {cvModel.languages && cvModel.languages.map((lang, index) => (
-                <li key={index}>
+                <li>
+                  <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
                   <input
                     type="text"
-                    value={lang.name}
-                    onChange={(e) => handleChangeLanguageName(e, index)}
+                    value={cvModel.email}
+                    onChange={(e) => handleChange(e, 'email')}
+                    className={styles.input}
+                    placeholder="Email"
+                  />
+                </li>
+                <li>
+                  <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
+                  <input
+                    type="text"
+                    value={cvModel.website}
+                    onChange={(e) => handleChange(e, 'website')}
+                    className={styles.input}
+                    placeholder="Website"
+                  />
+                </li>
+                <li>
+                  <span className={styles.icon}><i className="fa fa-linkedin" aria-hidden="true"></i></span>
+                  <input
+                    type="text"
+                    value={cvModel.linkedin}
+                    onChange={(e) => handleChange(e, 'linkedin')}
+                    className={styles.input}
+                    placeholder="LinkedIn"
+                  />
+                </li>
+                <li>
+                  <span className={styles.icon}><i className="fa fa-map-marker" aria-hidden="true"></i></span>
+                  <input
+                    type="text"
+                    value={cvModel.address}
+                    onChange={(e) => handleChange(e, 'address')}
+                    className={styles.input}
+                    placeholder="Address"
+                  />
+                </li>
+              </ul>
+            </div>
+            <div className={`${styles.contactInfo} ${styles.education}`}>
+              <h3 className={styles.title}>EDUCATION</h3>
+              <ul>
+                {cvModel.education.map((edu, index) => (
+                  <li key={index}>
+                    <input
+                      type="text"
+                      value={edu.period}
+                      onChange={(e) => handleEducationChange(e, index, 'period')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                    <input
+                      type="text"
+                      value={edu.degree}
+                      onChange={(e) => handleEducationChange(e, index, 'degree')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                    <input
+                      type="text"
+                      value={edu.institution}
+                      onChange={(e) => handleEducationChange(e, index, 'institution')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={`${styles.contactInfo} ${styles.languages}`}>
+              <h3 className={styles.title}>LANGUAGES</h3>
+              <ul>
+                {cvModel.languages && cvModel.languages.map((lang, index) => (
+                  <li key={index}>
+                    <input
+                      type="text"
+                      value={lang.name}
+                      onChange={(e) => handleChangeLanguageName(e, index)}
+                      className={styles.input}
+                      contentEditable
+                    />
+                    <div className={styles.percentContainer}>
+                      <input
+                        type="number"
+                        value={lang.proficiency}
+                        onChange={(e) => {
+                          const newLanguages = [...cvModel.languages];
+                          newLanguages[index].proficiency = e.target.value;
+                          setCvModel({ ...cvModel, languages: newLanguages });
+                        }}
+                        className={styles.input}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {/* Partie droite */}
+          <div className={styles.right_Side}>
+            <div className={styles.about}>
+              <h2 className={styles.title2}>Profile</h2>
+              <textarea
+                value={cvModel.profile}
+                onChange={(e) => handleChange(e, 'profile')}
+                className={styles.input}
+                placeholder="Profile"
+              />
+            </div>
+            <div className={styles.about}>
+              <h2 className={styles.title2}>Experience</h2>
+              {cvModel.experiences.map((exp, index) => (
+                <div className={styles.box} key={index}>
+                  <div className={styles.year_company}>
+                    <input
+                      type="text"
+                      value={exp.period}
+                      onChange={(e) => handleExperienceChange(e, index, 'period')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                    <input
+                      type="text"
+                      value={exp.companyName}
+                      onChange={(e) => handleExperienceChange(e, index, 'companyName')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                  </div>
+                  <div className={styles.text}>
+                    <input
+                      type="text"
+                      value={exp.jobTitle}
+                      onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
+                      className={styles.input}
+                      contentEditable
+                    />
+                    <textarea
+                      value={exp.description}
+                      onChange={(e) => handleExperienceChange(e, index, 'description')}
+                      className={styles.input}
+                      placeholder="Description"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className={`${styles.about} ${styles.skills}`}>
+              <h2 className={styles.title2}>Professional Skills</h2>
+              {cvModel.professionalSkills.map((skill, index) => (
+                <div className={styles.box} key={index}>
+                  <input
+                    type="text"
+                    value={skill.skillName}
+                    onChange={(e) => handleSkillChange(e, index, 'skillName')}
                     className={styles.input}
                     contentEditable
                   />
-                  <div className={styles.percentContainer}>
+                  <div className={styles.percent}>
                     <input
                       type="number"
-                      value={lang.proficiency}
-                      onChange={(e) => {
-                        const newLanguages = [...cvModel.languages];
-                        newLanguages[index].proficiency = e.target.value;
-                        setCvModel({ ...cvModel, languages: newLanguages });
-                      }}
+                      value={skill.proficiency}
+                      onChange={(e) => handleSkillChange(e, index, 'proficiency')}
                       className={styles.input}
                     />
                   </div>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
+            <div className={styles.AboutInterest}>
+              <h2 className={styles.title2}>Interest</h2>
+              <ul contentEditable={true}>
+                {cvModel.interests.map((interest, index) => (
+                  <li key={index}><i className="fa fa-circle" aria-hidden="true"></i>{interest}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-        {/* Partie droite */}
-        <div className={styles.right_Side}>
-          <div className={styles.about}>
-            <h2 className={styles.title2}>Profile</h2>
-            <textarea
-              value={cvModel.profile}
-              onChange={(e) => handleChange(e, 'profile')}
-              className={styles.input}
-              placeholder="Profile"
-            />
-          </div>
-          <div className={styles.about}>
-            <h2 className={styles.title2}>Experience</h2>
-            {cvModel.experiences.map((exp, index) => (
-              <div className={styles.box} key={index}>
-                <div className={styles.year_company}>
-                  <input
-                    type="text"
-                    value={exp.period}
-                    onChange={(e) => handleExperienceChange(e, index, 'period')}
-                    className={styles.input}
-                    contentEditable
-                  />
-                  <input
-                    type="text"
-                    value={exp.companyName}
-                    onChange={(e) => handleExperienceChange(e, index, 'companyName')}
-                    className={styles.input}
-                    contentEditable
-                  />
-                </div>
-                <div className={styles.text}>
-                  <input
-                    type="text"
-                    value={exp.jobTitle}
-                    onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
-                    className={styles.input}
-                    contentEditable
-                  />
-                  <textarea
-                    value={exp.description}
-                    onChange={(e) => handleExperienceChange(e, index, 'description')}
-                    className={styles.input}
-                    placeholder="Description"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className={`${styles.about} ${styles.skills}`}>
-            <h2 className={styles.title2}>Professional Skills</h2>
-            {cvModel.professionalSkills.map((skill, index) => (
-              <div className={styles.box} key={index}>
-                <input
-                  type="text"
-                  value={skill.skillName}
-                  onChange={(e) => handleSkillChange(e, index, 'skillName')}
-                  className={styles.input}
-                  contentEditable
-                />
-                <div className={styles.percent}>
-                  <input
-                    type="number"
-                    value={skill.proficiency}
-                    onChange={(e) => handleSkillChange(e, index, 'proficiency')}
-                    className={styles.input}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className={styles.AboutInterest}>
-            <h2 className={styles.title2}>Interest</h2>
-            <ul contentEditable={true}>
-              {cvModel.interests.map((interest, index) => (
-                <li key={index}><i className="fa fa-circle" aria-hidden="true"></i>{interest}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

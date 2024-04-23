@@ -1,7 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const CvModel = require('./CVModel'); // Importez votre modèle de CV
+const CvModel = require('./CV'); // Importez votre modèle de CV
+const ImageModel = require('./ImageModel');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
 
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null,file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(new Error('Invalid file type. Only JPEG and PNG files are allowed.'), false);
+    }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+      fileSize: 10 * 1024 * 1024, // 10 MB limit, adjust as needed
+  },
+  fileFilter: fileFilter
+});
 // Enregistrer un CV spécifique par son ID
 router.put('/cv/:userId/:cvId/', async (req, res) => {
   try {
@@ -55,5 +82,32 @@ router.get('/cv/:userId/:cvId', async (req, res) => {
     res.status(500).json({ error: 'Failed to load CV' });
   }
 });
+router.post('/api/save-reduced-image', upload.single('cv-content'), async (req, res) => {
+  try {
+    const { userId, reducedImageUrl } = req.body;
+
+    // Vérifiez si l'URL de l'image réduite et l'ID de l'utilisateur sont fournis
+    if (!userId || !reducedImageUrl) {
+      return res.status(400).json({ error: 'L\'URL de l\'image réduite ou l\'ID de l\'utilisateur est manquant.' });
+    }
+
+    // Créez un nouvel objet d'image en utilisant le modèle approprié
+    const newImage = new ImageModel({
+      userId: userId,
+      reducedImageUrl: reducedImageUrl,
+    });
+
+    // Enregistrez l'image réduite dans la base de données
+    const savedImage = await newImage.save();
+
+    // Envoyer une réponse de réussite au frontend
+    res.status(201).json({ message: 'Image réduite enregistrée avec succès dans la base de données.' });
+  } catch (error) {
+    console.error('Erreur lors de l\'enregistrement de l\'image réduite dans la base de données:', error);
+    // Envoyer une réponse d'erreur au frontend
+    res.status(500).json({ error: 'Erreur lors de l\'enregistrement de l\'image réduite dans la base de données.' });
+  }
+});
+
 
 module.exports = router;

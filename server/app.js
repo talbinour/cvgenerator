@@ -11,7 +11,6 @@ const CVRoutes = require('./routes/route'); // Importez vos routes CV
 // Import MongoDB models
 const UserInfo = require('./userDetails');
 const AuthController = require('./authController');
-
 // Load environment variables
 dotenv.config();
 
@@ -41,7 +40,7 @@ app.use('/uploads', express.static('uploads'));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ parameterLimit:500000,limit: '50mb', extended: true }));
 app.use('/cv', CVRoutes);
 
 // Connect to MongoDB
