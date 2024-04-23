@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
-import styles from './model7.module.css';
+import styles from './edit.module.css';
 import axios from 'axios'; 
-import html2pdf from 'html2pdf.js';
 import CvOrResume from './model7';
+import {  useNavigate } from "react-router-dom";
+
+//import { Link } from 'react-router-dom';
 const ParentComponent = () => {
+  const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
   const getCurrentCVId = () => {
     return currentCVId;
@@ -100,6 +103,8 @@ const ParentComponent = () => {
 
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
+      navigate("/model7-user");
+
     } catch (error) {
       console.error('Error saving CV:', error);
     }
@@ -112,27 +117,8 @@ const ParentComponent = () => {
       [field]: value
     }));
   };
-  const generatePDF = () => {
-    const element = document.getElementById('cv-content');
-    
-    if (!element) {
-      console.error('Element with id "cv-content" not found.');
-      return;
-    }
   
-    // Options pour la génération du PDF
-    const opt = {
-      margin: 0.5,
-      filename: 'mon_cv.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-
-    // Générer le PDF
-    html2pdf().from(element).set(opt).save();
-  };
-
+  
   const handleChangeLanguageName = (e, index) => {
     const newLanguages = [...cvModel.languages];
     newLanguages[index].name = e.target.value;
@@ -161,10 +147,9 @@ const ParentComponent = () => {
   }
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
-      <div className={styles.container}>
+      <div   className={styles.container}>
       <div className={styles.editButton}>
-          <button onClick={saveCVToServer}><i className="fas fa-save"></i> Save</button>
-          <button onClick={generatePDF}><i className="fas fa-file-pdf"></i> Download PDF</button>
+          <button onClick={saveCVToServer}><i className="fas fa-save"></i> Terminer</button>
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>

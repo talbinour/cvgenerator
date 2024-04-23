@@ -42,7 +42,7 @@ const DashboardPage = () => {
     setShowAlert(true);
   };
   const navigateToChatbot = () => {
-    navigate("/chatbot"); // Naviguer vers la route "/chatbot"
+    navigate("/cvselection"); // Naviguer vers la route "/chatbot"
   };
 
   return (

@@ -5,6 +5,7 @@ import avatar from '../assets/cvprofile.jpeg';
 import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
 
 function CvOrResume() {
+  
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
       <div className={styles.container}>
