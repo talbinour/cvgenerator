@@ -56,8 +56,7 @@ const userDetailsSchema = new mongoose.Schema({
   },
   emailToken: String,
   verificationCode: String,
-  photo: String, 
-  
+  photo: String, // Stocker le chemin de l'image dans la propriété photo  
 });
 userDetailsSchema.methods.comparePassword = async function (candidatePassword) {
   try {

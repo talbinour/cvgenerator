@@ -5,8 +5,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const session = require('express-session');
-const bodyParser = require('body-parser'); // Importez le module bodyParser
+const bodyParser = require('body-parser');
 const CVRoutes = require('./routes/route'); // Importez vos routes CV
+
 
 // Import MongoDB models
 const UserInfo = require('./userDetails');
@@ -20,6 +21,11 @@ const app = express();
 const router = express.Router(); // Add this line to create an instance of express.Router()
 app.use(express.json());
 app.use(morgan('dev'));
+// Configure bodyParser middleware to handle JSON data with an increased size limit
+app.use(bodyParser.json({ limit: '50mb' }));
+
+// You may adjust the limit as needed
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Configure CORS before routes
 app.use(cors({
@@ -27,7 +33,14 @@ app.use(cors({
   origin: 'http://localhost:3000',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 }));
-
+// Middleware for handling CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 // Configure session before passport
 app.use(session({
   secret: process.env.SESSION_SECRET || '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',

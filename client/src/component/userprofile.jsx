@@ -110,7 +110,7 @@ const UserProfile = () => {
           <div className="profile-container">
             <div className="image-container">
             {userPhoto && (
-              <img src="uploads\Capture d'Ã©cran 2024-03-18 120850 (1).png" alt="Nom de l'image" />
+              <img src={`http://localhost:8080/${userPhoto}`} className="profile_img" alt="avatar" />
             )}
               <button className="edit-image-button" onClick={() => inputRef.current.click()}>
                 <BsPlusCircle size={24} color="#1f4172" type="button" />

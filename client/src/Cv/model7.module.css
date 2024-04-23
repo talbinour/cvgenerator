@@ -280,4 +280,25 @@ background: rgb(31, 8, 148);
   .input:focus {
     border-color: #007bff; /* Couleur du bordure lorsqu'il est en focus */
   }
-  
+  /* Suppression des bordures et du fond des inputs */
+.input {
+    border: none; /* Supprime les bordures */
+    background-color: transparent; /* Rend le fond transparent */
+    outline: none; /* Supprime le halo bleu lors de la sélection */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* Si vous voulez également supprimer le style des textareas */
+textarea {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+

@@ -37,7 +37,7 @@ train_from_json("conversations.json")
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_input = request.json.get("message")
+    user_input = request.json.get("message") # type: ignore
     response = str(bot.get_response(user_input))
     return jsonify({"response": response})
 
