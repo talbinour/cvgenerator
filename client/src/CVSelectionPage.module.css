@@ -1,34 +1,37 @@
-.CVSelectionPage-container {
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 800px;
-  }
-  
-  .CVSelectionPage-title {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .CVSelectionPage-cvContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .CVSelectionPage-cvItem {
-    margin: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-  
-  .CVSelectionPage-cvItem:hover {
-    transform: scale(1.05);
-  }
-  
-  .CVSelectionPage-cvImage {
-    width: 200px;
-    height: auto;
-    border-radius: 8px;
-  }
-  
+.CVSelectionPage {
+  margin: 20px auto;
+  padding: 50px; /* Modification du padding pour plus d'espace autour du contenu */
+  max-width: 100%;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.cvContainer {
+  display: grid;
+  padding: 30px; /* Ajout de padding à la grille pour plus d'espace entre les éléments */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Crée une grille flexible avec une largeur minimale de 200px */
+  gap: 20px; /* Ajoute un espacement entre les éléments de la grille */
+}
+
+.cvItem {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  border-color: grey; /* Ajout d'une couleur de bordure grise */
+  border-style: solid; /* Ajout d'un style de bordure solide */
+  border-width: 1px; /* Définition de la largeur de la bordure */
+  border-radius: 8px; /* Ajout d'un rayon de bordure */
+}
+
+.cvItem:hover {
+  transform: scale(1.05);
+}
+
+.cvImage {
+  width: 100%; /* Ajustez la largeur des images pour qu'elles remplissent les conteneurs */
+  height: auto; /* Assurez-vous que la hauteur est ajustée automatiquement pour conserver les proportions */
+  border-radius: 8px;
+}

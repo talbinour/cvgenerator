@@ -2,34 +2,25 @@ const express = require('express');
 const router = express.Router();
 const CvModel = require('./CV'); // Importez votre modèle de CV
 const ImageModel = require('./ImageModel');
-const bcrypt = require('bcrypt');
+const fs = require('fs');
+const sharp = require('sharp');
+const bodyParser = require('body-parser'); // Importez le module bodyParser
+router.use(bodyParser.json({ limit: '50MB' }));
+const path = require('path');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function(req, file, cb) {
-        cb(null,file.originalname);
-    }
-});
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-        cb(null, true);
-    } else {
-        cb(new Error('Invalid file type. Only JPEG and PNG files are allowed.'), false);
-    }
-};
-
-const upload = multer({
-  storage: storage,
-  limits: {
-      fileSize: 10 * 1024 * 1024, // 10 MB limit, adjust as needed
+  destination: function (req, file, cb) {
+    cb(null, 'uploads'); // Définir le répertoire de destination des fichiers téléchargés
   },
-  fileFilter: fileFilter
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Définir le nom du fichier téléchargé
+  }
 });
+
+const upload = multer({ storage: storage });
 // Enregistrer un CV spécifique par son ID
+router.use(express.json());
 router.put('/cv/:userId/:cvId/', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -82,32 +73,65 @@ router.get('/cv/:userId/:cvId', async (req, res) => {
     res.status(500).json({ error: 'Failed to load CV' });
   }
 });
-router.post('/api/save-reduced-image', upload.single('cv-content'), async (req, res) => {
-  try {
-    const { userId, reducedImageUrl } = req.body;
+// Define the isValidBase64 function
+// Importez la fonction saveBase64Image
+// Function to save base64 image to disk
+/* const saveBase64Image = async (base64String, filename) => {
+  if (typeof base64String !== 'string') {
+    throw new Error('Base64 data is not a string.');
+  }
 
-    // Vérifiez si l'URL de l'image réduite et l'ID de l'utilisateur sont fournis
-    if (!userId || !reducedImageUrl) {
-      return res.status(400).json({ error: 'L\'URL de l\'image réduite ou l\'ID de l\'utilisateur est manquant.' });
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(base64Data, 'base64');
+  const filePath = path.join(__dirname, '..', 'uploads', filename);
+  await promisify(fs.writeFile)(filePath, buffer);
+  return filePath;
+};
+// Function to compress image
+const compressImage = async (imagePath) => {
+  try {
+    const compressedImagePath = path.join(__dirname, '..', 'uploads', 'compressed_' + path.basename(imagePath));
+    await sharp(imagePath).resize({ width: 800, height: 600 }).toFile(compressedImagePath);
+    return compressedImagePath;
+  } catch (error) {
+    console.error('Error compressing image:', error);
+    throw error;
+  }
+};
+ */
+// Route to save base64 image and compress it
+router.post('/api/save-image', upload.single('image'), async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const image = req.file;
+    const imageURL = req.body.imageURL; // Récupérer l'URL de l'image depuis le corps de la requête
+
+    console.log('userId received:', userId);
+    console.log('image received:', image);
+    console.log('imageURL received:', imageURL);
+
+    if (!userId || !image) {
+      throw new Error('Invalid request: userId or image is missing.');
     }
 
-    // Créez un nouvel objet d'image en utilisant le modèle approprié
+    // Créer une nouvelle instance du modèle d'image avec les données reçues
     const newImage = new ImageModel({
       userId: userId,
-      reducedImageUrl: reducedImageUrl,
+      imageName: image.originalname,
+      imagePath: image.path,
+      imageSize: image.size,
+      imageUrl: imageURL // Ajouter l'URL de l'image au modèle
     });
 
-    // Enregistrez l'image réduite dans la base de données
+    // Sauvegarder l'image en base de données
     const savedImage = await newImage.save();
 
-    // Envoyer une réponse de réussite au frontend
-    res.status(201).json({ message: 'Image réduite enregistrée avec succès dans la base de données.' });
+    // Répondre avec un message de succès
+    res.status(200).json({ message: 'Image saved successfully', image: savedImage });
   } catch (error) {
-    console.error('Erreur lors de l\'enregistrement de l\'image réduite dans la base de données:', error);
-    // Envoyer une réponse d'erreur au frontend
-    res.status(500).json({ error: 'Erreur lors de l\'enregistrement de l\'image réduite dans la base de données.' });
+    console.error('Error saving image:', error);
+    res.status(500).json({ error: 'Failed to save image' });
   }
 });
-
 
 module.exports = router;

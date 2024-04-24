@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './CVSelectionPage.module.css'; // Importez votre fichier CSS
+import styles from './CVSelectionPage.module.css'; // Importez votre fichier CSS
 import { useNavigate } from 'react-router-dom';
 
 const CVSelectionPage = () => {
@@ -33,12 +33,12 @@ const CVSelectionPage = () => {
   };
 
   return (
-    <div className="CVSelectionPage-container">
-      <h2 className="CVSelectionPage-title">Sélectionnez un modèle de CV</h2>
-      <div className="CVSelectionPage-cvContainer">
+    <div className={styles.CVSelectionPage}>
+      <h2 className={styles.title}>Sélectionnez un modèle de CV</h2>
+      <div className={styles.cvContainer}>
         {CVList.map((cv) => (
-          <div key={cv._id} className="CVSelectionPage-cvItem" onClick={() => handleCVSelection(cv._id)}>
-            <img src={cv.imageURL} alt={`CV ${cv._id}`} className="CVSelectionPage-cvImage" />
+          <div key={cv._id} className={styles.cvItem} onClick={() => handleCVSelection(cv._id)}>
+            <img src={cv.imageURL} alt={`CV ${cv._id}`} className={styles.cvImage} />
           </div>
         ))}
       </div>

@@ -39,10 +39,8 @@ app.use('/uploads', express.static('uploads'));
 // Initialize Passport after session
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(bodyParser.json({ limit: '50 mb' }));
-
-// You may adjust the limit as needed
-app.use(bodyParser.urlencoded({ parameterLimit:100000,limit: "50 mb", extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use('/cv', CVRoutes);
 
