@@ -41,6 +41,7 @@ router.delete('/deleteUser/:userId', UserController.deleteUser);
 router.get('/getAllUsers', UserController.getAllUsers);
 router.put('/deleteAttribute/:userId', UserController.deleteAttribute);
 router.get('/getUserByEmail/:email', UserController.getUserByEmail);
+//router.get('/api/getUserImages/:userId', UserController.getUserImages);
 router.get('/getUserById/:id', UserController.getUserById);
 router.post('/updateUserPhoto/:userId', upload.single('profileImage'), UserController.updateUserPhoto);
 // CRUD CV 

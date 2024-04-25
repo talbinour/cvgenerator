@@ -111,52 +111,13 @@ const generatePDF = () => {
 
   // Générer le PDF
   html2pdf().from(element).set(opt).save();
+  handleDownload();
 };
 const Download = () => {
   generatePDF(); // Naviguer vers la route "/chatbot"
-  handleDownload(); 
+   
 };
 
-/* const compressImage = async (imageDataUrl) => {
-  const image = new Image();
-  image.src = imageDataUrl;
-
-  return new Promise((resolve, reject) => {
-    image.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const maxWidth = 800; // Largeur maximale souhaitée
-      const maxHeight = 600; // Hauteur maximale souhaitée
-      let width = image.width;
-      let height = image.height;
-
-      if (width > height) {
-        if (width > maxWidth) {
-          height *= maxWidth / width;
-          width = maxWidth;
-        }
-      } else {
-        if (height > maxHeight) {
-          width *= maxHeight / height;
-          height = maxHeight;
-        }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(image, 0, 0, width, height);
-
-      // Convertir le canvas en image compressée
-      const compressedImageDataUrl = canvas.toDataURL('image/jpeg', 0.8); // Qualité de compression 80%
-
-      resolve(compressedImageDataUrl);
-    };
-
-    image.onerror = (error) => {
-      reject(error);
-    };
-  });
-}; */
 
 const handleDownload = async () => {
   try {
@@ -171,6 +132,7 @@ const handleDownload = async () => {
 
     const response = await fetch(url);
     const blob = await response.blob();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const formData = new FormData();
     formData.append('image', blob, 'cv_image.png');
@@ -189,44 +151,6 @@ const handleDownload = async () => {
 };
 
 
-
-
-
-// Définition de la fonction pour convertir un blob en base64
-/* const convertBlobToBase64 = (blob) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => {
-      resolve(reader.result.split(',')[1]);
-    };
-    reader.readAsDataURL(blob);
-  });é&
-};
- */
-// Définition de la fonction pour sauvegarder l'image dans la base de données
-/* const saveImageToDatabase = async (userId, imageURL) => {
-  try {
-    // Vérifier que imageURL est une chaîne de caractères
-    if (typeof imageURL !== 'string') {
-      throw new Error('Les données Base64 ne sont pas une chaîne de caractères.');
-    }
-
-    // Log the received base64 string to inspect it
-    console.log('Base64 string received:', imageURL);
-
-    const response = await axios.post(
-      'http://localhost:8080/api/save-image',
-      { userId, imageURL },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    console.log('Response:', response.data);
-  } catch (error) {
-    console.error('Erreur lors de l\'enregistrement de l\'image:', error);
-  }
-};
- */
 
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>

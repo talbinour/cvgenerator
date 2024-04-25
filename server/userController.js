@@ -1,6 +1,7 @@
 const UserInfo = require('./userDetails');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const ImageModel = require('./ImageModel');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -161,7 +162,7 @@ class UserController {
             return res.status(500).json({ error: "Internal server error" });
         }
     }
-
+    
     // Ajoutez ici d'autres méthodes du contrôleur si nécessaire
     // Par exemple, des méthodes pour la gestion d'autres fonctionnalités liées aux utilisateurs
 }
