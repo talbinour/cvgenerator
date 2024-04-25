@@ -1,10 +1,38 @@
-import json
 import os
+import json
+import pandas as pd
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
-from chatterbot.trainers import ListTrainer
+from chatterbot.trainers import Trainer
 from pymongo import MongoClient
+
+class CustomTrainer(Trainer):
+    def train(self, directory_path):
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                if file.endswith('.json'):
+                    self.train_from_json(os.path.join(root, file))
+                elif file.endswith('.csv'):
+                    self.train_from_csv(os.path.join(root, file))
+
+    def train_from_json(self, file_path):
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            for entry in data:
+                if "patterns" in entry and "responses" in entry:
+                    patterns = entry["patterns"]
+                    responses = entry["responses"]
+                    for pattern, response in zip(patterns, responses):
+                        self.chatbot.storage.update([{"text": pattern, "in_response_to": response}])
+
+    def train_from_csv(self, file_path):
+    df = pd.read_csv(file_path)
+    for row in df.itertuples():
+        question = str(row[1])  # Assuming the question is in the first column
+        answer = str(row[2])  # Assuming the answer is in the second column
+        statement = self.chatbot.storage.create(text=question, in_response_to=answer)
+        self.chatbot.storage.update(statement)
 
 app = Flask(__name__)
 CORS(app)
@@ -27,21 +55,13 @@ bot = ChatBot(
     ]
 )
 
-# Charger et entraîner à partir du JSON personnalisé
-def train_from_json(file_paths):
-    for file_path in file_paths:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            trainer = ListTrainer(bot)
-            for entry in data:
-                if "patterns" in entry and "responses" in entry:
-                    patterns = entry["patterns"]
-                    responses = entry["responses"]
-                    for pattern, response in zip(patterns, responses):
-                        trainer.train([pattern, response])  # Correction ici
+trainer = CustomTrainer(bot)
 
-# Entraîner à partir du fichier conversations.json
-train_from_json(["conversations.json"])
+# Chemin d'accès au répertoire contenant les fichiers JSON et CSV
+directory_path = "C:\\Users\\isran\\cvgenerator\\venv\\kaggle"
+
+# Charger et entraîner à partir de tous les fichiers JSON et CSV dans le répertoire
+trainer.train(directory_path)
 
 # Fonction pour enregistrer la conversation dans un fichier JSON
 def save_conversation_to_json(user_input, bot_response):
@@ -54,32 +74,17 @@ def save_conversation_to_json(user_input, bot_response):
 def chat():
     user_input = request.json.get("message")
     bot_response = str(bot.get_response(user_input))
-    save_conversation_to_json(user_input, bot_response)  # Enregistrer la conversation
+    save_conversation_to_json(user_input, bot_response)  
     return jsonify({"response": bot_response})
 
 @app.route("/profile", methods=["POST"])
 def profile():
     data = request.json
-    # Implémentez ici la gestion réelle des profils
-    # Enregistrez les données du profil utilisateur dans le CV
-    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
-    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(data)
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
-# Fonction pour charger les conversations depuis le fichier JSON
-def load_conversations_from_json(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            lines = file.readlines()
-            conversations = [json.loads(line) for line in lines if line.strip()]
-    except FileNotFoundError:
-        conversations = []
-    return conversations
 @app.route("/save-response", methods=["POST"])
 def save_response():
     data = request.json
-    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
     return jsonify({"message": "Réponse enregistrée avec succès."})
 
 if __name__ == "__main__":
