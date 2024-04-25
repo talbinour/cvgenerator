@@ -1,38 +1,12 @@
 import os
 import json
 import pandas as pd
+import itertools  # Ajout de l'importation du module itertools
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
-from chatterbot.trainers import Trainer
+from chatterbot.trainers import ListTrainer
 from pymongo import MongoClient
-
-class CustomTrainer(Trainer):
-    def train(self, directory_path):
-        for root, dirs, files in os.walk(directory_path):
-            for file in files:
-                if file.endswith('.json'):
-                    self.train_from_json(os.path.join(root, file))
-                elif file.endswith('.csv'):
-                    self.train_from_csv(os.path.join(root, file))
-
-    def train_from_json(self, file_path):
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            for entry in data:
-                if "patterns" in entry and "responses" in entry:
-                    patterns = entry["patterns"]
-                    responses = entry["responses"]
-                    for pattern, response in zip(patterns, responses):
-                        self.chatbot.storage.update([{"text": pattern, "in_response_to": response}])
-
-    def train_from_csv(self, file_path):
-    df = pd.read_csv(file_path)
-    for row in df.itertuples():
-        question = str(row[1])  # Assuming the question is in the first column
-        answer = str(row[2])  # Assuming the answer is in the second column
-        statement = self.chatbot.storage.create(text=question, in_response_to=answer)
-        self.chatbot.storage.update(statement)
 
 app = Flask(__name__)
 CORS(app)
@@ -55,13 +29,47 @@ bot = ChatBot(
     ]
 )
 
-trainer = CustomTrainer(bot)
+# Fonction pour charger et entraîner à partir de chaque fichier JSON
+def train_from_all_json(directory_path):
+    # Liste pour stocker les chemins d'accès des fichiers
+    file_paths = []
+    
+    # Parcourir les fichiers et répertoires dans le répertoire
+    for root, dirs, files in os.walk(directory_path):
+        for file in files:
+            if file.endswith('.json') or file.endswith('.csv'):  # Lire les fichiers JSON et CSV
+                file_path = os.path.join(root, file)
+                file_paths.append(file_path)
+
+    # Initialisez la variable trainer à l'extérieur de la boucle try-except
+    trainer = ListTrainer(bot)
+
+    # Charger et entraîner à partir de chaque fichier JSON ou CSV
+    for file_path in file_paths:
+        try:
+            if file_path.endswith('.json'):
+                with open(file_path, 'r', encoding='latin1') as file:
+                    data = json.load(file)
+                    for entry in data:
+                        if "patterns" in entry and "responses" in entry:
+                            patterns = entry["patterns"]
+                            responses = entry["responses"]
+                            for pattern, response in zip(patterns, responses):
+                                trainer.train([pattern, response])
+            elif file_path.endswith('.csv'):
+                df = pd.read_csv(file_path)
+                for row in df.itertuples():
+                    patterns = [str(row[1])]  # Assuming the question is in the first column
+                    responses = [str(row[2])]  # Assuming the answer is in the second column
+                    trainer.train(list(itertools.chain(patterns, responses)))  # Convertir itertools.chain en liste
+        except Exception as e:
+            print(f"Une erreur s'est produite lors du traitement du fichier {file_path}: {e}")
 
 # Chemin d'accès au répertoire contenant les fichiers JSON et CSV
 directory_path = "C:\\Users\\isran\\cvgenerator\\venv\\kaggle"
 
 # Charger et entraîner à partir de tous les fichiers JSON et CSV dans le répertoire
-trainer.train(directory_path)
+train_from_all_json(directory_path)
 
 # Fonction pour enregistrer la conversation dans un fichier JSON
 def save_conversation_to_json(user_input, bot_response):
@@ -69,7 +77,6 @@ def save_conversation_to_json(user_input, bot_response):
     with open("conversation_history.json", "a", encoding="utf-8") as file:
         json.dump(conversation, file, ensure_ascii=False)
         file.write("\n")
-
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message")

@@ -26,8 +26,7 @@ router.put('/cv/:userId/:cvId/', async (req, res) => {
     const userId = req.params.userId;
     const cvId = req.params.cvId;
     const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
-
-    // Vérifier si le CV existe déjà dans la base de données
+   
     let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId });
 
     if (!existingCV) {
@@ -45,8 +44,9 @@ router.put('/cv/:userId/:cvId/', async (req, res) => {
     // Enregistrer le CV dans la base de données
     const savedCV = await existingCV.save();
 
-    // Répondre avec un message de réussite
-    res.status(200).json({ message: 'CV saved successfully', cvId: cvId });
+    // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
+    const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+    res.status(200).json({ message: 'CV saved successfully', cvId: cvId, cvData: reloadedCV });
   } catch (error) {
     console.error('Error saving CV:', error);
     res.status(500).json({ error: 'Failed to save CV' });

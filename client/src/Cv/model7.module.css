@@ -280,4 +280,64 @@ background: rgb(31, 8, 148);
   .input:focus {
     border-color: #007bff; /* Couleur du bordure lorsqu'il est en focus */
   }
+  /* Suppression des bordures et du fond des inputs */
+.input {
+    border: none; /* Supprime les bordures */
+    background-color: transparent; /* Rend le fond transparent */
+    outline: none; /* Supprime le halo bleu lors de la sélection */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+/* Si vous voulez également supprimer le style des textareas */
+textarea {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+/* Ajoutez ces styles à votre fichier CSS */
+
+.skills .box {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+  }
+  
+  .skills .box h4 {
+    flex: 0 0 150px; /* Limitez la largeur du titre à 150px */
+    text-transform: uppercase;
+    color: #848c99;
+    font-weight: 500;
+    margin-right: 20px; /* Ajoute une marge à droite pour l'espace */
+  }
+  
+  .progressBar {
+    flex: 1; /* Utilisez tout l'espace disponible */
+    height: 10px;
+    background: #c1baba;
+    position: relative;
+    width: 100%;
+    height: 10px;
+    background: #c1baba;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+  
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: rgb(31, 8, 148);
+    border-radius: 5px;
+  }
+  
   

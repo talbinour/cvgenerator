@@ -261,29 +261,32 @@ const ParentComponent = () => {
             <div className={`${styles.contactInfo} ${styles.languages}`}>
               <h3 className={styles.title}>LANGUAGES</h3>
               <ul>
-                {cvModel.languages && cvModel.languages.map((lang, index) => (
-                  <li key={index}>
-                    <input
-                      type="text"
-                      value={lang.name}
-                      onChange={(e) => handleChangeLanguageName(e, index)}
-                      className={styles.input}
-                      contentEditable
-                    />
-                    <div className={styles.percentContainer}>
-                      <input
-                        type="number"
-                        value={lang.proficiency}
-                        onChange={(e) => {
-                          const newLanguages = [...cvModel.languages];
-                          newLanguages[index].proficiency = e.target.value;
-                          setCvModel({ ...cvModel, languages: newLanguages });
-                        }}
-                        className={styles.input}
-                      />
-                    </div>
-                  </li>
-                ))}
+              {cvModel.languages.map((lang, index) => (
+  <div className={styles.box} key={index}>
+    <input
+      type="text"
+      value={lang.name}
+      onChange={(e) => handleChangeLanguageName(e, index)}
+      className={styles.input}
+      contentEditable
+    />
+    <div className={styles.sliderContainer}>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={lang.proficiency}
+        onChange={(e) => {
+          const newLanguages = [...cvModel.languages];
+          newLanguages[index].proficiency = e.target.value;
+          setCvModel({ ...cvModel, languages: newLanguages });
+        }}
+        className={styles.slider}
+      />
+      <span>{lang.proficiency}%</span>
+    </div>
+  </div>
+))}
               </ul>
             </div>
           </div>
@@ -339,24 +342,27 @@ const ParentComponent = () => {
             <div className={`${styles.about} ${styles.skills}`}>
               <h2 className={styles.title2}>Professional Skills</h2>
               {cvModel.professionalSkills.map((skill, index) => (
-                <div className={styles.box} key={index}>
-                  <input
-                    type="text"
-                    value={skill.skillName}
-                    onChange={(e) => handleSkillChange(e, index, 'skillName')}
-                    className={styles.input}
-                    contentEditable
-                  />
-                  <div className={styles.percent}>
-                    <input
-                      type="number"
-                      value={skill.proficiency}
-                      onChange={(e) => handleSkillChange(e, index, 'proficiency')}
-                      className={styles.input}
-                    />
-                  </div>
-                </div>
-              ))}
+  <div className={styles.box} key={index}>
+    <input
+      type="text"
+      value={skill.skillName}
+      onChange={(e) => handleSkillChange(e, index, 'skillName')}
+      className={styles.input}
+      contentEditable
+    />
+    <div className={styles.sliderContainer}>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={skill.proficiency}
+        onChange={(e) => handleSkillChange(e, index, 'proficiency')}
+        className={styles.slider}
+      />
+      <span>{skill.proficiency}%</span>
+    </div>
+  </div>
+))}
             </div>
             <div className={styles.AboutInterest}>
               <h2 className={styles.title2}>Interest</h2>
