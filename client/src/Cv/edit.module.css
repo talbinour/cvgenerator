@@ -161,6 +161,8 @@ font-weight: 300;
     position: relative;
     background: #fff;
     padding: 40px;
+    align-items: self-start;
+    margin-top: 0;
 }
 .about 
 {
