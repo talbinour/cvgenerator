@@ -73,32 +73,7 @@ router.get('/cv/:userId/:cvId', async (req, res) => {
     res.status(500).json({ error: 'Failed to load CV' });
   }
 });
-// Define the isValidBase64 function
-// Importez la fonction saveBase64Image
-// Function to save base64 image to disk
-/* const saveBase64Image = async (base64String, filename) => {
-  if (typeof base64String !== 'string') {
-    throw new Error('Base64 data is not a string.');
-  }
 
-  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
-  const buffer = Buffer.from(base64Data, 'base64');
-  const filePath = path.join(__dirname, '..', 'uploads', filename);
-  await promisify(fs.writeFile)(filePath, buffer);
-  return filePath;
-};
-// Function to compress image
-const compressImage = async (imagePath) => {
-  try {
-    const compressedImagePath = path.join(__dirname, '..', 'uploads', 'compressed_' + path.basename(imagePath));
-    await sharp(imagePath).resize({ width: 800, height: 600 }).toFile(compressedImagePath);
-    return compressedImagePath;
-  } catch (error) {
-    console.error('Error compressing image:', error);
-    throw error;
-  }
-};
- */
 // Route to save base64 image and compress it
 router.post('/api/save-image', upload.single('image'), async (req, res) => {
   try {
@@ -133,5 +108,31 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Failed to save image' });
   }
 });
+
+
+
+
+
+
+router.get('/user-cvs/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Recherche des CV dans la base de données en fonction de l'ID de l'utilisateur
+    const userCvs = await ImageModel.find({ userId: userId });
+
+    // Renvoyer les CV trouvés dans la réponse
+    res.status(200).json(userCvs);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des CV de l\'utilisateur:', error);
+    // En cas d'erreur, renvoyer une réponse 500 Internal Server Error
+    res.status(500).json({ error: 'Erreur lors de la récupération des CV de l\'utilisateur' });
+  }
+});
+
+
+
+
+
 
 module.exports = router;
