@@ -22,6 +22,9 @@
 .rightPanel {
     flex: 1; /* La partie droite prendra autant d'espace que possible */
     padding: 20px;
+    max-height: 50%;
+    max-width: 80%;
+
 }
 
 

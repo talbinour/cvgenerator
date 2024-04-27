@@ -144,8 +144,8 @@ function CvOuResume() {
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
       <div id="cv-content" className={styles.container}>
-        <div className={styles.editButton}>
-          <button onClick={() => generatePDF()} className={styles['new-button']}><i className="fas fa-file-pdf"></i>Télécharger</button>
+      <div className={styles.editButton}>
+          <a href="#" onClick={generatePDF}><i className="fas fa-file-pdf"></i></a>
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>

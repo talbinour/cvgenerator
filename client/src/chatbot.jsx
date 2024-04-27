@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
-import Edit from './Cv/edit'; // Importez le composant Edit
+import User from './Cv/model7-user'; // Importez le composant Edit
 import axios from 'axios';
 
 const Chat = () => {
@@ -74,7 +74,7 @@ const Chat = () => {
             </div>
             <div className={styles.rightPanel}>
                 {/* Affichez le composant Edit ici */}
-                <Edit />
+                <User />
             </div>
         </div>
     );
