@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
-import Edit from './Cv/edit'; // Importez le composant Edit
 import axios from 'axios';
 
 const Chat = () => {
@@ -34,25 +33,11 @@ const Chat = () => {
         }
     };
     
-    const saveResponseToBackend = async (userInput, botResponse) => {
-        try {
-            const response = await axios.post("http://localhost:5000/save-response", { userInput, botResponse }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log(response.data.message); // Afficher un message de confirmation
-        } catch (error) {
-            console.error("Erreur lors de l'enregistrement de la réponse :", error);
-        }
-    };
-    
     const handleSendMessage = async () => {
         const response = await sendMessage(input);
         setMessages([...messages, { text: input, user: "me" }, { text: response, user: "bot" }]);
         setInput("");
         saveUserResponseToBackend(input); // Enregistrer la réponse de l'utilisateur vers le backend
-        saveResponseToBackend(input, response); // Enregistrer la réponse vers le backend
     };
 
     return (
@@ -71,10 +56,6 @@ const Chat = () => {
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
                 </div>
-            </div>
-            <div className={styles.rightPanel}>
-                {/* Affichez le composant Edit ici */}
-                <Edit />
             </div>
         </div>
     );

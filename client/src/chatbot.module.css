@@ -18,15 +18,6 @@
     border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
 }
 
-/* Style de la partie droite */
-.rightPanel {
-    flex: 1; /* La partie droite prendra autant d'espace que possible */
-    padding: 20px;
-}
-
-
-/* Ajoutez vos styles spécifiques pour la partie gauche et la partie droite ici */
-
 .container {
     max-width: 600px;
     margin: 20px auto;
@@ -53,7 +44,7 @@
 }
 
 /* Input field */
-.input-field {
+.inputField {
     width: calc(100% - 80px); /* Adjust based on button width */
     padding: 10px;
     margin-top: 10px;
@@ -62,7 +53,7 @@
 }
 
 /* Send button */
-.send-button {
+.sendButton {
     width: 70px;
     padding: 10px;
     margin-top: 10px;
@@ -74,6 +65,6 @@
 }
 
 /* Send button hover */
-.send-button:hover {
+.sendButton:hover {
     background-color: #0056b3; /* Darker blue */
 }
