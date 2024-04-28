@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Chat from "../chatbot";
-import axios from 'axios';
-import styles from './CVModel7.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
-import '@fortawesome/fontawesome-free/css/all.css';
-import avatar from '../assets/cvprofile.jpeg';
+import axios from "axios";
+//import PropTypes from "prop-types";
+import styles from "./CVModel7.module.css";
+import "@fortawesome/fontawesome-free/css/all.css";
+import avatar from "../assets/cvprofile.jpeg";
 
 const CVModel7 = () => {
-  const [cvContent, setCvContent] = useState(""); // État pour stocker le contenu du CV
+  const [cvContent, setCvContent] = useState("");
   const [userId, setUserId] = useState(null);
-  const [cvTitle, setCvTitle] = useState(""); // Utilisez useState pour déclarer setCvTitle comme une fonction
+  const [cvTitle, setCvTitle] = useState("");
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
     jobTitle: 'Développeur Web',
@@ -65,6 +66,7 @@ const CVModel7 = () => {
         });
     }
   }, [userId]);
+
   useEffect(() => {
     const detectAndSendTitle = async () => {
       try {
@@ -85,7 +87,6 @@ const CVModel7 = () => {
         console.error('Erreur lors de la détection et de l\'envoi du titre du CV:', error);
       }
     };
-    
 
     if (cvContent !== "") {
       detectAndSendTitle();
@@ -96,18 +97,47 @@ const CVModel7 = () => {
     setCvContent(newCvContent);
   };
 
+  const updateTitleContent = (question) => {
+    // Implémenter la logique pour mettre à jour le titre du CV en fonction de la question posée par le chatbot
+  
+    switch (question) {
+      case "Quelle est votre expérience professionnelle ?":
+        setCvTitle("Experience"); // Mettre à jour le titre avec "Experience"
+        break;
+      case "Quelle est votre formation académique ?":
+        setCvTitle("EDUCATION"); // Mettre à jour le titre avec "EDUCATION"
+        break;
+      case "Quelles sont vos informations de contact ?":
+        // Pas de mise à jour du titre nécessaire car déjà fixe dans le JSX
+        break;
+      case "Quel est votre profil ?":
+        setCvTitle("Profile"); // Mettre à jour le titre avec "Profile"
+        break;
+      case "Quels sont vos centres d'intérêt ?":
+        setCvTitle("Interest"); // Mettre à jour le titre avec "Interest"
+        break;
+      case "Quelles langues parlez-vous ?":
+        setCvTitle("LANGUAGES"); // Mettre à jour le titre avec "LANGUAGES"
+        break;
+      case "Quelles sont vos compétences professionnelles ?":
+        setCvTitle("Professional Skills"); // Mettre à jour le titre avec "Professional Skills"
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.leftPanel}>
-        {/* Passer la fonction updateCvContent en tant que prop */}
-        <Chat updateCvContent={updateCvContent} />  
-      </div>   
+        <Chat updateCvContent={updateCvContent} updateTitleContent={updateTitleContent} />
+      </div>
       <div className={styles.rightPanel}>
         <div className={styles.container}>
           <div className={styles.left_Side}>
             <div className={styles.profileText}>
               <div className={styles.imgBx}>
-                <img src={avatar} alt="Profile" />  
+                <img src={avatar} alt="Profile" />
               </div>
               <h2>{cvModel.name} {cvModel.prenom}<br /><span>{cvModel.job}</span></h2>
             </div>
@@ -164,11 +194,11 @@ const CVModel7 = () => {
           </div>
           <div className={styles.right_Side}>
             <div className={styles.about}>
-              <h2 className={styles.title2}id={cvTitle}>Profile</h2>
+              <h2 className={styles.title2} id={cvTitle}>Profile</h2>
               <p>{cvModel.profile}</p>
             </div>
             <div className={styles.about}>
-              <h2 className={styles.title2}id={cvTitle}>Experience</h2>
+              <h2 className={styles.title2} id={cvTitle}>Experience</h2>
               {cvModel.experiences.map(item => (
                 <div className={styles.box} key={item.id}>
                   <div className={styles.year_company}>
@@ -183,7 +213,7 @@ const CVModel7 = () => {
               ))}
             </div>
             <div className={`${styles.about} ${styles.skills}`}>
-              <h2 className={styles.title2}id={cvTitle}>Professional Skills</h2>
+              <h2 className={styles.title2} id={cvTitle}>Professional Skills</h2>
               {cvModel.professionalSkills.map(item => (
                 <div className={styles.box} key={item.id}>
                   <h4>{item.skillName}</h4>
@@ -194,7 +224,7 @@ const CVModel7 = () => {
               ))}
             </div>
             <div className={styles.AboutInterest}>
-              <h2 className={styles.title2}id={cvTitle}>Interest</h2>
+              <h2 className={styles.title2} id={cvTitle}>Interest</h2>
               <ul>
                 {cvModel.interests.map((interest, index) => (
                   <li key={index}><i className="fa fa-bar-chart" aria-hidden="true"></i>{interest}</li>
@@ -206,6 +236,6 @@ const CVModel7 = () => {
       </div>
     </div>
   );
-}
+};
 
 export default CVModel7;
