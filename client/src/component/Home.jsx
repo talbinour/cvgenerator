@@ -8,6 +8,9 @@ const Home = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const cvListRef = useRef(null);
+  const [showDescription, setShowDescription] = useState(false); // Initialiser showDescription à false
+  const [typedText, setTypedText] = useState(''); // Initialiser le texte tapé à une chaîne vide
+  const description = "  Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -29,7 +32,6 @@ const Home = () => {
     const fetchCVs = async () => {
       try {
         const response = await axios.get('http://localhost:8080/getCVs');
-        // Dupliquez la liste pour créer un effet de boucle circulaire
         setCVList([...response.data, ...response.data]);
       } catch (error) {
         console.error("Failed to fetch CVs:", error);
@@ -42,16 +44,37 @@ const Home = () => {
   useEffect(() => {
     const scrollInterval = setInterval(() => {
       if (cvListRef.current) {
-        cvListRef.current.scrollLeft += 1; // Réglez la vitesse de défilement en ajustant la valeur
+        cvListRef.current.scrollLeft += 1;
         if (cvListRef.current.scrollLeft >= cvListRef.current.scrollWidth / 2) {
-          // Faites pivoter la liste de 180 degrés pour un défilement circulaire
           cvListRef.current.scrollLeft -= cvListRef.current.scrollWidth / 2;
         }
       }
-    }, 50); // Réglez la fréquence de défilement en ajustant la valeur
+    }, 50);
 
     return () => clearInterval(scrollInterval);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowDescription(true); // Activer l'affichage du paragraphe après un certain délai
+    }, 400); // Définir le délai en millisecondes
+
+    return () => clearTimeout(timer); // Nettoyer le timer lors du démontage du composant
+  }, []);
+
+  useEffect(() => {
+    if (showDescription) {
+      let index = 0;
+      const interval = setInterval(() => {
+        setTypedText((prevText) => prevText + description[index]);
+        index++;
+        if (index === description.length) {
+          clearInterval(interval);
+        }
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [showDescription, description]);
 
   const handleCVClick = (cvcontent) => {
     navigate(`/${cvcontent}`);
@@ -61,7 +84,7 @@ const Home = () => {
     if (currentUser) {
       navigate("/cvselection");
     } else {
-      alert("Vous devez vous connecter pour accéder à cette fonctionnalité.");
+      alert("Connectez-vous pour personnaliser et sauvegarder votre CV.");
       setTimeout(() => {
         navigate("/login");
       }, 100);
@@ -70,29 +93,34 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <section className={styles.hero}>
-        <h1 style={{ color: '#132043' }}>Créez votre CV professionnel</h1>
-        <p>Remplissez le formulaire, choisissez un modèle et téléchargez votre CV en quelques minutes.</p>
-        <button className={styles.createButton} style={{ backgroundColor: '#F1B4BB', color: '#FDF0F0' }} onClick={handleWriteCVClick}>Créer un CV</button>
-      </section>
-      <section className={styles.models}>
-        <h1 style={{ color: '#132043' }}>Modèles de CV</h1>
-        <div className={styles.cvListHorizontal} ref={cvListRef}>
-          {cvList.map((cv, index) => (
-            <div key={index} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}>
-              <img src={cv.imageURL} alt={cv.title} className={styles.cvImage} />
-              <p className={styles.cvTitle}>{cv.title}</p>
+        <section className={styles.hero}>
+            <h1>Bienvenue sur Cevor</h1>
+            <div className={styles.descriptionContainer}>
+                <p className={`${styles.description} ${showDescription ? styles.show : ''}`}>
+                    {typedText}
+                </p>
             </div>
-          ))}
-        </div>
-      </section>
+            <button className={styles.createButton} onClick={handleWriteCVClick}>Commencer votre CV</button>
+        </section>
+        <section className={styles.models}>
+            <h1>Explorez nos modèles</h1>
+            <div className={styles.cvListHorizontal} ref={cvListRef}>
+                {cvList.map((cv, index) => (
+                    <div key={index} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}>
+                        <img src={cv.imageURL} alt={cv.title} className={styles.cvImage} />
+                        <p className={styles.cvTitle}>{cv.title}</p>
+                    </div>
+                ))}
+            </div>
+        </section>
 
-      <footer className={styles.footer}>
-        <p>Vous avez des questions sur notre site Web ? Consultez notre FAQ</p>
-        <button className={styles.downloadButton}>Faire un CV en ligne</button>
-      </footer>
+        <footer className={styles.footer}>
+            <p>Des questions ? Consultez notre FAQ ou contactez-nous directement.</p>
+            <button className={styles.downloadButton}>Créez votre CV maintenant</button>
+        </footer>
     </div>
-  );
+);
+
 };
 
 export default Home;

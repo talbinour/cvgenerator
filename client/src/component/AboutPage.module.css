@@ -1,0 +1,42 @@
+/* AboutPage.module.css */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .content {
+    text-align: justify;
+  }
+  
+  h1, h2 {
+    color: #132043;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  li::before {
+    content: "•";
+    margin-right: 8px;
+  }
+  
+  .grid {
+    display: grid;
+    gap: 30px;
+  }
+  
+  .section {
+    background-color: #f3f4f6;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  .section:hover {
+    transform: scale(1.05);
+  }
+  

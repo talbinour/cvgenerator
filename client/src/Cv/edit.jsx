@@ -149,9 +149,9 @@ const ParentComponent = () => {
     <div className={`${styles['print-area']} ${styles.resume}`}>
         <div   className={styles.container}>
         <div className={styles.editButton}>
-            <button onClick={saveCVToServer}><i className="fas fa-save"></i> Terminer</button>
-          </div>
-          <div className={styles.left_Side}>
+          <a href="#" onClick={saveCVToServer}><i className="fas fa-check"></i></a>
+        </div>
+        <div className={styles.left_Side}>
             <div className={styles.profileText}>
               <div className={styles.imgBx}>
                 <img src={avatar} alt="Profile" />  

@@ -14,7 +14,7 @@ import ResumesPage from './DashboardPage/ResumesPage';
 import JobOffersPage from './DashboardPage/JobOffersPage';
 import ApplicationsPage from './DashboardPage/ApplicationsPage';
 import DashboardContent from './DashboardPage/DashboardContent';
-import Contact from './DashboardPage/contact';
+import Contact from './component/contact';
 import Skills from "./DashboardPage/Skills";
 import NewPassword from './NewPassword';
 import PasswordReset from './PasswordReset';

@@ -1,6 +1,6 @@
 .CVSelectionPage {
   margin: 20px auto;
-  padding: 50px; /* Modification du padding pour plus d'espace autour du contenu */
+  padding: 20px;
   max-width: 100%;
 }
 
@@ -12,18 +12,23 @@
 
 .cvContainer {
   display: grid;
-  padding: 30px; /* Ajout de padding à la grille pour plus d'espace entre les éléments */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Crée une grille flexible avec une largeur minimale de 200px */
-  gap: 20px; /* Ajoute un espacement entre les éléments de la grille */
+  padding: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Augmente la largeur minimale pour correspondre au dashboard */
+  gap: 20px;
+  margin-top: 20px; /* Ajouté pour la cohérence avec le dashboard */
 }
 
 .cvItem {
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ajoute une ombre portée légère pour l'effet de flottaison */
+  padding: 5px;
+  height:490px; /* Hauteur fixe pour une cohérence visuelle */
   transition: transform 0.3s ease;
-  border-color: grey; /* Ajout d'une couleur de bordure grise */
-  border-style: solid; /* Ajout d'un style de bordure solide */
-  border-width: 1px; /* Définition de la largeur de la bordure */
-  border-radius: 8px; /* Ajout d'un rayon de bordure */
 }
 
 .cvItem:hover {
@@ -31,7 +36,8 @@
 }
 
 .cvImage {
-  width: 100%; /* Ajustez la largeur des images pour qu'elles remplissent les conteneurs */
-  height: auto; /* Assurez-vous que la hauteur est ajustée automatiquement pour conserver les proportions */
-  border-radius: 8px;
+  width: 100%;
+  height: 400px; /* Hauteur fixe pour les images */
+  object-fit: cover; /* S'assurer que l'image couvre l'espace disponible sans se déformer */
+  border-radius: 5px;
 }
