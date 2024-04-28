@@ -203,7 +203,7 @@ def generate_questions():
 
     if conversation_state:
         state = conversation_state.get('state')
-        if state.startswith('question') and user_response:
+        if state and state.startswith('question') and user_response:
             # Gérer la réponse de l'utilisateur à la question actuelle
             user_response = user_response.lower()  # Convertir la réponse de l'utilisateur en minuscules
             next_question_number = int(state.replace('question', '')) + 1
