@@ -1,11 +1,10 @@
 import json
 import os
 import re
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
-from python_question_generator import QuestionGenerator
 
 app = Flask(__name__)
 CORS(app)
@@ -49,12 +48,10 @@ def train_from_json(directory):
 # Entraîner à partir du répertoire contenant les fichiers JSON
 train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
 
-question_generator = QuestionGenerator()
-
 # Définir la classe QuestionGenerator avant de l'utiliser
 class QuestionGenerator:
     def __init__(self):
-        self.questions = []
+        self.questions = {}
 
     def load_questions(self, questions):
         self.questions = questions
@@ -131,6 +128,14 @@ class QuestionGenerator:
 
         return skills_questions
 
+# Charger les questions pour question_generator
+question_generator = QuestionGenerator()
+question_generator.load_questions({
+    "question1": "Quel est votre expérience professionnelle ?",
+    "question2": "Quelle est votre formation académique ?",
+    "question3": "Quelles sont vos compétences professionnelles ?",
+    # Ajoutez d'autres questions ici...
+})
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -159,9 +164,6 @@ def save_response():
     # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
     return jsonify({"message": "Réponse enregistrée avec succès."})
 
-
-
-
 @app.route("/extract-cv-title", methods=["POST"])
 def get_cv_title():
     data = request.json
@@ -172,8 +174,22 @@ def get_cv_title():
     return jsonify({"title": title})
 
 def generate_next_question(next_question_key):
-    # Code pour générer la prochaine question en fonction de next_question_key
-    pass
+    # Définir un dictionnaire contenant les questions associées à chaque clé
+    questions = {
+        "question1": "Quel est votre expérience professionnelle ?",
+        "question2": "Quelle est votre formation académique ?",
+        "question3": "Quelles sont vos compétences professionnelles ?",
+        # Ajoutez d'autres questions ici...
+    }
+
+    # Obtenir la question associée à la clé fournie
+    next_question = questions.get(next_question_key)
+
+    # Si la clé n'est pas dans le dictionnaire, renvoyer None
+    if next_question is None:
+        return None
+
+    return next_question
 
 @app.route("/new-question", methods=["POST"])
 def generate_questions():
@@ -181,33 +197,36 @@ def generate_questions():
     cv_title = data.get("cv_title")
     cv_content = data.get("cv_content")
     conversation_state = data.get("conversation_state")
+    user_response = data.get("message")
+    
+    next_question_key = None  # Valeur par défaut
 
-    if not conversation_state:
-        # État initial de la conversation
-        next_question_key = 'start'
-        bot_response = "Bonjour! Comment puis-je vous aider aujourd'hui ?"
-    else:
+    if conversation_state:
         state = conversation_state.get('state')
-        if state == 'start':
-            # Retourner la première question
-            next_question_key = 'question1'
-            bot_response = "Quel est votre expérience professionnelle ?"
-            # Supprimer la variable conversation_state après le message de bienvenue
-            del data["conversation_state"]
-        elif state.startswith('question'):
+        if state.startswith('question') and user_response:
             # Gérer la réponse de l'utilisateur à la question actuelle
-            user_response = data.get("message")  # Modification ici pour récupérer la réponse de l'utilisateur
+            user_response = user_response.lower()  # Convertir la réponse de l'utilisateur en minuscules
             next_question_number = int(state.replace('question', '')) + 1
             next_question_key = f"question{next_question_number}"
-            if user_response.lower() == "terminer" or next_question_key not in questions:
+            if next_question_key not in question_generator.questions:
+                # Si la clé de la prochaine question n'est pas dans le dictionnaire de questions,
+                # cela signifie que la conversation est terminée
                 bot_response = "Merci pour les informations. Votre CV est complet."
                 conversation_state.clear()  # Effacer l'état de la conversation
             else:
                 # Poser la question suivante
-                bot_response = generate_next_question(next_question_key)  # Appeler une fonction pour générer la prochaine question
-                next_question_key = next_question_key
+                bot_response = question_generator.questions[next_question_key]
+                conversation_state['state'] = next_question_key  # Mettre à jour l'état de la conversation
+        else:
+            # Si l'utilisateur n'a pas répondu ou a envoyé un message vide, redemander la même question
+            bot_response = question_generator.questions[state]
+    else:
+        # État initial de la conversation
+        next_question_key = 'question1'
+        bot_response = question_generator.questions[next_question_key]
+        conversation_state = {'state': next_question_key}  # Initialiser l'état de la conversation
 
-    return jsonify({"response": bot_response, "next_question_key": next_question_key})
+    return jsonify({"response": bot_response, "next_question_key": next_question_key, "conversation_state": conversation_state})
 
 if __name__ == "__main__":
     app.run(debug=True)
