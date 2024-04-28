@@ -1,58 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot.module.css'; // Import CSS module
 import User from './Cv/model7-user'; // Importez le composant Edit
 import axios from 'axios';
 
-const Chat = () => {
+const Chat = ({ updateCvContent }) => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
+    const [conversationState, setConversationState] = useState(null);
 
-    const sendMessage = async (message) => {
-        const response = await fetch("http://localhost:5000/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ message })
-        });
-        const data = await response.json();
-        return data.response;
+    useEffect(() => {
+        // Envoyer le message "Bonjour" lorsque le composant est monté
+        sendHelloMessage();
+    }, []); // Assurez-vous que cette fonction ne s'exécute qu'une seule fois lors du montage du composant
+
+    const sendHelloMessage = async () => {
+        const response = await axios.post(
+            "http://localhost:5000/new-question",
+            { cv_title: "Titre du CV", cv_content: "", conversation_state: conversationState },
+            { headers: { "Content-Type": "application/json" } }
+        );
+
+        const botResponse = response.data.response;
+        const nextQuestionKey = response.data.next_question_key;
+
+        setMessages([...messages, { text: botResponse, user: "bot" }]);
+        setConversationState(nextQuestionKey === 'start' ? null : { state: nextQuestionKey });
     };
-    
-    const saveUserResponseToBackend = async (response) => {
-        try {
-            const saveResponse = await axios.post("http://localhost:5000/profile", { response }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log(saveResponse.data.message); // Affichez un message de confirmation
-        } catch (error) {
-            console.error("Erreur lors de l'enregistrement de la réponse utilisateur:", error);
-        }
-    };
-    
-    const saveResponseToBackend = async (userInput, botResponse) => {
-        try {
-            const response = await axios.post("http://localhost:5000/save-response", { userInput, botResponse }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log(response.data.message); // Afficher un message de confirmation
-        } catch (error) {
-            console.error("Erreur lors de l'enregistrement de la réponse :", error);
-        }
-    };
-    
-    const handleSendMessage = async () => {
-        const response = await sendMessage(input);
-        setMessages([...messages, { text: input, user: "me" }, { text: response, user: "bot" }]);
+
+    const sendMessage = async () => {
+        const response = await axios.post(
+            "http://localhost:5000/new-question",
+            { cv_title: "Titre du CV", cv_content: input, conversation_state: conversationState },
+            { headers: { "Content-Type": "application/json" } }
+        );
+
+        const botResponse = response.data.response;
+        const nextQuestionKey = response.data.next_question_key;
+
+        setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
         setInput("");
-        saveUserResponseToBackend(input); // Enregistrer la réponse de l'utilisateur vers le backend
-        saveResponseToBackend(input, response); // Enregistrer la réponse vers le backend
+        setConversationState({ state: nextQuestionKey });
+    };
+
+    const handleSendMessage = async () => {
+        await sendMessage();
+
+        // Mettre à jour le contenu du CV avec le nouveau message
+        updateCvContent(input);
+    };
+
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
     };
 
     return (
@@ -66,7 +69,7 @@ const Chat = () => {
                             </div>
                         ))}
                     </div>
-                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} />
+                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
                     <button className={styles.sendButton} onClick={handleSendMessage}>
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
@@ -78,6 +81,10 @@ const Chat = () => {
             </div>
         </div>
     );
+};
+
+Chat.propTypes = {
+    updateCvContent: PropTypes.func.isRequired,
 };
 
 export default Chat;

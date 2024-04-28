@@ -10,7 +10,7 @@ const imageSchema = new mongoose.Schema({
   imageName: { type: String, required: true },
   imagePath: { type: String, required: true },
   imageSize: { type: Number, required: true },
-  imageUrl: { type: String } ,
+  imageUrl: { type: String,required: true  } ,
   date: {
     type: Date,
     default: Date.now

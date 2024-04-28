@@ -1,0 +1,363 @@
+.pageWrapper {
+    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
+}
+
+.leftPanel {
+    flex: 1; /* La partie gauche prendra autant d'espace que possible */
+    padding: 20px;
+    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
+}
+
+/* Style de la partie droite */
+.rightPanel {
+    flex: 1; /* La partie droite prendra autant d'espace que possible */
+    padding: 20px;
+}
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Print area styles */
+  .print-area {
+    background: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Container styles */
+  .container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    margin: 50px;
+    box-shadow: 0 50px 75px rgba(0, 0, 0, 0.1);
+    border-left: 50px solid #fff;
+    border-right: 50px solid #fff;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  
+  /* Profile text styles */
+  .profileText {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    margin-left: -200px;
+  }
+  
+  .profileText h3 {
+    font-size: 3em;
+    letter-spacing: 0.1em;
+    line-height: 1.2em;
+    font-weight: 600;
+    color: #333;
+    margin-right: -15px;
+  }
+  
+  .profileText h3 span {
+    position: relative;
+    font-size: 0.5em;
+    font-weight: 300;
+    top: -10px;
+    
+   
+  }
+  
+  /* Content box styles */
+  .contentBox {
+    position: relative;
+    min-height: 500px;
+    padding: 0 40px 40px;
+    margin-top: -50px;
+    margin-left: -35px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  
+  /* Left side content styles */
+  .leftSide {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-left: -15px;
+  }
+  
+  /* Right side content styles */
+  .rightSide {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    padding-left: 20px;
+    width: 100%;
+    margin-left: -60px;
+
+  }
+  
+  /* Contact info styles */
+  .contactInfo {
+    margin-top: 50px;
+  }
+  
+  .contactInfo h3 {
+    border-left: 4px solid #ff8bb3;
+    padding-left: 10px;
+    line-height: 1em;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+  .container .contentBox {
+    position: relative;
+    min-height: 500px;
+    padding: 0 40px 40px;
+    margin-top: -50px;
+    margin-left: -35px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px; /* Espacement entre les deux colonnes */
+}
+
+.container .contentBox h3 {
+    border-left: 4px solid #ff8bb3;
+    padding-left: 10px;
+    line-height: 1em;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+
+.container .contentBox ul {
+    position: relative;
+    margin: 10px 0;
+}
+
+.container .contentBox ul li {
+    position: relative;
+    margin: 25px 0;
+    line-height: 1em;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Ajout de cette ligne */
+    margin-bottom: 10px;
+}
+
+.container .contentBox ul li i {
+    font-size: 1.2em;
+    margin-right: 10px;
+    color: #3590d2;
+    list-style: none;
+}
+
+.contactInfo ul li .icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #02a1d6;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.container .contentBox ul .text {
+    font-weight: 500;
+}
+
+.container .contentBox .education li {
+    flex-direction: column;
+    margin: 25px 0;
+    position: relative;
+    display: grid;
+    padding: 10px;
+    margin-left: -30px;
+}
+
+h5 {
+    color: #3590d2;
+    display: block;
+}
+
+h4 {
+    color: #333;
+    font-weight: 500;
+    margin: 5px 0;
+    display: block;
+}
+
+h6 {
+    color: #666;
+    font-weight: 300;
+    font-size: 1em;
+    display: block;
+}
+  /* Language styles */
+  .language {
+    margin-top: 50px;
+  }
+  
+  .language li {
+    margin: 30px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    display: grid;
+  }
+  
+  .language li .text {
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    margin-right: 10px;
+    display: block;
+  }
+  
+  .language .percent {
+    position: relative;
+    width: 200px;
+    background: #e3e3e3;
+    height: 6px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .language .percent div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: #3590d2;
+  }
+  .container .contentBox .interest {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.container .contentBox .interest li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.container .contentBox .interest li .icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: #3590d2;
+    color: #fff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .contentBox .interest li .icon i {
+    color: #fff;
+    margin-right: 0;
+}
+
+
+
+  .container .imgBx {
+    grid-row: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container .imgBx .box img {
+    max-width: 200px; /* Taille maximale de la photo */
+    max-height: 200px; /* Taille maximale de la photo */
+    margin-top: -300px; /* Décalage vers le haut pour aligner avec le haut de la partie texte */
+}
+
+.container .profileText {
+    grid-row: 1; /* Déplacer vers la première rangée */
+    grid-column: 1; /* Sur la même colonne que l'image */
+    display: flex;
+    justify-content: flex-end; /* Alignement à droite */
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px; 
+    margin-left: -225px;
+    /* Espacement par rapport à l'image */
+}
+
+.container .profileText h3 {
+    font-size: 3em;
+    letter-spacing: 0.1em;
+    line-height: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.container .profileText h3 span {
+    position: relative;
+    font-size: 0.5em;
+    font-weight: 300;
+    top: -10px;
+}
+  .container .contentBox h3 {
+    border-left: 4px solid #ff8bb3;
+    padding-left: 10px;
+    line-height: 1em;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    margin-top: 50px;
+}
+.about_skills .box{
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  justify-content: center;
+  align-items: center;
+}
+.about_skills .box h4{
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.about_skills .box .percent{
+ position: relative;
+ width: 100%;
+ height: 10px;
+ background: #e3e3e3;
+}
+.about_skills .box .percent div{
+  position: absolute;
+  top:0;
+  left: 0;
+  height: 100%;
+  background: #3590d2;
+ }

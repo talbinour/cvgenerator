@@ -79,7 +79,7 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
   try {
     const userId = req.body.userId;
     const image = req.file;
-    const imageURL = req.body.imageURL; // Récupérer l'URL de l'image depuis le corps de la requête
+    let imageURL = req.body.imageURL; // Récupérer l'URL de l'image depuis le corps de la requête
 
     console.log('userId received:', userId);
     console.log('image received:', image);
@@ -87,6 +87,15 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
 
     if (!userId || !image) {
       throw new Error('Invalid request: userId or image is missing.');
+    }
+
+    // Vérifier si imageURL est défini
+    if (!imageURL) {
+      // Si imageURL est vide, définir une valeur par défaut ou renvoyer une erreur selon vos besoins
+      // Par exemple, définir une URL par défaut :
+      imageURL = 'default_image_url.png';
+      // Ou lancer une erreur :
+      throw new Error('Image URL is missing.');
     }
 
     // Créer une nouvelle instance du modèle d'image avec les données reçues

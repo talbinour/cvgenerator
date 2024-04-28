@@ -35,6 +35,13 @@ import Edit from "./Cv/edit";
 import Edit5 from "./Cv/editmodel5";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
+import Chatbot2 from "./chatbot2";
+import CVModel6 from "./CvModelChat/CVModel6";
+import CVModel from "./CvModelChat/CVModel";
+import CVModel5 from "./CvModelChat/CVModel5";
+import CVModel3 from "./CvModelChat/CVModel3";
+import CVModel2 from "./CvModelChat/CVModel2";
+import CVModel7 from "./CvModelChat/CVModel7";
 import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
 
@@ -78,7 +85,14 @@ function App() {
           <Route path='/edit-cv' element={<Edit/>} />
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
-          <Route path='/chatbot/:cvId' element={<Chatbot />} />
+          <Route path='/chatbot' element={<Chatbot />} />
+          <Route path='/chatbot2' element={<Chatbot2 />} />
+          <Route path='/CVModel6' element={<CVModel6 />} />
+          <Route path='/CVModel' element={<CVModel />} />
+          <Route path='/CVModel5' element={<CVModel5 />} />
+          <Route path='/CVModel2' element={<CVModel2 />} />
+          <Route path='/CVModel3' element={<CVModel3 />} />
+          <Route path='/CVModel7' element={<CVModel7 />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
           {/* <Route path='/login' element={<Login />} exact />
