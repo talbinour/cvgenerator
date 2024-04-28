@@ -6,47 +6,54 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  background-color: #FFF; /* White background for the whole container */
 }
 
 /* Hero section style */
 .hero {
   text-align: center;
-  padding: 20px 0;
+  padding: 20px 20px;
+  background-color: #FFF; /* White background */
+  color: #132043; /* Dark blue text for contrast */
+  border-radius: 8px;
 }
 
 .hero h1 {
-  color: #132043;
+  font-size: 2.5em;
   margin-bottom: 20px;
 }
 
 .hero p {
-  color: #1F4172;
+  font-size: 1.2em;
+  margin-bottom: 20px;
 }
 
 .createButton {
-  background-color: #132043;
+  background-color: #F1B4BB; /* Pink button */
   color: #FFF;
-  padding: 10px 20px;
+  font-size: 1.1em;
+  padding: 12px 24px;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .createButton:hover {
-  background-color: #1F4172;
+  background-color: #f8d7da; /* Lighter pink on hover */
 }
 
 /* CV list styles */
 .cvListHorizontal {
   display: flex;
   gap: 20px;
-  padding: 10px;
+  padding: 10px; /* Restored original padding */
   overflow-x: auto;
+  align-items: center;
 }
 
 .cvListHorizontal::-webkit-scrollbar {
-  width: 4px;
+  height: 8px;
 }
 
 .cvListHorizontal::-webkit-scrollbar-track {
@@ -60,21 +67,20 @@
 
 .cvItem {
   flex: 0 0 auto;
-  width: calc(25% - 20px);
-  max-height: 400px;
+  width: calc(25% - 20px); /* Restored original width */
+  max-height: 400px; /* Restored original height */
   background-color: #f3f4f6;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   overflow: hidden;
   text-align: center;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cvItem:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .cvImage {
@@ -85,16 +91,18 @@
 
 .cvTitle {
   padding: 10px;
+  font-size: 1em;
   color: #333;
   font-weight: bold;
 }
 
 .models {
   padding: 20px 0;
-  margin-top: -5%; /* Adjust as needed */
-  text-align: center;
 }
-
+.models h1 {
+  
+  margin-bottom: 20px;
+}
 /* Footer styles */
 .footer {
   text-align: center;
@@ -108,17 +116,74 @@
   margin: 10px 0;
 }
 
+.downloadButton {
+  color: #040404;
+  
+  padding: 10px 20px;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
+}
+
+.downloadButton:hover {
+  background-color: #1F4172; /* Slightly darker blue on hover */
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .hero, .models, .footer {
-    padding: 10px;
+    padding: 20px;
   }
 
   .createButton, .downloadButton {
-    padding: 8px 16px;
+    padding: 10px 15px;
   }
 
   .cvListHorizontal {
-    gap: 15px;
+    gap: 10px;
+  }
+
+  .hero h1 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    font-size: 1em;
+  }
+}
+.descriptionContainer {
+  max-width: 800px; /* Largeur maximale du conteneur */
+  margin: 0 auto; /* Centrer le conteneur horizontalement */
+  padding: 30px; /* Espacement intérieur du conteneur */
+  background-color: #f9f9f9; /* Couleur de fond du conteneur */
+  border-radius: 10px; /* Bord arrondi du conteneur */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
+  margin-bottom: 15px;
+}
+
+.description {
+  color: #132043; /* Couleur du texte */
+  font-size: 20px; /* Taille de la police */
+  line-height: 1.6; /* Hauteur de ligne */
+  opacity: 0; /* Opacité initiale à 0 pour l'animation */
+  transition: opacity 0.5s ease; /* Transition de l'opacité pour l'animation */
+}
+
+.show {
+  opacity: 1; /* Opacité à 1 pour afficher le texte */
+}
+
+
+.typing-animation::after {
+  content: "|"; /* Afficher un curseur clignotant */
+  animation: blink-caret 0.75s step-end infinite alternate; /* Animation du curseur clignotant */
+}
+
+@keyframes blink-caret {
+  from, to {
+    color: transparent; /* Rendre le curseur clignotant invisible */
+  }
+  50% {
+    color: black; /* Rendre le curseur clignotant visible */
   }
 }
