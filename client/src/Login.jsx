@@ -29,45 +29,43 @@ const Login = () => {
       const response = await axios.post('http://localhost:8080/loginuser', requestData, {
         withCredentials: true,
       });
-
+    
       const responseData = response.data;
-
+    
       if (responseData.status === 'ok') {
-        // Stocker le token JWT dans le localStorage
         localStorage.setItem('token', responseData.data);
-
-        if (responseData.role === 'admin') {
-          navigate('/admin');
-          window.location.reload();
-
-        } else {
-          navigate('/dashboard');
-          window.location.reload();
-        }   
-      } else if (response.status === 403) {
-        // Utilisateur non vérifié
-        setError('Votre compte n\'a pas été vérifié. Vérifiez votre e-mail et suivez les instructions de vérification.');
-      } 
-      else {                                                                      
-        navigate('/default-route');
+        navigate(responseData.role === 'admin' ? '/admin' : '/dashboard');
+        window.location.reload();
+      } else {
+        setError('Erreur de connexion: ' + responseData.message);
       }
     } catch (error) {
       console.error('Login failed', error);
       console.log('Response Data:', error.response ? error.response.data : 'No response data');
-
-      if (error.response && error.response.status === 401) {
-        setError(error.response.data.message);
-        setError('Mot de passe incorrect ou utilisateur inexistant.');
-        setAttemptCount(attemptCount + 1);
-
-        // If the number of attempts reaches 3, block the login button
-        if (attemptCount + 1 >= 3) {
-          setButtonBlocked(true);
+    
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            setError('Mot de passe incorrect ou utilisateur inexistant.');
+            if (attemptCount >= 2) {
+              setButtonBlocked(true);
+              alert("Vous avez dépassé 3 essais. Veuillez récupérer votre mot de passe.");
+            } else {
+              setAttemptCount(attemptCount + 1);
+            }
+            break;
+          case 403:
+            setError('Votre compte n\'a pas été vérifié. Vérifiez votre e-mail et suivez les instructions de vérification.');
+            break;
+          default:
+            setError('Une erreur s\'est produite lors de la connexion.');
+            break;
         }
       } else {
-        setError('Une erreur s\'est produite lors de la connexion.');
+        setError('Une erreur réseau est survenue.');
       }
     }
+    
   };
 
   const loginWithGoogle = () => {

@@ -21,12 +21,12 @@ const CVSelectionPage = () => {
     fetchCVs();
   }, []);
 
-  const handleCVSelection = async (cvId) => {
+  const handleCVSelection = async (cvId, cvTitle) => {
     try {
-      const response = await axios.get(`http://localhost:8080/getCVById/${cvId}`);
-      const selectedCV = response.data;
-      // Rediriger vers l'interface de chatbot avec l'ID du CV sélectionné
-      navigate(`/chatbot/${selectedCV._id}`);
+      //const response = await axios.get(`http://localhost:8080/getCVById/${cvId}`);
+      //const selectedCV = response.data;
+    
+      navigate(`/${cvTitle}`);
     } catch (error) {
       console.error("Failed to fetch selected CV:", error);
     }
@@ -37,7 +37,7 @@ const CVSelectionPage = () => {
       <h2 className={styles.title}>Sélectionnez un modèle de CV</h2>
       <div className={styles.cvContainer}>
         {CVList.map((cv) => (
-          <div key={cv._id} className={styles.cvItem} onClick={() => handleCVSelection(cv._id)}>
+          <div key={cv._id} className={styles.cvItem} onClick={() => handleCVSelection(cv._id, cv.title)}>
             <img src={cv.imageURL} alt={`CV ${cv._id}`} className={styles.cvImage} />
           </div>
         ))}

@@ -172,8 +172,8 @@ const Admin = () => {
           <input
             name="title"
             className={styles['input-title']}
-            type="text"
-            placeholder="Titre de template"
+            type="lien vers le chat "
+            placeholder="lien vers le chat "
             value={formData.title}
             onChange={handleInputChange}
           />
