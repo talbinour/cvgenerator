@@ -1,137 +1,85 @@
 import React, { useState, useEffect } from "react";
 import Chat from "../chatbot";
 import axios from "axios";
-//import PropTypes from "prop-types";
 import styles from "./CVModel7.module.css";
-import "@fortawesome/fontawesome-free/css/all.css";
 import avatar from "../assets/cvprofile.jpeg";
 
 const CVModel7 = () => {
-  const [cvContent, setCvContent] = useState("");
   const [userId, setUserId] = useState(null);
-  const [cvTitle, setCvTitle] = useState("");
+  //const [cvTitle, setCvTitle] = useState(""); // Titre initial
   const [cvModel, setCvModel] = useState({
-    name: 'John Doe',
-    jobTitle: 'Développeur Web',
-    phone: '0900 786 01',
-    email: 'emmi@gmail.com',
-    website: 'monsite.com',
-    linkedin: 'www.linkedin.com',
-    address: '56e rue, Californie',
-    education: [
-      { id: 1, period: '2017 - 2019', degree: 'Matric en Science', institution: 'Nom de l\'école' },
-      { id: 2, period: '2019 - 2021', degree: 'Intermédiaire en Maths', institution: 'Nom du collège' },
-      { id: 3, period: '2021 - Aujourd\'hui', degree: 'Licence en Informatique', institution: 'Nom de l\'université' }
-    ],
-    languages: [
-      { id: 1, name: 'Anglais', proficiency: 90 },
-      { id: 2, name: 'Ourdou', proficiency: 80 }
-    ],
-    profile: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis maxime delectus quae quo reprehenderit quas laudantium. Itaque sequi commodi vero suscipit reiciendis ea aspernatur cum.',
-    experiences: [
-      { id: 1, period: '2019 - 2021', companyName: 'Société A', jobTitle: 'Développeur Web Senior', description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis' },
-      { id: 2, period: '2021 - présent', companyName: 'Société B', jobTitle: 'Analyste de Données', description: 'Lorem ipsum,dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,tenetur architecto omnis' }
-    ],
-    professionalSkills: [
-      { id: 1, skillName: 'HTML', proficiency: 95 },
-      { id: 2, skillName: 'CSS', proficiency: 70 },
-      { id: 3, skillName: 'JavaScript', proficiency: 95 },
-      { id: 4, skillName: 'Python', proficiency: 75 }
-    ],
-    interests: ['Trading', 'Développement', 'Gaming', 'Business']
+    name: "",
+    prenom: "",
+    job: "",
+    phone: "",
+    email: "",
+    website: "",
+    linkedin: "",
+    address: "",
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
       axios
-        .get('http://localhost:8080/current-username', { withCredentials: true })
+        .get("http://localhost:8080/current-username", { withCredentials: true })
         .then((response) => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
 
           setUserId(userId);
           setCvModel({
-            ...cvModel,
             name: userData.nom,
-            jobTitle: userData.prenom,
-            phone: userData.Nbphone,
-            email: userData.email,
-            address: userData.pays,
+            prenom: userData.prenom,
+            job: userData.jobTitle,
           });
         })
         .catch((error) => {
-          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+          console.error("Erreur lors de la récupération des informations utilisateur:", error);
         });
     }
   }, [userId]);
 
-  useEffect(() => {
-    const detectAndSendTitle = async () => {
-      try {
-        const detectedTitleElement = document.querySelector(`.${styles.title}`);
-        const detectedTitle = detectedTitleElement.textContent;
-        const response = await axios.post(
-          'http://localhost:5000/extract-cv-title',
-          { cv_content: cvContent, cv_title: detectedTitle },
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        const titleFromBackend = response.data.title;
-        setCvTitle(titleFromBackend || detectedTitle);
-      } catch (error) {
-        console.error('Erreur lors de la détection et de l\'envoi du titre du CV:', error);
-      }
-    };
-
-    if (cvContent !== "") {
-      detectAndSendTitle();
-    }
-  }, [cvContent]);
-
-  const updateCvContent = (newCvContent) => {
-    setCvContent(newCvContent);
-  };
-
-  const updateTitleContent = (question) => {
-    // Implémenter la logique pour mettre à jour le titre du CV en fonction de la question posée par le chatbot
-  
+  const updateTitleContent = (question, answer) => {
     switch (question) {
-      case "Quelle est votre expérience professionnelle ?":
-        setCvTitle("Experience"); // Mettre à jour le titre avec "Experience"
+      case "Quel est votre numéro de téléphone ?":
+        setCvModel((prevState) => ({ ...prevState, phone: answer }));
         break;
-      case "Quelle est votre formation académique ?":
-        setCvTitle("EDUCATION"); // Mettre à jour le titre avec "EDUCATION"
+      case "Quelle est votre adresse e-mail ?":
+        setCvModel((prevState) => ({ ...prevState, email: answer }));
         break;
-      case "Quelles sont vos informations de contact ?":
-        // Pas de mise à jour du titre nécessaire car déjà fixe dans le JSX
+      case "Quel est l'URL de votre site web ?":
+        setCvModel((prevState) => ({ ...prevState, website: answer }));
         break;
-      case "Quel est votre profil ?":
-        setCvTitle("Profile"); // Mettre à jour le titre avec "Profile"
+      case "Quel est votre profil LinkedIn ?":
+        setCvModel((prevState) => ({ ...prevState, linkedin: answer }));
         break;
-      case "Quels sont vos centres d'intérêt ?":
-        setCvTitle("Interest"); // Mettre à jour le titre avec "Interest"
-        break;
-      case "Quelles langues parlez-vous ?":
-        setCvTitle("LANGUAGES"); // Mettre à jour le titre avec "LANGUAGES"
-        break;
-      case "Quelles sont vos compétences professionnelles ?":
-        setCvTitle("Professional Skills"); // Mettre à jour le titre avec "Professional Skills"
+      case "Dans quel pays êtes-vous basé(e) ?":
+        setCvModel((prevState) => ({ ...prevState, address: answer }));
         break;
       default:
         break;
     }
   };
 
+  const updateUserResponse = (response) => {
+    // Mettre à jour les informations de contact
+    const [phone, email, website, linkedin, address] = response.split(",");
+    setCvModel((prevState) => ({
+      ...prevState,
+      phone: phone.trim(),
+      email: email.trim(),
+      website: website.trim(),
+      linkedin: linkedin.trim(),
+      address: address.trim(),
+    }));
+  };
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.leftPanel}>
-        <Chat updateCvContent={updateCvContent} updateTitleContent={updateTitleContent} />
-      </div>
+      <Chat updateTitleContent={updateTitleContent} updateUserResponse={updateUserResponse} setCvModel={setCvModel} />      </div>
       <div className={styles.rightPanel}>
         <div className={styles.container}>
           <div className={styles.left_Side}>
@@ -139,96 +87,84 @@ const CVModel7 = () => {
               <div className={styles.imgBx}>
                 <img src={avatar} alt="Profile" />
               </div>
-              <h2>{cvModel.name} {cvModel.prenom}<br /><span>{cvModel.job}</span></h2>
+              <h2>
+                {cvModel.name} {cvModel.prenom}
+                <br />
+                <span>{cvModel.job}</span>
+              </h2>
             </div>
+            <h3 className={styles.title}>CONTACT INFO</h3>
             <div className={styles.contactInfo}>
-              <h3 className={styles.title} >Informations de Contact</h3>
               <ul>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
+                  <span className={styles.icon}>
+                    <i className="fa fa-phone" aria-hidden="true"></i>
+                  </span>
                   <span className={styles.text}>{cvModel.phone}</span>
                 </li>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
+                  <span className={styles.icon}>
+                    <i className="fa fa-envelope" aria-hidden="true"></i>
+                  </span>
                   <span className={styles.text}>{cvModel.email}</span>
                 </li>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
+                  <span className={styles.icon}>
+                    <i className="fa fa-globe" aria-hidden="true"></i>
+                  </span>
                   <span className={styles.text}>{cvModel.website}</span>
                 </li>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-linkedin" aria-hidden="true"></i></span>
+                  <span className={styles.icon}>
+                    <i className="fa fa-linkedin" aria-hidden="true"></i>
+                  </span>
                   <span className={styles.text}>{cvModel.linkedin}</span>
                 </li>
                 <li>
-                  <span className={styles.icon}><i className="fa fa-map-marker" aria-hidden="true"></i></span>
+                  <span className={styles.icon}>
+                    <i className="fa fa-map-marker" aria-hidden="true"></i>
+                  </span>
                   <span className={styles.text}>{cvModel.address}</span>
                 </li>
               </ul>
             </div>
-            <div className={`${styles.contactInfo} ${styles.education}`}>
-              <h3 className={styles.title} id={cvTitle}>EDUCATION</h3>
-              <ul>
-                {cvModel.education.map(item => (
-                  <li key={item.id}>
-                    <h5>{item.period}</h5>
-                    <h4>{item.degree}</h4>
-                    <h4>{item.institution}</h4>
-                  </li>
-                ))}
-              </ul>
+            <div className={styles.education}>
+              <h3 className={styles.title}>EDUCATION</h3>
+              <ul></ul>
             </div>
-            <div className={`${styles.contactInfo} ${styles.languages}`}>
-              <h3 className={styles.title} id={cvTitle}>LANGUAGES</h3>
-              <ul>
-                {cvModel.languages.map(item => (
-                  <li key={item.id}>
-                    <span className={styles.text}>{item.name}</span>
-                    <div className={styles.percentContainer}>
-                      <div className={styles.percentBar} style={{ width: `${item.proficiency}%` }}></div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            <div className={styles.languages}>
+              <h3 className={styles.title}>LANGUAGES</h3>
+              <ul></ul>
             </div>
           </div>
           <div className={styles.right_Side}>
             <div className={styles.about}>
-              <h2 className={styles.title2} id={cvTitle}>Profile</h2>
-              <p>{cvModel.profile}</p>
+              <h2 className={styles.title2}>PROFILE</h2>
+              <p></p>
             </div>
             <div className={styles.about}>
-              <h2 className={styles.title2} id={cvTitle}>Experience</h2>
-              {cvModel.experiences.map(item => (
-                <div className={styles.box} key={item.id}>
-                  <div className={styles.year_company}>
-                    <h5>{item.period}</h5>
-                    <h5>{item.companyName}</h5>
-                  </div>
-                  <div className={styles.text}>
-                    <h4>{item.jobTitle}</h4>
-                    <p>{item.description}</p>
-                  </div>
+              <h2 className={styles.title2}>Expérience</h2>
+              <div className={styles.box}>
+                <div className={styles.year_company}>
+                  <h5></h5>
+                  <h5></h5>
                 </div>
-              ))}
+                <div className={styles.text}>
+                  <h4></h4>
+                  <p></p>
+                </div>
+              </div>
             </div>
             <div className={`${styles.about} ${styles.skills}`}>
-              <h2 className={styles.title2} id={cvTitle}>Professional Skills</h2>
-              {cvModel.professionalSkills.map(item => (
-                <div className={styles.box} key={item.id}>
-                  <h4>{item.skillName}</h4>
-                  <div className={styles.percent}>
-                    <div style={{ width: `${item.proficiency}%` }}></div>
-                  </div>
-                </div>
-              ))}
+              <h2 className={styles.title2}>Compétences Professionnelles</h2>
+              <div className={styles.skillContainer}></div>
             </div>
             <div className={styles.AboutInterest}>
-              <h2 className={styles.title2} id={cvTitle}>Interest</h2>
+              <h2 className={styles.title2}>Intérêts</h2>
               <ul>
-                {cvModel.interests.map((interest, index) => (
-                  <li key={index}><i className="fa fa-bar-chart" aria-hidden="true"></i>{interest}</li>
-                ))}
+                <li>
+                  <i className="fa fa-circle"></i>
+                </li>
               </ul>
             </div>
           </div>

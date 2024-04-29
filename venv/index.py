@@ -48,7 +48,6 @@ def train_from_json(directory):
 # Entraîner à partir du répertoire contenant les fichiers JSON
 train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
 
-# Définir la classe QuestionGenerator avant de l'utiliser
 class QuestionGenerator:
     def __init__(self):
         self.questions = {}
@@ -56,9 +55,31 @@ class QuestionGenerator:
     def load_questions(self, questions):
         self.questions = questions
 
+    def generate_questions_by_classification(self, classification, cv_content):
+        if classification == "contact":
+            return self.generate_contact_questions(cv_content)
+        elif classification == "education":
+            return self.generate_education_questions(cv_content)
+        elif classification == "profile":
+            return self.generate_profile_questions(cv_content)
+        elif classification == "experience":
+            return self.generate_experience_questions(cv_content)
+        elif classification == "skills":
+            return self.generate_skills_questions(cv_content)
+        elif classification == "interests":
+            return self.generate_interests_questions(cv_content)
+        elif classification == "languages":
+            return self.generate_languages_questions(cv_content)
+        else:
+            return []
+
     def generate_contact_questions(self, cv_content):
         contact_questions = [
-            "Quelles sont vos informations de contact ? (numéro de téléphone, email, site web, LinkedIn, etc.)"
+            "Quel est votre numéro de téléphone ?",
+            "Quelle est votre adresse e-mail ?",
+            "Quel est l'URL de votre site web ?",
+            "Quel est votre profil LinkedIn ?",
+            "Dans quel pays êtes-vous basé(e) ?"
         ]
         return contact_questions
 
@@ -100,23 +121,19 @@ class QuestionGenerator:
         ]
         return languages_questions
 
-
+# Charger les questions pour question_generator
 # Charger les questions pour question_generator
 question_generator = QuestionGenerator()
 question_generator.load_questions({
-    "question1": "Quel est votre expérience professionnelle ?",
-    "question2": "Quelle est votre formation académique ?",
-    "question3": "Quelles sont vos compétences professionnelles ?",
-    "question4": "Quelles sont vos informations de contact ?",
-    "question5": "Quel est votre profil ?",
-    "question6": "Quels sont vos centres d'intérêt ?",
-     "question7": "Quelles langues parlez-vous ?",
+    "question1": question_generator.generate_contact_questions(None),  # Passer None pour cv_content
+    "question2": question_generator.generate_education_questions(None),  # Passer None pour cv_content
+    "question3": question_generator.generate_profile_questions(None),  # Passer None pour cv_content
+    "question4": question_generator.generate_experience_questions(None),  # Passer None pour cv_content
+    "question5": question_generator.generate_skills_questions(None),  # Passer None pour cv_content
+    "question6": question_generator.generate_interests_questions(None),  # Passer None pour cv_content
+    "question7": question_generator.generate_languages_questions(None),  # Passer None pour cv_content
     # Ajoutez d'autres questions ici...
 })
-
-
-
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
