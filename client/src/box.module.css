@@ -1,0 +1,47 @@
+/* box.module.css */
+
+.App {
+    text-align: center;
+  }
+  
+  header {
+    background-color: #282c34;
+    padding: 20px;
+    color: white;
+  }
+  
+  main {
+    padding: 20px;
+  }
+  
+  footer {
+    background-color: #282c34;
+    padding: 10px;
+    color: white;
+  }
+  
+  .personal-info, .skills, .experience, .education {
+    margin-bottom: 20px;
+  }
+  
+  .personal-info h2, .skills h2, .experience h2, .education h2 {
+    margin-bottom: 10px;
+  }
+  
+  .personal-info ul, .skills ul, .experience ul, .education ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .personal-info ul li, .skills ul li, .experience ul li, .education ul li {
+    margin-bottom: 5px;
+  }
+  
+  .ExperienceItem {
+    margin-bottom: 20px;
+  }
+  
+  .EducationItem {
+    margin-bottom: 20px;
+  }
+  

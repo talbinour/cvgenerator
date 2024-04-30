@@ -2,24 +2,26 @@ import React, { useState, useEffect } from "react";
 import Chat from "../chatbot";
 import axios from "axios";
 import styles from "./CVModel7.module.css";
+import avatar from "../assets/cvprofile.jpeg";
 
 const CVModel7 = () => {
   const [userId, setUserId] = useState(null);
-  const [cvTitle, setCvTitle] = useState("Mon CV");
   const [cvModel, setCvModel] = useState({
-    name: '',
-    jobTitle: '',
-    phone: '',
-    email: '',
-    website: '',
-    linkedin: '',
-    address: '',
+    name: "",
+    prenom: "",
+    job: "",
+    phone: "",
+    email: "",
+    website: "",
+    linkedin: "",
+    address: "",
     education: [],
     languages: [],
-    profile: '',
+    profile: "",
     experiences: [],
     professionalSkills: [],
-    interests: ['', '', '', '']
+    interests: [],
+    formation: [],
   });
 
   useEffect(() => {
@@ -33,17 +35,23 @@ const CVModel7 = () => {
           const userId = userData.id || userData.user_id;
 
           setUserId(userId);
-          setCvModel((prevState) => ({
-            ...prevState,
-            name: userData.nom || '',
-            prenom: userData.prenom || '',
-            job: userData.jobTitle || '',
-            phone: userData.phone || '',
-            email: userData.email || '',
-            website: userData.website || '',
-            linkedin: userData.linkedin || '',
-            address: userData.address || '',
-          }));
+          setCvModel({
+            name: userData.nom,
+            prenom: userData.prenom,
+            job: userData.jobTitle,
+            phone: userData.phone,
+            email: userData.email,
+            website: userData.website,
+            linkedin: userData.linkedin,
+            address: userData.address,
+            education: [],
+            languages: [],
+            profile: "",
+            experiences: [],
+            professionalSkills: [],
+            interests: [],
+            formation: [],
+          });
         })
         .catch((error) => {
           console.error("Erreur lors de la récupération des informations utilisateur:", error);
@@ -51,154 +59,213 @@ const CVModel7 = () => {
     }
   }, [userId]);
 
-  const updateContactInfo = (response) => {
-    const [phone, email, website, linkedin, address] = response.split(",");
-    setCvModel((prevState) => ({
-      ...prevState,
-      phone: phone.trim(),
-      email: email.trim(),
-      website: website.trim(),
-      linkedin: linkedin.trim(),
-      address: address.trim(),
-    }));
-  };
-
-  const updateEducation = (response) => {
-    const educationData = response.split(";").map((item, index) => ({
-      id: index + 1,
-      period: item.trim(),
-      degree: "",
-      institution: "",
-    }));
-
-    setCvModel((prevState) => ({
-      ...prevState,
-      education: educationData,
-    }));
-  };
-
-  const updateLanguages = (response) => {
-    const languagesData = response.split(",").map((item, index) => ({
-      id: index + 1,
-      name: item.trim(),
-      proficiency: 0,
-    }));
-
-    setCvModel((prevState) => ({
-      ...prevState,
-      languages: languagesData,
-    }));
-  };
-
-  const updateTitleContent = (response) => {
-    const newTitle = response.trim();
-    setCvTitle(newTitle);
-  };
-
-  const updateUserResponse = (question, response) => {
-    switch (question) {
+  const updateTitleContent = (title, content) => {
+    let newEducation, newLanguage, newExperience, newSkill;
+    switch (title) {
       case "Quel est votre numéro de téléphone ?":
+        setCvModel((prevState) => ({ ...prevState, contactInfo: { ...prevState.contactInfo, phone: content } }));
+        break;
       case "Quelle est votre adresse e-mail ?":
-      case "Quel est l'URL de votre site web ?":
-      case "Quel est votre profil LinkedIn ?":
-      case "Dans quel pays êtes-vous basé(e) ?":
-        updateContactInfo(response);
+        setCvModel((prevState) => ({ ...prevState, contactInfo: { ...prevState.contactInfo, email: content } }));
         break;
+      // Autres cas...
       case "Où avez-vous étudié ?":
-      case "Quel est le nom de votre école/université ?":
-      case "Pouvez-vous préciser la période de temps de vos études ?":
-        updateEducation(response);
+        newEducation = {
+          formationName: content,
+          establishment: content,
+          city: content,
+          startDate: content,
+          endDate: content,
+          description: content,
+        };
+        setCvModel((prevState) => ({ ...prevState, formation: [...prevState.formation, newEducation] }));
         break;
-      case "Quelles langues parlez-vous ?":
-        updateLanguages(response);
+      case "Quelles langues parlez-vous et à quel niveau ?":
+        newLanguage = {
+          name: content,
+          proficiency: 50, // Modifier la valeur de proficiency selon vos besoins
+        };
+        setCvModel((prevState) => ({ ...prevState, languages: [...prevState.languages, newLanguage] }));
         break;
-      case "Pouvez-vous nous parler un peu de vous ?":
-        setCvModel((prevState) => ({
-          ...prevState,
-          profile: response.trim(),
-        }));
-        break;
+      // Autres cas...
       default:
         break;
     }
   };
 
+  const updateUserResponse = (formationResponse) => {
+    let newFormation, newEducation, newContactInfo, newLanguage, newSkill, newExperience;
+    // Mise à jour des intérêts
+    // Autres mises à jour...
+
+    // Mise à jour de la formation
+    newFormation = {
+      formationName: "", // Remplacer par la valeur correspondante
+      establishment: "", // Remplacer par la valeur correspondante
+      city: "", // Remplacer par la valeur correspondante
+      startDate: "", // Remplacer par la valeur correspondante
+      endDate: "", // Remplacer par la valeur correspondante
+      description: "", // Remplacer par la valeur correspondante
+    };
+    // Autres mises à jour...
+
+    // Mise à jour de l'éducation
+    newEducation = {
+      period: formationResponse,
+      degree: formationResponse,
+      institution: formationResponse,
+    };
+    // Autres mises à jour...
+
+    // Mise à jour des informations de contact
+    newContactInfo = {
+      phone: formationResponse,
+      email: formationResponse,
+      website: formationResponse,
+      linkedin: formationResponse,
+      address: formationResponse,
+    };
+    // Autres mises à jour...
+
+    // Mise à jour des langues
+    newLanguage = {
+      name: formationResponse,
+      proficiency: 50, // Modifier la valeur de proficiency selon vos besoins
+    };
+    // Autres mises à jour...
+
+    // Mise à jour des compétences professionnelles
+    newSkill = {
+      skillName: formationResponse,
+      proficiency: 50, // Modifier la valeur de proficiency selon vos besoins
+    };
+    // Autres mises à jour...
+
+    // Mise à jour de l'expérience
+    newExperience = {
+      period: formationResponse,
+      companyName: formationResponse,
+      jobTitle: formationResponse,
+      description: formationResponse,
+    };
+    // Autres mises à jour...
+  };
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.leftPanel}>
-        <Chat updateTitleContent={updateTitleContent} updateUserResponse={updateUserResponse} setCvModel={setCvModel} />
+        <Chat updateTitleContent={updateTitleContent} updateUserResponse={updateUserResponse} />
       </div>
       <div className={styles.rightPanel}>
         <div className={styles.container}>
-          <div className={styles.contactInfo}>
-            <h2>{cvTitle}</h2>
-            <h3>CONTACT INFO</h3>
-            <ul>
-              <li><strong>Téléphone:</strong> {cvModel.phone}</li>
-              <li><strong>Email:</strong> {cvModel.email}</li>
-              <li><strong>Site Web:</strong> {cvModel.website}</li>
-              <li><strong>LinkedIn:</strong> {cvModel.linkedin}</li>
-              <li><strong>Adresse:</strong> {cvModel.address}</li>
-            </ul>
-          </div>
-          <div className={styles.education}>
-            <h3>ÉDUCATION</h3>
-            <ul>
-              {cvModel.education && cvModel.education.map((edu, index) => (
-                <li key={index}>
-                  <span>{edu.period}</span>
-                  <span>{edu.degree}</span>
-                  <span>{edu.institution}</span>
+          <div className={styles.left_Side}>
+            <div className={styles.profileText}>
+              <div className={styles.imgBx}>
+                <img src={avatar} alt="Profile" />
+              </div>
+              <h2>
+                {cvModel.name} {cvModel.prenom}
+                <br />
+                <span>{cvModel.job}</span>
+              </h2>
+            </div>
+            <h3 className={styles.title}>CONTACT INFO</h3>
+            <div className={styles.contactInfo}>
+              <ul>
+                <li>
+                  <span className={styles.icon}>
+                    <i className="fa fa-phone" aria-hidden="true"></i>
+                  </span>
+                  <span className={styles.text}>{cvModel.phone}</span>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.profile}>
-            <h3>PROFIL</h3>
-            <p>{cvModel.profile}</p>
-          </div>
-          <div className={styles.experience}>
-            <h3>EXPÉRIENCE</h3>
-            <ul>
-              {cvModel.experiences && cvModel.experiences.map((experience, index) => (
-                <li key={index}>
-                  <span>{experience.period}</span>
-                  <span>{experience.companyName}</span>
-                  <span>{experience.jobTitle}</span>
-                  <span>{experience.description}</span>
+                <li>
+                  <span className={styles.icon}>
+                    <i className="fa fa-envelope" aria-hidden="true"></i>
+                  </span>
+                  <span className={styles.text}>{cvModel.email}</span>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.skills}>
-            <h3>COMPÉTENCES PROFESSIONNELLES</h3>
-            <ul>
-              {cvModel.professionalSkills && cvModel.professionalSkills.map((skill, index) => (
-                <li key={index}>
-                  <span>{skill.skillName}</span>
-                  <span>{skill.proficiency}</span>
+                <li>
+                  <span className={styles.icon}>
+                    <i className="fa fa-globe" aria-hidden="true"></i>
+                  </span>
+                  <span className={styles.text}>{cvModel.website}</span>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.languages}>
-            <h3>LANGUES</h3>
-            <ul>
-              {cvModel.languages && cvModel.languages.map((language, index) => (
-                <li key={index}>
-                  <span>{language.name}</span>
-                  <span>{language.proficiency}</span>
+                <li>
+                  <span className={styles.icon}>
+                    <i className="fa fa-linkedin" aria-hidden="true"></i>
+                  </span>
+                  <span className={styles.text}>{cvModel.linkedin}</span>
                 </li>
-              ))}
-            </ul>
+                <li>
+                  <span className={styles.icon}>
+                    <i className="fa fa-map-marker" aria-hidden="true"></i>
+                  </span>
+                  <span className={styles.text}>{cvModel.address}</span>
+                </li>
+              </ul>
+            </div>
+            <div className={styles.education}>
+              <h3 className={styles.title}>EDUCATION</h3>
+              <ul>
+                {cvModel.education.map((edu, index) => (
+                  <li key={index}>
+                    <h4>{edu.formationName}</h4>
+                    <p>
+                      <span>{edu.city}</span>, <span>{edu.startDate}</span> - <span>{edu.endDate}</span>
+                    </p>
+                    <p>{edu.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.languages}>
+              <h3 className={styles.title}>LANGUAGES</h3>
+              <ul>
+                {cvModel.languages.map((language, index) => (
+                  <li key={index}>
+                    <h4>{language.name}</h4>
+                    <p>Proficiency: {language.proficiency}%</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className={styles.interests}>
-            <h3>INTÉRÊTS</h3>
-            <ul>
-              {cvModel.interests && cvModel.interests.map((interest, index) => (
-                <li key={index}>{interest}</li>
-              ))}
-            </ul>
+          <div className={styles.right_Side}>
+            <div className={styles.experience}>
+              <h3 className={styles.title}>EXPERIENCE</h3>
+              <ul>
+                {cvModel.experiences.map((experience, index) => (
+                  <li key={index}>
+                    <h4>{experience.jobTitle}</h4>
+                    <p>
+                      <span>{experience.companyName}</span>, <span>{experience.period}</span>
+                    </p>
+                    <p>{experience.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.skills}>
+              <h3 className={styles.title}>PROFESSIONAL SKILLS</h3>
+              <ul>
+                {cvModel.professionalSkills.map((skill, index) => (
+                  <li key={index}>
+                    <h4>{skill.skillName}</h4>
+                    <p>Proficiency: {skill.proficiency}%</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.interests}>
+              <h3 className={styles.title}>INTERESTS</h3>
+              <ul>
+                {cvModel.interests.map((interest, index) => (
+                  <li key={index}>
+                    <p>{interest}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>

@@ -59,7 +59,7 @@ function CvOuResume() {
           setCvModel({
             ...cvModel,
             name: userData.nom,
-            prenom: userData.prenom ,
+            prenom: userData.prenom,
             phone: userData.Nbphone,
             email: userData.email,
             address: userData.pays,
@@ -70,7 +70,7 @@ function CvOuResume() {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
         });
     }
-  }, [cvModel]);
+  }, []);
 
   useEffect(() => {
     loadCVFromServer();
@@ -93,25 +93,23 @@ function CvOuResume() {
 
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
+
     if (!element) {
-        console.error('Élément avec l\'ID "cv-content" introuvable.');
-        return;
+      console.error('Élément avec l\'ID "cv-content" introuvable.');
+      return;
     }
 
     const opt = {
-        margin: -0.5,
-        filename: 'mon_cv.pdf',
-        image: { type: 'jpeg', quality: 1 }, // Amélioration de la qualité de l'image
-        html2canvas: { scale: 3, logging: true, dpi: 192, letterRendering: true }, // Augmenter l'échelle pour une meilleure résolution
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } // S'assurer que le format est A4
+      margin: 0.5,
+      filename: 'mon_cv.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    html2pdf().from(element).set(opt).toPdf().get('pdf').then(function (pdf) {
-        window.open(pdf.output('bloburl'), '_blank'); // Optionnel : Ouvrir le PDF dans un nouvel onglet
-    });
+    html2pdf().from(element).set(opt).save();
     handleDownload();
-};
-
+  };
 
   const handleDownload = async () => {
     try {
@@ -132,7 +130,6 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
-      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',
@@ -146,10 +143,10 @@ function CvOuResume() {
   };
 
   return (
-    <div className={`${styles['print-area']} ${styles.resume}`}style={{backgroundColor: 'rgb(128, 138, 226)',backgroundRepeat: 'no-repeat', backgroundPosition: 'center center'}}>
+    <div className={`${styles['print-area']} ${styles.resume}`}>
       <div id="cv-content" className={styles.container}>
-      <div className={styles.editButton}>
-          <a href="#" onClick={generatePDF}><i className="fas fa-file-pdf"></i></a>
+        <div className={styles.editButton}>
+          <button onClick={() => generatePDF()} className={styles['new-button']}><i className="fas fa-file-pdf"></i>Télécharger</button>
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
@@ -157,8 +154,8 @@ function CvOuResume() {
               <img src={avatar} alt="Profile" />
             </div>
             <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
-            <h3>{cvModel.profession}</h3>
-          </div>
+            <h3>{cvModel.profession}</h3>         
+             </div>
           <div className={styles.contactInfo}>
             <h3 className={styles.title}>Informations de Contact</h3>
             <ul>
@@ -187,13 +184,14 @@ function CvOuResume() {
           <div className={`${styles.contactInfo} ${styles.education}`}>
             <h3 className={styles.title}>ÉDUCATION</h3>
             <ul>
-              {cvModel.education.map((edu, index) => (
-                <li key={index}>
-                  <h5>{edu.period}</h5>
-                  <h4>{edu.degree}</h4>
-                  <h4>{edu.institution}</h4>
-                </li>
-              ))}
+            {cvModel.education && cvModel.education.map((edu, index) => (
+              <li key={index}>
+                <h5>{edu.period}</h5>
+                <h4>{edu.degree}</h4>
+                <h4>{edu.institution}</h4>
+              </li>
+            ))}
+
             </ul>
           </div>
           <div className={`${styles.contactInfo} ${styles.languages}`}>

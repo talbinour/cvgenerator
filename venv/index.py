@@ -47,18 +47,6 @@ def train_from_json(directory):
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
 train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_input = request.json.get("message")
-
-    # Obtenir la réponse du bot
-    bot_response = str(bot.get_response(user_input))
-    
-    return jsonify({"response": bot_response})
-
-
-
-
 
 class QuestionGenerator:
     def __init__(self):
@@ -67,90 +55,109 @@ class QuestionGenerator:
     def load_questions(self, questions):
         self.questions = questions
 
-    def generate_next_question(self, current_question_key, user_response):
-        # Vérifier si la clé de la question actuelle existe dans le dictionnaire des questions
-        if current_question_key in self.questions:
-            current_question_data = self.questions[current_question_key]
-            main_question = current_question_data.get("main_question")
-            additional_question = current_question_data.get("additional_question")
-
-            if user_response.strip().lower() == main_question.strip().lower():
-                # Si la réponse de l'utilisateur correspond à la question principale, poser la question supplémentaire
-                return additional_question
-            else:
-                # Si la réponse de l'utilisateur est différente de la question principale, passer à la question suivante
-                question_number = int(current_question_key.replace("question", ""))
-                next_question_number = question_number + 1
-                next_question_key = f"question{next_question_number}"
-                if next_question_key in self.questions:
-                    next_question_data = self.questions[next_question_key]
-                    next_question = next_question_data.get("main_question")
-                    return next_question, next_question_key
-                else:
-                    # Si toutes les questions ont été posées, la conversation est terminée
-                    return "Merci pour les informations. Votre CV est complet.", None
+    def generate_questions_by_classification(self, classification, cv_content):
+        if classification == "contact":
+            return self.generate_contact_questions(cv_content)
+        elif classification == "education":
+            return self.generate_education_questions(cv_content)
+        elif classification == "profile":
+            return self.generate_profile_questions(cv_content)
+        elif classification == "experience":
+            return self.generate_experience_questions(cv_content)
+        elif classification == "skills":
+            return self.generate_skills_questions(cv_content)
+        elif classification == "interests":
+            return self.generate_interests_questions(cv_content)
+        elif classification == "languages":
+            return self.generate_languages_questions(cv_content)
         else:
-            # Si la clé de la question actuelle n'existe pas dans le dictionnaire, la conversation est interrompue
-            return "Une erreur est survenue. La conversation est interrompue.", None
+            return []
 
+    def generate_contact_questions(self, cv_content):
+        contact_questions = [
+            "Quel est votre numéro de téléphone ?",
+            "Quelle est votre adresse e-mail ?",
+            "Quel est l'URL de votre site web ?",
+            "Quel est votre profil LinkedIn ?",
+            "Dans quel pays êtes-vous basé(e) ?"
+        ]
+        return contact_questions
 
-# Schéma de données JSON pour les questions
-questions_data = {
-  "question1": {
-    "main_question": "Quel est votre expérience professionnelle ?",
-    "additional_question": "Voulez-vous ajouter quelque chose de plus à propos de votre expérience professionnelle ?"
-  },
-  "question2": {
-    "main_question": "Quelle est votre formation académique ?",
-    "additional_question": "Avez-vous d'autres formations à ajouter ?"
-  },
-  "question3": {
-    "main_question": "Quelles langues parlez-vous ?",
-    "additional_question": "Avez-vous d'autres langues à ajouter ?"
-  },
-  "question4": {
-    "main_question": "Pouvez-vous nous parler un peu de vous ?",
-    "additional_question": "Voulez-vous ajouter quelque chose de plus à propos de vous ?"
-  },
-  "question5": {
-    "main_question": "Pouvez-vous nous parler de votre expérience professionnelle ?",
-    "additional_question": "Voulez-vous ajouter quelque chose de plus à propos de votre expérience professionnelle ?"
-  },
-  "question6": {
-    "main_question": "Quelles sont vos compétences professionnelles ?",
-    "additional_question": "Avez-vous d'autres compétences à ajouter ?"
-  },
-  "question7": {
-    "main_question": "Quels sont vos centres d'intérêt ?",
-    "additional_question": "Avez-vous d'autres centres d'intérêt à ajouter ?"
-  }
-  # Ajoutez d'autres questions ici...
-}
+    def generate_education_questions(self, cv_content):
+        education_questions = [
+            "Où avez-vous étudié ?",
+            "Quel est le nom de votre école/université ?",
+            "Pouvez-vous préciser la période de temps de vos études ?"
+        ]
+        return education_questions
 
-# Instanciation de la classe QuestionGenerator et chargement des questions
+    def generate_profile_questions(self, cv_content):
+        profile_questions = [
+            "Pouvez-vous nous parler un peu de vous ?"
+        ]
+        return profile_questions
+
+    def generate_experience_questions(self, cv_content):
+        experience_professionnelle_questions = [
+            "Quel est votre poste ?",
+            "Quel est le nom de votre employeur ?",
+            "Dans quelle ville avez-vous travaillé ?",
+            "Quelle est la date de début de votre expérience professionnelle ?",
+            "Quelle est la date de fin de votre expérience professionnelle ?",
+            "Pouvez-vous décrire votre expérience professionnelle ?"
+        ]
+        return experience_professionnelle_questions
+    def generate_skills_questions(self, cv_content):
+        competence_questions = [
+            "Quelles compétences avez-vous et à quel niveau ?"
+        ]
+        return competence_questions
+
+    def generate_interests_questions(self, cv_content):
+        centre_interet_questions = [
+            "Quels sont vos centres d'intérêt ?"
+        ]
+        return centre_interet_questions
+    
+    def generate_languages_questions(self, cv_content):
+        langue_questions = [
+            "Quelles langues parlez-vous et à quel niveau ?"
+        ]
+        return langue_questions
+    def generate_formation_questions(self, cv_content):
+        formation_questions = [
+            "Quel est votre titre de formation ?",
+            "Quel est le nom de votre établissement ?",
+            "Dans quelle ville avez-vous étudié ?",
+            "Quelle est la date de début de votre formation ?",
+            "Quelle est la date de fin de votre formation ?",
+            "Pouvez-vous décrire votre formation ?"
+        ]
+        return formation_questions
+
+# Charger les questions pour question_generator
+# Charger les questions pour question_generator
 question_generator = QuestionGenerator()
-question_generator.load_questions(questions_data)
+question_generator.load_questions({
+    "question1": question_generator.generate_contact_questions(None),  # Passer None pour cv_content
+    "question2": question_generator.generate_education_questions(None),  # Passer None pour cv_content
+    "question3": question_generator.generate_languages_questions(None),  # Passer None pour cv_content
+    "question4": question_generator.generate_profile_questions(None),  # Passer None pour cv_content
+    "question5": question_generator.generate_experience_questions(None),  # Passer None pour cv_content
+    "question6": question_generator.generate_skills_questions(None),  # Passer None pour cv_content
+    "question7": question_generator.generate_interests_questions(None),  # Passer None pour cv_content
+    "question8": question_generator.generate_formation_questions(None),  # Passer None pour cv_content
+    # Ajoutez d'autres questions ici...
+})
 
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message")
 
-
-@app.route("/add-more-info", methods=["POST"])
-def add_more_info():
-    data = request.json
-    user_input = data.get("message")
-    conversation_state = data.get("conversation_state")
-
-    # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
-    if conversation_state is None:
-        conversation_state = {}
-
-    current_question_key = conversation_state.get("state")
-    next_question_key = None
-
-    # Logique pour gérer les réponses de l'utilisateur et lui permettre d'ajouter des informations supplémentaires
-    # Ajoutez votre logique pour chaque étape de la création du CV ici
-
-    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
-
+    # Obtenir la réponse du bot
+    bot_response = str(bot.get_response(user_input))
+    
+    return jsonify({"response": bot_response})
 
 
 @app.route("/profile", methods=["POST"])
@@ -170,14 +177,6 @@ def save_response():
     # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
     return jsonify({"message": "Réponse enregistrée avec succès."})
 
-@app.route("/extract-cv-title", methods=["POST"])
-def get_cv_title():
-    data = request.json
-    cv_content = data.get("cv_content")
-    # Implémentez la logique pour extraire le titre du CV à partir de son contenu
-    # Remplacez cette logique par votre propre méthode de détection automatique du titre du CV
-    title = "Titre du CV"
-    return jsonify({"title": title})
 
 def generate_next_question(next_question_key):
     # Définir un dictionnaire contenant les questions associées à chaque clé
@@ -214,44 +213,32 @@ def generate_next_question_route():
     next_question_key = None
 
     if current_question_key:
-        current_question_data = question_generator.questions.get(current_question_key)
-        if current_question_data:
-            main_question = current_question_data.get("main_question")
-            additional_question = current_question_data.get("additional_question")
-
-            if user_response.strip().lower() == main_question.strip().lower():
-                # Si la réponse de l'utilisateur correspond à la question principale, poser la question supplémentaire
-                next_question = additional_question
+        current_question = question_generator.questions.get(current_question_key)
+        if current_question:
+            if user_response and user_response.strip().lower() == current_question.strip().lower():
+                # Si la réponse de l'utilisateur est la même que la question actuelle, répéter la question
+                return jsonify({"response": current_question, "next_question_key": current_question_key, "conversation_state": conversation_state})
             else:
-                # Si la réponse de l'utilisateur est différente de la question principale, passer à la question suivante
+                # Si la réponse de l'utilisateur est différente de la question actuelle, passer à la question suivante
                 question_number = int(current_question_key.replace("question", ""))
                 next_question_number = question_number + 1
                 next_question_key = f"question{next_question_number}"
-                next_question_data = question_generator.questions.get(next_question_key)
-                if next_question_data:
-                    next_question = next_question_data.get("main_question")
+                if next_question_key in question_generator.questions:
+                    next_question = question_generator.questions.get(next_question_key)
                     conversation_state["state"] = next_question_key
+                    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
                 else:
                     # Si toutes les questions ont été posées, la conversation est terminée
-                    next_question = "Merci pour les informations. Votre CV est complet."
-                    conversation_state = None
+                    return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": None})
         else:
             # Si la clé de la question actuelle n'existe pas dans le dictionnaire, la conversation est interrompue
-            next_question = "Une erreur est survenue. La conversation est interrompue."
-            conversation_state = None
+            return jsonify({"response": "Une erreur est survenue. La conversation est interrompue.", "next_question_key": None, "conversation_state": None})
     else:
         # Si l'état de la conversation est absent, initialiser à la première question
         next_question_key = "question1"
-        next_question_data = question_generator.questions.get(next_question_key)
-        if next_question_data:
-            next_question = next_question_data.get("main_question")
-            conversation_state["state"] = next_question_key
-        else:
-            # Si la première question n'existe pas, la conversation est interrompue
-            next_question = "Une erreur est survenue. La conversation est interrompue."
-            conversation_state = None
-
-    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+        next_question = question_generator.questions.get(next_question_key)
+        conversation_state["state"] = next_question_key
+        return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
 
 if __name__ == "__main__":
     app.run(debug=True)

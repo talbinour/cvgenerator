@@ -45,6 +45,7 @@ import CVModel7 from "./CvModelChat/CVModel7";
 import NewQuestion from "./CvModelChat/NewQuestion";
 import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
+import Box from './box';
 
 function App() {
   return (
@@ -94,6 +95,7 @@ function App() {
           <Route path='/CVModel2' element={<CVModel2 />} />
           <Route path='/CVModel3' element={<CVModel3 />} />
           <Route path='/CVModel7' element={<CVModel7 />} />
+          <Route path='/box' element={<Box />} />
           <Route path='/NewQuestion' element={<NewQuestion />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
