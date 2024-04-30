@@ -59,17 +59,18 @@ function CvOuResume() {
           setCvModel({
             ...cvModel,
             name: userData.nom,
-            jobTitle: userData.prenom,
+            prenom: userData.prenom ,
             phone: userData.Nbphone,
             email: userData.email,
             address: userData.pays,
+            profession:userData.profession
           });
         })
         .catch((error) => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
         });
     }
-  }, []);
+  }, [cvModel]);
 
   useEffect(() => {
     loadCVFromServer();
@@ -92,23 +93,25 @@ function CvOuResume() {
 
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
-
     if (!element) {
-      console.error('Élément avec l\'ID "cv-content" introuvable.');
-      return;
+        console.error('Élément avec l\'ID "cv-content" introuvable.');
+        return;
     }
 
     const opt = {
-      margin: 0.5,
-      filename: 'mon_cv.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        margin: -0.5,
+        filename: 'mon_cv.pdf',
+        image: { type: 'jpeg', quality: 1 }, // Amélioration de la qualité de l'image
+        html2canvas: { scale: 3, logging: true, dpi: 192, letterRendering: true }, // Augmenter l'échelle pour une meilleure résolution
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } // S'assurer que le format est A4
     };
 
-    html2pdf().from(element).set(opt).save();
+    html2pdf().from(element).set(opt).toPdf().get('pdf').then(function (pdf) {
+        window.open(pdf.output('bloburl'), '_blank'); // Optionnel : Ouvrir le PDF dans un nouvel onglet
+    });
     handleDownload();
-  };
+};
+
 
   const handleDownload = async () => {
     try {
@@ -129,6 +132,7 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
+      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',
@@ -142,7 +146,7 @@ function CvOuResume() {
   };
 
   return (
-    <div className={`${styles['print-area']} ${styles.resume}`}>
+    <div className={`${styles['print-area']} ${styles.resume}`}style={{backgroundColor: 'rgb(128, 138, 226)',backgroundRepeat: 'no-repeat', backgroundPosition: 'center center'}}>
       <div id="cv-content" className={styles.container}>
       <div className={styles.editButton}>
           <a href="#" onClick={generatePDF}><i className="fas fa-file-pdf"></i></a>
@@ -152,7 +156,8 @@ function CvOuResume() {
             <div className={styles.imgBx}>
               <img src={avatar} alt="Profile" />
             </div>
-            <h2>{cvModel.name} {cvModel.prenom}<br /><span>{cvModel.job}</span></h2>
+            <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
+            <h3>{cvModel.profession}</h3>
           </div>
           <div className={styles.contactInfo}>
             <h3 className={styles.title}>Informations de Contact</h3>

@@ -60,19 +60,21 @@ const ParentComponent = () => {
               setCurrentCVId(userId); // Set currentCVId with userId
               setCvModel({
                 ...cvModel,
-                name: userData.nom,
-                jobTitle: userData.prenom,
+                name: userData.nom+' '+userData.prenom,
+                
                 phone: userData.Nbphone,
                 email: userData.email,
                 address: userData.pays,
-                // Assuming other properties are similar
+                profession:userData.profession,
+                
+                
               });
           })
           .catch((error) => {
               console.error('Erreur lors de la récupération des informations utilisateur:', error);
           });
     }
-  }, []);
+  }, [cvModel]);
 
   useEffect(() => {
     loadCVFromServer();
@@ -156,22 +158,22 @@ const ParentComponent = () => {
               <div className={styles.imgBx}>
                 <img src={avatar} alt="Profile" />  
               </div>
-              <form>
+             
                 <span 
                   name="name" 
                   onBlur={handleChange} 
-                  placeholder="Your Name" 
+                  placeholder="Votre nom" 
                   className={styles.input}
                   contentEditable
                 >{cvModel.name}</span>
+             
                 <span 
                   name="jobTitle" 
                   onBlur={handleChange} 
-                  placeholder="Your Job Title" 
+                  placeholder="Votre profession " 
                   className={styles.input}
                   contentEditable
-                >{cvModel.jobTitle}</span>
-              </form>
+                >{cvModel.profession}</span>
             </div>
             <div className={styles.contactInfo}>
               <h3 className={styles.title}>Contact Info</h3>
@@ -183,7 +185,7 @@ const ParentComponent = () => {
                     value={cvModel.phone}
                     onChange={(e) => handleChange(e, 'phone')}
                     className={styles.input}
-                    placeholder="Phone"
+                    placeholder="telephone"
                   />
                 </li>
                 <li>
@@ -203,7 +205,7 @@ const ParentComponent = () => {
                     value={cvModel.website}
                     onChange={(e) => handleChange(e, 'website')}
                     className={styles.input}
-                    placeholder="Website"
+                    placeholder="siteweb "
                   />
                 </li>
                 <li>
@@ -223,7 +225,7 @@ const ParentComponent = () => {
                     value={cvModel.address}
                     onChange={(e) => handleChange(e, 'address')}
                     className={styles.input}
-                    placeholder="Address"
+                    placeholder="Adresse"
                   />
                 </li>
               </ul>

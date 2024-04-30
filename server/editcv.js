@@ -46,6 +46,8 @@ router.put('/cv/:userId/:cvId/', async (req, res) => {
 
     // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
     const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+    console.log('Updated CV Data:', reloadedCV);
+
     res.status(200).json({ message: 'CV saved successfully', cvId: cvId, cvData: reloadedCV });
   } catch (error) {
     console.error('Error saving CV:', error);
@@ -104,12 +106,11 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
       imageName: image.originalname,
       imagePath: image.path,
       imageSize: image.size,
+      pageURL: req.body.pageURL,
       imageUrl: imageURL // Ajouter l'URL de l'image au modèle
     });
-
     // Sauvegarder l'image en base de données
     const savedImage = await newImage.save();
-
     // Répondre avec un message de succès
     res.status(200).json({ message: 'Image saved successfully', image: savedImage });
   } catch (error) {

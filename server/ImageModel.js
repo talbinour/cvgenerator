@@ -11,6 +11,7 @@ const imageSchema = new mongoose.Schema({
   imagePath: { type: String, required: true },
   imageSize: { type: Number, required: true },
   imageUrl: { type: String,required: true  } ,
+  pageURL: { type: String },
   date: {
     type: Date,
     default: Date.now

@@ -75,12 +75,12 @@ class UserController {
     static async updateUser(req, res) {
         try {
             const userId = req.params.userId;
-            const { nom, prenom, Nbphone, email, date_naissance, pays, photo } = req.body;
+            const { nom, prenom, Nbphone, email, date_naissance, pays, profession, photo } = req.body;
             let updatedUser;
             if (req.file) {
-                updatedUser = await UserInfo.findByIdAndUpdate(userId, { nom, prenom, Nbphone, email, date_naissance, pays, photo: req.file.path }, { new: true });
+                updatedUser = await UserInfo.findByIdAndUpdate(userId, { nom, prenom, Nbphone, email, date_naissance, pays , profession, photo: req.file.path }, { new: true });
             } else {
-                updatedUser = await UserInfo.findByIdAndUpdate(userId, { nom, prenom, Nbphone, email, date_naissance, pays, photo }, { new: true });
+                updatedUser = await UserInfo.findByIdAndUpdate(userId, { nom, prenom, Nbphone, email, date_naissance, pays , profession, photo }, { new: true });
             }
             res.status(200).json({ user: updatedUser });
         } catch (error) {
