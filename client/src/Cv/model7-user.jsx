@@ -59,17 +59,18 @@ function CvOuResume() {
           setCvModel({
             ...cvModel,
             name: userData.nom,
-            jobTitle: userData.prenom,
+            prenom: userData.prenom ,
             phone: userData.Nbphone,
             email: userData.email,
             address: userData.pays,
+            profession:userData.profession
           });
         })
         .catch((error) => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
         });
     }
-  }, []);
+  }, [cvModel]);
 
   useEffect(() => {
     loadCVFromServer();
@@ -131,6 +132,7 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
+      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',
@@ -154,7 +156,8 @@ function CvOuResume() {
             <div className={styles.imgBx}>
               <img src={avatar} alt="Profile" />
             </div>
-            <h2>{cvModel.name} {cvModel.prenom}<br /><span>{cvModel.job}</span></h2>
+            <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
+            <h3>{cvModel.profession}</h3>
           </div>
           <div className={styles.contactInfo}>
             <h3 className={styles.title}>Informations de Contact</h3>

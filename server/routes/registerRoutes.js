@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 router.post('/', async (req, res) => {
-  const { nom, prenom, email, date_naissance, mot_passe, Nbphone ,genre, pays} = req.body;
+  const { nom, prenom, email, date_naissance, mot_passe, Nbphone ,genre, pays, profession} = req.body;
   console.log('Requête POST reçue:', req.body);
 
   try {
@@ -32,7 +32,8 @@ router.post('/', async (req, res) => {
       mot_passe,
       Nbphone,
       genre, // Added gender
-      pays ,  // Added country
+      pays , 
+      profession,  // Added country
       emailToken,
       isVerified: false,
     });

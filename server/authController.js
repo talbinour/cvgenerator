@@ -143,6 +143,7 @@ class AuthController {
         date_naissance: currentUser.date_naissance,
         role: currentUser.role,
         pays: currentUser.pays,
+        profession: currentUser.profession,
         // Ajoutez d'autres champs nécessaires
       };
   

@@ -14,6 +14,7 @@ const UserProfile = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [userPhoto, setUserPhoto] = useState(null); 
   const [selectedImage, setSelectedImage] = useState(null); 
+  const [profession, setProfession] = useState('');
   const inputRef = useRef(null); 
   
  
@@ -35,8 +36,8 @@ const UserProfile = () => {
               setEmail(userData.email);
               setDateNaissance(userData.date_naissance);
               setPays(userData.pays);
-
-              // Récupérer l'URL de l'image de profil de l'utilisateur
+              setProfession(userData.profession || '');
+              
               setUserPhoto(userData.photo);
           })
           .catch((error) => {
@@ -61,6 +62,7 @@ const UserProfile = () => {
       formData.append('email', email);
       formData.append('date_naissance', dateNaissance);
       formData.append('pays', pays);
+      formData.append('profession', profession);
       if (selectedImage) {
         formData.append('photo', selectedImage);
       }
@@ -155,6 +157,19 @@ const UserProfile = () => {
               value={prenom}
               placeholder="Prénom"
               onChange={(e) => setPrenom(e.target.value)}
+            />
+          </div>
+          <div className="textbox flex flex-wrap justify-center gap-4">
+            <label htmlFor="profession" className="label">
+              Profession :
+            </label>
+            <input
+              id="profession"
+              className="input"
+              type="text"
+              value={profession}
+              placeholder="Profession"
+              onChange={(e) => setProfession(e.target.value)}
             />
           </div>
           <div className="textbox flex flex-wrap justify-center gap-4">

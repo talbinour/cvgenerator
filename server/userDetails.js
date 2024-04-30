@@ -50,6 +50,11 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
     default: 'user',
   },
+  profession:{
+    type: String,
+    required: true ,
+    default : '...',
+  },
   isVerified: {
     type: Boolean,
     default: false,

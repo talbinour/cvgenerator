@@ -15,7 +15,7 @@ const Dashboard = () => {
         console.error('User ID is null or invalid.');
         return;
       }
-
+  
       const response = await axios.get(`http://localhost:8080/user-cvs/${userId}`);
       setCvsList(response.data); // Mettre à jour l'état avec les CV récupérés
     } catch (error) {
@@ -39,12 +39,12 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [userId]);
+  fetchData();
+}, [userId]);
 
-  const handleImageClick = (cvId) => {
-    navigate(`/cv/${cvId}`);
-  };
+const handleImageClick = (cvId, pageURL) => {
+  navigate(pageURL); // Utilisez l'URL de la page associée pour la navigation
+};
 
   const handleDeleteClick = (cvId) => {
     // Logique pour supprimer le CV
@@ -61,7 +61,7 @@ const Dashboard = () => {
               src={cv.imageUrl}
               alt={cv.imageName}
               className={styles['cv-image']}
-              onClick={() => handleImageClick(cv._id)}
+              onClick={() => handleImageClick(cv._id, cv.pageURL)}
             />
             <div className={styles['cv-details']}>
               <p className={styles['cv-title']}>{cv.imageName}</p>

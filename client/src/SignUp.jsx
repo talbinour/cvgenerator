@@ -40,8 +40,9 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
     mot_passe: '',
     date_naissance: '',
     Nbphone: '',
-    country: '', // Nouvel état pour le pays
-    genre: '', // Nouvel état pour le genre
+    country: '', 
+    genre: '', 
+    profession: '',
   });
 
   const [errorMessages, setErrorMessages] = useState({
@@ -52,7 +53,9 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
     Nbphone: '',
     mot_passe: '',
     country: '',
-    genre: '', // Nouvel état pour le genre
+    genre: '', 
+    profession:'',
+
   });
 
   const handleInputChange = (e) => {
@@ -107,7 +110,7 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
     }
 
     try {
-      const { nom, prenom, email, date_naissance, mot_passe, Nbphone, genre, country } = formData;
+      const { nom, prenom, email, date_naissance, mot_passe, Nbphone, genre, country ,profession} = formData;
       const response = await axios.post('http://localhost:8080/register', {
         nom,
         prenom,
@@ -115,6 +118,7 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
         date_naissance,
         mot_passe,
         Nbphone,
+        profession,
         genre,
         pays: country,
       });
@@ -277,6 +281,16 @@ const phoneCodes = getAllCountriesWithPhoneCodes();
           />
           {errorMessages.date_naissance && <p style={{ color: 'red' }}>{errorMessages.date_naissance}</p>}
         </div>
+        <label className="required-label">Profession:</label>
+        <input
+          type="text"
+          name="profession"
+          placeholder='Entrez votre profession'
+          value={formData.profession}
+          onChange={handleInputChange}
+          required
+        />
+        {errorMessages.profession && <p style={{ color: 'red' }}>{errorMessages.profession}</p>}
 
         <div className="form-group">
           <label className="required-label">Genre:</label>
