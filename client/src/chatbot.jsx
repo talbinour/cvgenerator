@@ -1,4 +1,3 @@
-// Chat.js
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -63,10 +62,9 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     if (updateTitleContent) {
       updateTitleContent(botResponse, input); // Call updateTitleContent function if defined
     }
-  };
 
-  const handleSendMessage = async () => {
-    await sendMessage();
+    // Call handleResponse to handle the response
+    handleResponse(botResponse, input);
   };
 
   const handleKeyPress = (event) => {
@@ -75,31 +73,116 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     }
   };
 
+  const handleResponse = (question, response) => {
+    switch (question) {
+      case "Quel est votre numéro de téléphone ?":
+        updateTitleContent("CONTACT_INFO", response);
+        break;
+      case "Quelle est votre adresse e-mail ?":
+        updateTitleContent("CONTACT_INFO", response);
+        break;
+      case "Quel est l'URL de votre site web ?":
+        updateTitleContent("CONTACT_INFO", response);
+        break;
+      case "Quel est votre profil LinkedIn ?":
+        updateTitleContent("CONTACT_INFO", response);
+        break;
+      case "Dans quel pays êtes-vous basé(e) ?":
+        updateTitleContent("CONTACT_INFO", response);
+        break;
+      case "Où avez-vous étudié ?":
+        updateTitleContent("FORMATION", response);
+        break;
+      case "Quel est le nom de votre école/université ?":
+        updateTitleContent("FORMATION", response);
+        break;
+      case "Pouvez-vous préciser la période de temps de vos études ?":
+        updateTitleContent("FORMATION", response);
+        break;
+      case "Quelles langues parlez-vous et à quel niveau ?":
+        updateTitleContent("LANGUAGES", response);
+        break;
+      case "Pouvez-vous nous parler un peu de vous ?":
+        updateTitleContent("PROFILE", response);
+        break;
+      case "Quel est votre poste ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Quel est le nom de votre employeur ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Dans quelle ville avez-vous travaillé ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Quelle est la date de début de votre expérience professionnelle ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Quelle est la date de fin de votre expérience professionnelle ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Pouvez-vous décrire votre expérience professionnelle ?":
+        updateTitleContent("EXPÉRIENCE", response);
+        break;
+      case "Quelles compétences avez-vous et à quel niveau ?":
+        updateTitleContent("COMPÉTENCES_PROFESSIONNELLES", response);
+        break;
+      case "Quels sont vos centres d'intérêt ?":
+        updateTitleContent("INTÉRÊTS", response);
+        break;
+      case "Quel est votre titre de formation ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      case "Quel est le nom de votre établissement ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      case "Dans quelle ville avez-vous étudié ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      case "Quelle est la date de début de votre formation ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      case "Quelle est la date de fin de votre formation ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      case "Pouvez-vous décrire votre formation ?":
+        updateTitleContent("FORMATIONS", response);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.leftPanel}>
-        <div className={styles.container}>
-          <div className={styles.messageContainer}>
-            {messages.map((message, index) => (
-              <div key={index} className={`${styles.message} ${message.user === "me" ? styles.me : styles.bot}`}>
-                {message.user}: {message.text}
-              </div>
-            ))}
+    <div className={styles.chatContainer}>
+      <div className={styles.chat}>
+        {messages.map((message, index) => (
+          <div key={index} className={styles.messageContainer}>
+            <div className={`${styles.message} ${message.user === "me" ? styles.me : styles.bot}`}>
+              {message.text}
+            </div>
           </div>
-          <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
-          <button className={styles.sendButton} onClick={handleSendMessage}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-        </div>
+        ))}
+      </div>
+      <div className={styles.inputContainer}>
+        <input
+          className={styles.input}
+          type="text"
+          placeholder="Entrez votre message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <button className={styles.sendButton} onClick={sendMessage}>
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </button>
       </div>
     </div>
   );
 };
 
-// Validate props with PropTypes
 Chat.propTypes = {
-  updateTitleContent: PropTypes.func, // Make updateTitleContent optional
-  updateUserResponse: PropTypes.func, // Make updateUserResponse optional
+  updateTitleContent: PropTypes.func,
+  updateUserResponse: PropTypes.func,
 };
 
 export default Chat;
