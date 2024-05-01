@@ -147,6 +147,7 @@ question_generator.load_questions({
     "question6": question_generator.generate_skills_questions(None),  # Passer None pour cv_content
     "question7": question_generator.generate_interests_questions(None),  # Passer None pour cv_content
     "question8": question_generator.generate_formation_questions(None),  # Passer None pour cv_content
+    "question9":""
     # Ajoutez d'autres questions ici...
 })
 
@@ -178,26 +179,6 @@ def save_response():
     return jsonify({"message": "Réponse enregistrée avec succès."})
 
 
-def generate_next_question(next_question_key):
-    # Définir un dictionnaire contenant les questions associées à chaque clé
-    questions = {
-      "question1": "Quel est votre expérience professionnelle ?",
-    "question2": "Quelle est votre formation académique ?",
-    "question3": "Quelles sont vos compétences professionnelles ?",
-    "question4": "Quelles sont vos informations de contact ?",
-    "question5": "Quel est votre profil ?",
-    "question6": "Quels sont vos centres d'intérêt ?",
-     "question7": "Quelles langues parlez-vous ?",
-    }
-
-    # Obtenir la question associée à la clé fournie
-    next_question = questions.get(next_question_key)
-
-    # Si la clé n'est pas dans le dictionnaire, renvoyer None
-    if next_question is None:
-        return None
-
-    return next_question
 
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
@@ -233,6 +214,7 @@ def generate_next_question_route():
         else:
             # Si la clé de la question actuelle n'existe pas dans le dictionnaire, la conversation est interrompue
             return jsonify({"response": "Une erreur est survenue. La conversation est interrompue.", "next_question_key": None, "conversation_state": None})
+    
     else:
         # Si l'état de la conversation est absent, initialiser à la première question
         next_question_key = "question1"

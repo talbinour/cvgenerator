@@ -64,11 +64,11 @@ const CVModel7 = () => {
       case "CONTACT_INFO":
         setCvModel(prevState => ({
           ...prevState,
-          phone: title === "Quel est votre numéro de téléphone ?" ? content : prevState.phone,
-          email: title === "Quelle est votre adresse e-mail ?" ? content : prevState.email,
-          website: title === "Quel est l'URL de votre site web ?" ? content : prevState.website,
-          linkedin: title === "Quel est votre profil LinkedIn ?" ? content : prevState.linkedin,
-          address: title === "Dans quel pays êtes-vous basé(e) ?" ? content : prevState.address
+          phone: content.phone || prevState.phone,
+          email: content.email || prevState.email,
+          website: content.website || prevState.website,
+          linkedin: content.linkedin || prevState.linkedin,
+          address: content.address || prevState.address
         }));
         break;
       case "FORMATION":
@@ -77,12 +77,12 @@ const CVModel7 = () => {
           formation: [
             ...prevState.formation,
             {
-              formationName: title === "Quel est votre titre de formation ?" ? content : "",
-              establishment: title === "Quel est le nom de votre établissement ?" ? content : "",
-              city: title === "Dans quelle ville avez-vous étudié ?" ? content : "",
-              startDate: title === "Quelle est la date de début de votre formation ?" ? content : "",
-              endDate: title === "Quelle est la date de fin de votre formation ?" ? content : "",
-              description: title === "Pouvez-vous décrire votre formation ?" ? content : ""
+              formationName: content.formationName || "",
+              establishment: content.establishment || "",
+              city: content.city || "",
+              startDate: content.startDate || "",
+              endDate: content.endDate || "",
+              description: content.description || ""
             }
           ]
         }));
@@ -93,10 +93,10 @@ const CVModel7 = () => {
           experiences: [
             ...prevState.experiences,
             {
-              period: title === "Quelle est la période de votre expérience professionnelle ?" ? content : "",
-              companyName: title === "Quel est le nom de votre employeur ?" ? content : "",
-              jobTitle: title === "Quel est votre poste ?" ? content : "",
-              description: title === "Pouvez-vous décrire votre expérience professionnelle ?" ? content : ""
+              period: content.period || "",
+              companyName: content.companyName || "",
+              jobTitle: content.jobTitle || "",
+              description: content.description || ""
             }
           ]
         }));
@@ -107,7 +107,7 @@ const CVModel7 = () => {
           professionalSkills: [
             ...prevState.professionalSkills,
             {
-              skillName: title === "Quelles compétences avez-vous et à quel niveau ?" ? content : "",
+              skillName: content.skillName || "",
               proficiency: 50 // Modifier la valeur de proficiency selon vos besoins
             }
           ]
@@ -118,7 +118,7 @@ const CVModel7 = () => {
           ...prevState,
           interests: [
             ...prevState.interests,
-            content
+            content || ""
           ]
         }));
         break;
@@ -128,7 +128,7 @@ const CVModel7 = () => {
           languages: [
             ...prevState.languages,
             {
-              name: title === "Quelles langues parlez-vous et à quel niveau ?" ? content : "",
+              name: content.name || "",
               proficiency: 50 // Modifier la valeur de proficiency selon vos besoins
             }
           ]
@@ -137,29 +137,14 @@ const CVModel7 = () => {
       case "PROFILE":
         setCvModel(prevState => ({
           ...prevState,
-          profile: title === "Pouvez-vous nous parler un peu de vous ?" ? content : prevState.profile
-        }));
-        break;
-      case "FORMATIONS":
-        setCvModel(prevState => ({
-          ...prevState,
-          formation: [
-            ...prevState.formation,
-            {
-              formationName: title === "Quel est votre titre de formation ?" ? content : "",
-              establishment: title === "Quel est le nom de votre établissement ?" ? content : "",
-              city: title === "Dans quelle ville avez-vous étudié ?" ? content : "",
-              startDate: title === "Quelle est la date de début de votre formation ?" ? content : "",
-              endDate: title === "Quelle est la date de fin de votre formation ?" ? content : "",
-              description: title === "Pouvez-vous décrire votre formation ?" ? content : ""
-            }
-          ]
+          profile: content || prevState.profile
         }));
         break;
       default:
         break;
     }
   };
+
   
   
   
@@ -168,62 +153,71 @@ const CVModel7 = () => {
     const updatedModel = { ...cvModel };
   
     switch (nextQuestionKey) {
-      case "question1": // CONTACT_INFO
-        updatedModel.phone = formationResponse; // Mettre à jour le téléphone
-        updatedModel.email = formationResponse; // Mettre à jour l'e-mail
-        updatedModel.website = formationResponse; // Mettre à jour le site web
-        updatedModel.linkedin = formationResponse; // Mettre à jour le profil LinkedIn
-        updatedModel.address = formationResponse; // Mettre à jour l'adresse
+      case "question2": {// CONTACT_INFO
+      const [phone, email, website, linkedin, address] = formationResponse.split(",").map(item => item.trim());
+      updatedModel.phone = phone; // Mettre à jour le téléphone
+      updatedModel.email = email; // Mettre à jour l'e-mail
+      updatedModel.website = website; // Mettre à jour le site web
+      updatedModel.linkedin = linkedin; // Mettre à jour le profil LinkedIn
+      updatedModel.address = address; // Mettre à jour l'adresse
       break;
-
-      case "question2":{ // EDUCATION
-        const newEducation = {
-          period: formationResponse,
-          degree: formationResponse,
-          institution: formationResponse,
-        };
-  
-        if (Array.isArray(cvModel.education)) {
-          updatedModel.education = [...cvModel.education, newEducation];
-        } else {
-          updatedModel.education = [newEducation];
-        }
-        break;
       }
-      case "question3": {// LANGUAGES
-        const newLanguage = {
-          name: formationResponse,
-          proficiency: 50, // Modifier la valeur de proficiency selon vos besoins
-        };
-  
-        if (Array.isArray(cvModel.languages)) {
-          updatedModel.languages = [...cvModel.languages, newLanguage];
-        } else {
-          updatedModel.languages = [newLanguage];
-        }
-        break;}
-      case "question4": // PROFILE
+      case "question3": {// EDUCATION
+      const [period, degree, institution] = formationResponse.split(",").map(item => item.trim());
+      const newEducation = { period, degree, institution };
+
+      if (Array.isArray(cvModel.education)) {
+        updatedModel.education = [...cvModel.education, newEducation];
+      } else {
+        updatedModel.education = [newEducation];
+      }
+      break;
+    }
+    case "question4": { // LANGUAGES
+      const [language, proficiencyString] = formationResponse.split(":").map(item => item.trim());
+      const proficiency = parseInt(proficiencyString); // Convertir la chaîne en nombre
+
+      const newLanguage = {
+        name: language,
+        proficiency: proficiency || 50, // Utiliser 50 si aucun niveau n'est spécifié
+      };
+
+      if (Array.isArray(cvModel.languages)) {
+        updatedModel.languages = [...cvModel.languages, newLanguage];
+      } else {
+        updatedModel.languages = [newLanguage];
+      }
+      break;
+    }
+      case "question5": // PROFILE
         updatedModel.profile = formationResponse; // Mettre à jour le profil
         break;
-      case "question5": {// EXPÉRIENCE
-        const newExperience = {
-          period: formationResponse,
-          companyName: formationResponse,
-          jobTitle: formationResponse,
-          description: formationResponse,
-        };
-  
-        if (Array.isArray(cvModel.experiences)) {
-          updatedModel.experiences = [...cvModel.experiences, newExperience];
-        } else {
-          updatedModel.experiences = [newExperience];
+        case "question6": { // EXPÉRIENCE
+          const [period, companyName,ville, jobTitle, description] = formationResponse.split("\n").map(item => item.trim());
+          const newExperience = {
+            period,
+            companyName,
+            ville,
+            jobTitle,
+            description,
+
+          };
+    
+          if (Array.isArray(cvModel.experiences)) {
+            updatedModel.experiences = [...cvModel.experiences, newExperience];
+          } else {
+            updatedModel.experiences = [newExperience];
+          }
+          break;
         }
-        break;
-      }
-      case "question6":{ // COMPÉTENCES_PROFESSIONNELLES
+    
+      case "question7": { // COMPÉTENCES_PROFESSIONNELLES
+        const [skillName, proficiencyString] = formationResponse.split(":").map(item => item.trim());
+        const proficiency = parseInt(proficiencyString); // Convertir la chaîne en nombre
+  
         const newSkill = {
-          skillName: formationResponse,
-          proficiency: 50, // Modifier la valeur de proficiency selon vos besoins
+          skillName,
+          proficiency: proficiency || 50, // Utiliser 50 si aucun niveau n'est spécifié
         };
   
         if (Array.isArray(cvModel.professionalSkills)) {
@@ -231,31 +225,39 @@ const CVModel7 = () => {
         } else {
           updatedModel.professionalSkills = [newSkill];
         }
-        break;}
-      case "question7": // INTÉRÊTS
-        if (Array.isArray(cvModel.interests)) {
-          updatedModel.interests = [...cvModel.interests, formationResponse];
-        } else {
-          updatedModel.interests = [formationResponse];
-        }
-        break;
-      case "question8": {// FORMATION
-        const newFormation = {
-          formationName: formationResponse,
-          establishment: formationResponse,
-          city: formationResponse,
-          startDate: formationResponse,
-          endDate: formationResponse,
-          description: formationResponse,
-        };
-  
-        if (Array.isArray(cvModel.formation)) {
-          updatedModel.formation = [...cvModel.formation, newFormation];
-        } else {
-          updatedModel.formation = [newFormation];
-        }
         break;
       }
+  
+        case "question8":{ // INTÉRÊTS
+        const interests = formationResponse.split(",").map(item => item.trim());
+      
+        if (Array.isArray(cvModel.interests)) {
+          updatedModel.interests = [...cvModel.interests, ...interests];
+        } else {
+          updatedModel.interests = interests;
+        }
+        break;
+        }
+        case "question9": {// FORMATION
+          const [formationName, establishment, city, startDate, endDate, description] = formationResponse.split("\n").map(item => item.trim());
+          const newFormation = {
+            formationName,
+            establishment,
+            city,
+            startDate,
+            endDate,
+            description,
+          };
+        
+          if (Array.isArray(cvModel.formation)) {
+            updatedModel.formation = [...cvModel.formation, newFormation];
+          } else {
+            updatedModel.formation = [newFormation];
+          }
+          break;
+        }
+        
+      
       default:
         break;
     }
@@ -357,18 +359,19 @@ const CVModel7 = () => {
                   <h5></h5>
                 </div>
                 <div className={styles.text}>
-                  {cvModel.experiences.map((exp, index) => (
-                    <div className={styles.box} key={index}>
-                      <div className={styles.year_company}>
-                        <h5>{exp.period}</h5>
-                        <h5>{exp.companyName}</h5>
-                      </div>
-                      <div className={styles.text}>
-                        <h4>{exp.jobTitle}</h4>
-                        <p>{exp.description}</p>
-                      </div>
+                {cvModel.experiences.map((exp, index) => (
+                  <div className={styles.box} key={index}>
+                    <div className={styles.year_company}>
+                      <h5>{exp.period}</h5>
+                      <h5>{exp.companyName}</h5>
+                      <h5>{exp.ville}</h5>
                     </div>
-                  ))}
+                    <div className={styles.text}>
+                      <h4>{exp.jobTitle}</h4>
+                      <p>{exp.description}</p>
+                    </div>
+                  </div>
+                ))}
                 </div>
               </div>
             </div>
@@ -396,18 +399,17 @@ const CVModel7 = () => {
             <div className={styles.Aboutformation}>
               <h2 className={styles.title2}>FORMATION</h2>
               <ul>
-                {cvModel.formation.map((formation, index) => (
-                  <div className={styles.box} key={index}>
-                    <div className={styles.year_company}>
-                      <h5>{formation.startDate} - {formation.endDate}</h5>
-                      <h5>{formation.city}</h5>
-                    </div>
-                    <div className={styles.text}>
-                      <h4>{formation.formationName}</h4>
-                      <p>{formation.description}</p>
-                    </div>
+               {cvModel.formation.map((formation, index) => (
+                <div className={styles.box} key={index}>
+                  <div className={styles.year_company}>
+                    <h5>{formation.formationName} {formation.establishment} {formation.city}</h5>
+                    <h5>{formation.startDate} - {formation.endDate}</h5>
                   </div>
-                ))}
+                  <div className={styles.text}>
+                    <p>{formation.description}</p>
+                  </div>
+                </div>
+              ))}
               </ul>
             </div>
           </div>

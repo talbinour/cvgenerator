@@ -9,6 +9,8 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [conversationState, setConversationState] = useState(null);
+  const [previousResponse, setPreviousResponse] = useState("");
+  const [conversationBlocked, setConversationBlocked] = useState(false); // Nouvelle variable d'état pour bloquer la conversation
 
   useEffect(() => {
     sendHelloMessage();
@@ -28,43 +30,66 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     const botResponse = response.data.response;
     const nextQuestionKey = response.data.next_question_key;
 
-    setMessages([...messages, { text: botResponse, user: "bot" }]);
+    if (!conversationBlocked) {
+      setMessages([...messages, { text: botResponse, user: "bot" }]);
+    }
+
     setConversationState(nextQuestionKey === "start" ? null : { state: nextQuestionKey });
   };
 
-  const sendMessage = async () => {
-    const response = await axios.post(
-      "http://localhost:5000/new-question",
-      {
-        cv_title: "Titre du CV",
-        cv_content: input,
-        conversation_state: conversationState,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
+ const sendMessage = async () => {
+  // Vérifier si l'utilisateur a répondu à la question précédente
+  if (!input.trim()) {
+    setMessages([...messages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
+    return;
+  }
 
-    const botResponse = response.data.response;
-    const nextQuestionKey = response.data.next_question_key;
+  const response = await axios.post(
+    "http://localhost:5000/new-question",
+    {
+      cv_title: "Titre du CV",
+      cv_content: input,
+      conversation_state: conversationState,
+      previous_response: previousResponse
+    },
+    { headers: { "Content-Type": "application/json" } }
+  );
 
-    setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
-    setInput("");
+  const botResponse = response.data.response;
+  const nextQuestionKey = response.data.next_question_key;
 
-    if (updateUserResponse) {
-      updateUserResponse(input, nextQuestionKey); // Update CV model with user response
-    }
+  setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
+  setInput("");
 
-    if (nextQuestionKey) {
-      setConversationState({ state: nextQuestionKey });
-    } else {
-      setConversationState(null);
-    }
+  if (updateUserResponse) {
+    updateUserResponse(input, nextQuestionKey);
+  }
 
-    if (updateTitleContent) {
-      updateTitleContent(botResponse, input); // Call updateTitleContent function if defined
-    }
+  if (nextQuestionKey) {
+    setConversationState({ state: nextQuestionKey });
+  } else {
+    setConversationState(null);
+  }
 
-    // Call handleResponse to handle the response
-    handleResponse(botResponse, input);
+  if (updateTitleContent) {
+    updateTitleContent(botResponse, input);
+  }
+
+  setPreviousResponse(input);
+
+  // Bloquer la conversation si c'est la dernière réponse
+  if (!nextQuestionKey) {
+    setConversationBlocked(true);
+    setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+  }
+};
+
+
+
+
+
+  const handleSendMessage = async () => {
+    await sendMessage();
   };
 
   const handleKeyPress = (event) => {
@@ -73,113 +98,37 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     }
   };
 
-  const handleResponse = (question, response) => {
-    switch (question) {
-      case "Quel est votre numéro de téléphone ?":
-        updateTitleContent("CONTACT_INFO", response);
-        break;
-      case "Quelle est votre adresse e-mail ?":
-        updateTitleContent("CONTACT_INFO", response);
-        break;
-      case "Quel est l'URL de votre site web ?":
-        updateTitleContent("CONTACT_INFO", response);
-        break;
-      case "Quel est votre profil LinkedIn ?":
-        updateTitleContent("CONTACT_INFO", response);
-        break;
-      case "Dans quel pays êtes-vous basé(e) ?":
-        updateTitleContent("CONTACT_INFO", response);
-        break;
-      case "Où avez-vous étudié ?":
-        updateTitleContent("FORMATION", response);
-        break;
-      case "Quel est le nom de votre école/université ?":
-        updateTitleContent("FORMATION", response);
-        break;
-      case "Pouvez-vous préciser la période de temps de vos études ?":
-        updateTitleContent("FORMATION", response);
-        break;
-      case "Quelles langues parlez-vous et à quel niveau ?":
-        updateTitleContent("LANGUAGES", response);
-        break;
-      case "Pouvez-vous nous parler un peu de vous ?":
-        updateTitleContent("PROFILE", response);
-        break;
-      case "Quel est votre poste ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Quel est le nom de votre employeur ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Dans quelle ville avez-vous travaillé ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Quelle est la date de début de votre expérience professionnelle ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Quelle est la date de fin de votre expérience professionnelle ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Pouvez-vous décrire votre expérience professionnelle ?":
-        updateTitleContent("EXPÉRIENCE", response);
-        break;
-      case "Quelles compétences avez-vous et à quel niveau ?":
-        updateTitleContent("COMPÉTENCES_PROFESSIONNELLES", response);
-        break;
-      case "Quels sont vos centres d'intérêt ?":
-        updateTitleContent("INTÉRÊTS", response);
-        break;
-      case "Quel est votre titre de formation ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      case "Quel est le nom de votre établissement ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      case "Dans quelle ville avez-vous étudié ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      case "Quelle est la date de début de votre formation ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      case "Quelle est la date de fin de votre formation ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      case "Pouvez-vous décrire votre formation ?":
-        updateTitleContent("FORMATIONS", response);
-        break;
-      default:
-        break;
+  const handleInputChange = (event) => {
+    // Empêcher l'utilisateur d'entrer du texte si la conversation est bloquée
+    if (conversationBlocked) {
+      event.preventDefault();
+    } else {
+      setInput(event.target.value);
     }
   };
 
   return (
-    <div className={styles.chatContainer}>
-      <div className={styles.chat}>
-        {messages.map((message, index) => (
-          <div key={index} className={styles.messageContainer}>
-            <div className={`${styles.message} ${message.user === "me" ? styles.me : styles.bot}`}>
-              {message.text}
-            </div>
+    <div className={styles.pageWrapper}>
+      <div className={styles.leftPanel}>
+        <div className={styles.container}>
+          <div className={styles.messageContainer}>
+            {messages.map((message, index) => (
+              <div key={index} className={`${styles.message} ${message.user === "me" ? styles.me : styles.bot}`}>
+                {message.user}: {message.text}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className={styles.inputContainer}>
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Entrez votre message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-        <button className={styles.sendButton} onClick={sendMessage}>
-          <FontAwesomeIcon icon={faPaperPlane} />
-        </button>
+          <input className={styles.inputField} value={input} onChange={handleInputChange} onKeyPress={handleKeyPress} disabled={conversationBlocked} />
+          <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
+// Validate props with PropTypes
 Chat.propTypes = {
   updateTitleContent: PropTypes.func,
   updateUserResponse: PropTypes.func,
