@@ -2,15 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from './Home.module.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Chat from "../chatbot2"; // Importez le composant Chat que vous avez créé
+import boot from '../assets/chatbot.png';
 
 const Home = () => {
   const [cvList, setCVList] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const cvListRef = useRef(null);
-  const [showDescription, setShowDescription] = useState(false); // Initialiser showDescription à false
-  const [typedText, setTypedText] = useState(''); // Initialiser le texte tapé à une chaîne vide
+  const [showDescription, setShowDescription] = useState(false); 
+  const [typedText, setTypedText] = useState(''); 
   const description = "  Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
+  const [showChat, setShowChat] = useState(false); // Ajoutez une variable d'état pour contrôler l'affichage du chatbot
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -56,10 +59,10 @@ const Home = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowDescription(true); // Activer l'affichage du paragraphe après un certain délai
-    }, 400); // Définir le délai en millisecondes
+      setShowDescription(true); 
+    }, 400); 
 
-    return () => clearTimeout(timer); // Nettoyer le timer lors du démontage du composant
+    return () => clearTimeout(timer); 
   }, []);
 
   useEffect(() => {
@@ -91,36 +94,49 @@ const Home = () => {
     }
   };
 
+  const toggleChat = () => {
+    setShowChat(!showChat); // Inverser la valeur de showChat lorsque l'utilisateur clique sur l'icône du chatbot
+  };
+
   return (
     <div className={styles.container}>
-        <section className={styles.hero}>
-            <h1>Bienvenue sur Cevor</h1>
-            <div className={styles.descriptionContainer}>
-                <p className={`${styles.description} ${showDescription ? styles.show : ''}`}>
-                    {typedText}
-                </p>
-            </div>
-            <button className={styles.createButton} onClick={handleWriteCVClick}>Commencer votre CV</button>
-        </section>
-        <section className={styles.models}>
-            <h1>Explorez nos modèles</h1>
-            <div className={styles.cvListHorizontal} ref={cvListRef}>
-                {cvList.map((cv, index) => (
-                    <div key={index} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}>
-                        <img src={cv.imageURL} alt={cv.title} className={styles.cvImage} />
-                        <p className={styles.cvTitle}>{cv.title}</p>
-                    </div>
-                ))}
-            </div>
-        </section>
+     
+      {showChat && (
+        <div className={styles.chatContainer}>
+          <Chat />
+        </div>
+      )}
+      
+      <div className={styles.chatIconContainer}>
+        <img src={boot} alt="Chatbot" className={styles.chatIcon}  onClick={toggleChat}/>
+      </div>
 
-        <footer className={styles.footer}>
-            <p>Des questions ? Consultez notre FAQ ou contactez-nous directement.</p>
-            <button className={styles.downloadButton}>Créez votre CV maintenant</button>
-        </footer>
+      <section className={styles.hero}>
+        <h1>Bienvenue sur Cevor</h1>
+        <div className={styles.descriptionContainer}>
+          <p className={`${styles.description} ${showDescription ? styles.show : ''}`}>
+            {typedText}
+          </p>
+        </div>
+        <button className={styles.createButton} onClick={handleWriteCVClick}>Commencer votre CV</button>
+      </section>
+      <section className={styles.models}>
+        <h1>Explorez nos modèles</h1>
+        <div className={styles.cvListHorizontal} ref={cvListRef}>
+          {cvList.map((cv, index) => (
+            <div key={index} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}>
+              <img src={cv.imageURL} alt={cv.title} className={styles.cvImage} />
+              <p className={styles.cvTitle}>{cv.title}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      <footer className={styles.footer}>
+        <p>Des questions ? Consultez notre FAQ ou contactez-nous directement.</p>
+        <button className={styles.downloadButton}>Créez votre CV maintenant</button>
+      </footer>
     </div>
-);
-
+  );
 };
 
 export default Home;
