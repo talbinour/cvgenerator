@@ -74,7 +74,7 @@ const ParentComponent = () => {
               console.error('Erreur lors de la récupération des informations utilisateur:', error);
           });
     }
-  }, [cvModel]);
+  }, []);
 
   useEffect(() => {
     loadCVFromServer();
@@ -167,13 +167,13 @@ const ParentComponent = () => {
                   contentEditable
                 >{cvModel.name}</span>
              
-                <span 
-                  name="jobTitle" 
-                  onBlur={handleChange} 
-                  placeholder="Votre profession " 
-                  className={styles.input}
-                  contentEditable
-                >{cvModel.profession}</span>
+                 <input
+                    type="text"
+                    value={cvModel.profession}
+                    onChange={(e) => handleChange(e, 'profession')}
+                    className={styles.input}
+                    placeholder="profession"
+                  />
             </div>
             <div className={styles.contactInfo}>
               <h3 className={styles.title}>Contact Info</h3>
