@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types"; 
+import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import styles from "./chatbot.module.css";
 import axios from "axios";
 
-const Chat = ({ updateUserResponse, setCvModel }) => {
+const Chat = ({ updateTitleContent, updateUserResponse }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [conversationState, setConversationState] = useState(null);
+  const [previousResponse, setPreviousResponse] = useState("");
+  const [conversationBlocked, setConversationBlocked] = useState(false); // Nouvelle variable d'état pour bloquer la conversation
 
   useEffect(() => {
     sendHelloMessage();
@@ -28,50 +30,64 @@ const Chat = ({ updateUserResponse, setCvModel }) => {
     const botResponse = response.data.response;
     const nextQuestionKey = response.data.next_question_key;
 
-    setMessages([...messages, { text: botResponse, user: "bot" }]);
+    if (!conversationBlocked) {
+      setMessages([...messages, { text: botResponse, user: "bot" }]);
+    }
+
     setConversationState(nextQuestionKey === "start" ? null : { state: nextQuestionKey });
   };
 
-  const sendMessage = async () => {
-    const response = await axios.post(
-      "http://localhost:5000/new-question",
-      {
-        cv_title: "Titre du CV",
-        cv_content: input,
-        conversation_state: conversationState,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-  
-    const botResponse = response.data.response;
-    const nextQuestionKey = response.data.next_question_key;
-  
-    // Mettre à jour les messages et le modèle de CV
-    setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
-    setInput("");
-  
-    // Mettre à jour le modèle de CV en appelant updateUserResponse
-    updateUserResponse && updateUserResponse(botResponse, input);
-  
-    if (input.includes(",")) {
-      const [phone, email, website, linkedin, address] = input.split(",");
-      setCvModel((prevState) => ({
-        ...prevState,
-        phone: phone.trim(),
-        email: email.trim(),
-        website: website.trim(),
-        linkedin: linkedin.trim(),
-        address: address.trim(),
-      }));
-    }
-  
-    if (nextQuestionKey) {
-      setConversationState({ state: nextQuestionKey });
-    } else {
-      setConversationState(null);
-    }
-  };
-  
+ const sendMessage = async () => {
+  // Vérifier si l'utilisateur a répondu à la question précédente
+  if (!input.trim()) {
+    setMessages([...messages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
+    return;
+  }
+
+  const response = await axios.post(
+    "http://localhost:5000/new-question",
+    {
+      cv_title: "Titre du CV",
+      cv_content: input,
+      conversation_state: conversationState,
+      previous_response: previousResponse
+    },
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  const botResponse = response.data.response;
+  const nextQuestionKey = response.data.next_question_key;
+
+  setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
+  setInput("");
+
+  if (updateUserResponse) {
+    updateUserResponse(input, nextQuestionKey);
+  }
+
+  if (nextQuestionKey) {
+    setConversationState({ state: nextQuestionKey });
+  } else {
+    setConversationState(null);
+  }
+
+  if (updateTitleContent) {
+    updateTitleContent(botResponse, input);
+  }
+
+  setPreviousResponse(input);
+
+  // Bloquer la conversation si c'est la dernière réponse
+  if (!nextQuestionKey) {
+    setConversationBlocked(true);
+    setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+  }
+};
+
+
+
+
+
   const handleSendMessage = async () => {
     await sendMessage();
   };
@@ -82,22 +98,13 @@ const Chat = ({ updateUserResponse, setCvModel }) => {
     }
   };
 
-  const handleAddMoreInfo = async () => {
-    const response = await axios.post(
-      "http://localhost:5000/add-more-info",
-      {
-        message: input,
-        conversation_state: conversationState,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    const botResponse = response.data.response;
-    const nextQuestionKey = response.data.next_question_key;
-
-    setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
-    setInput("");
-    setConversationState({ state: nextQuestionKey });
+  const handleInputChange = (event) => {
+    // Empêcher l'utilisateur d'entrer du texte si la conversation est bloquée
+    if (conversationBlocked) {
+      event.preventDefault();
+    } else {
+      setInput(event.target.value);
+    }
   };
 
   return (
@@ -111,12 +118,9 @@ const Chat = ({ updateUserResponse, setCvModel }) => {
               </div>
             ))}
           </div>
-          <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
-          <button className={styles.sendButton} onClick={handleSendMessage}>
+          <input className={styles.inputField} value={input} onChange={handleInputChange} onKeyPress={handleKeyPress} disabled={conversationBlocked} />
+          <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
             <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-          <button className={styles.addButton} onClick={handleAddMoreInfo}>
-            Add More Info
           </button>
         </div>
       </div>
@@ -124,10 +128,10 @@ const Chat = ({ updateUserResponse, setCvModel }) => {
   );
 };
 
-// Validez les props avec PropTypes
+// Validate props with PropTypes
 Chat.propTypes = {
+  updateTitleContent: PropTypes.func,
   updateUserResponse: PropTypes.func,
-  setCvModel: PropTypes.func.isRequired,
 };
 
 export default Chat;
