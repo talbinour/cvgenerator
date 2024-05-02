@@ -74,7 +74,7 @@ const ParentComponent = () => {
               console.error('Erreur lors de la récupération des informations utilisateur:', error);
           });
     }
-  }, [cvModel]);
+  }, []);
 
   useEffect(() => {
     loadCVFromServer();

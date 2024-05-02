@@ -21,39 +21,42 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // Enregistrer un CV spécifique par son ID
 router.use(express.json());
-router.put('/cv/:userId/:cvId/', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const cvId = req.params.cvId;
-    const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
-   
-    let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+  router.put('/cv/:userId/:cvId/', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const cvId = req.params.cvId;
+      const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
+    
+      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId });
 
-    if (!existingCV) {
-      // Si le CV n'existe pas, créer un nouveau document CV
-      existingCV = new CvModel({
-        userId: userId,
-        cvId: cvId,
-        ...cvData
-      });
-    } else {
-      // Si le CV existe, mettre à jour les données existantes
-      existingCV.set(cvData);
+      if (!existingCV) {
+        // Si le CV n'existe pas, créer un nouveau document CV
+        existingCV = new CvModel({
+          userId: userId,
+          cvId: cvId,
+          ...cvData
+        });
+      } else {
+        // Si le CV existe, mettre à jour les données existantes
+        existingCV.set(cvData);
+      }
+
+      // Enregistrer le CV dans la base de données
+      const savedCV = await existingCV.save();
+
+      // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
+      const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+      console.log('Updated CV Data:', reloadedCV);
+        // Ajoutez des en-têtes pour empêcher la mise en cache des réponses
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+      res.status(200).json({ message: 'CV saved successfully', cvId: cvId, cvData: reloadedCV });
+    } catch (error) {
+      console.error('Error saving CV:', error);
+      res.status(500).json({ error: 'Failed to save CV' });
     }
-
-    // Enregistrer le CV dans la base de données
-    const savedCV = await existingCV.save();
-
-    // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
-    const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId });
-    console.log('Updated CV Data:', reloadedCV);
-
-    res.status(200).json({ message: 'CV saved successfully', cvId: cvId, cvData: reloadedCV });
-  } catch (error) {
-    console.error('Error saving CV:', error);
-    res.status(500).json({ error: 'Failed to save CV' });
-  }
-});
+  });
 router.get('/cv/:userId/:cvId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -118,12 +121,6 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Failed to save image' });
   }
 });
-
-
-
-
-
-
 router.get('/user-cvs/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -139,6 +136,23 @@ router.get('/user-cvs/:userId', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des CV de l\'utilisateur' });
   }
 });
+// Supprimer un CV spécifique par son ID
+router.delete('/cv/:userId/:cvId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const cvId = req.params.id;
+
+    // Supprimer le CV de la base de données
+    await ImageModel.deleteOne({ userId: userId, cvId: cvId });
+
+    res.status(200).json({ message: 'CV deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting CV:', error);
+    res.status(500).json({ error: 'Failed to delete CV' });
+  }
+});
+
+
 
 
 

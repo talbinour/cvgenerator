@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useCallback } from 'react';
 import styles from './model7.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
@@ -49,7 +49,14 @@ function CvOuResume() {
 
     if (token) {
       axios
-        .get('http://localhost:8080/current-username', { withCredentials: true })
+        .get('http://localhost:8080/current-username', { 
+          withCredentials: true ,
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+      })
         .then((response) => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
@@ -70,13 +77,13 @@ function CvOuResume() {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
         });
     }
-  }, [cvModel]);
+  }, []);
 
   useEffect(() => {
     loadCVFromServer();
   }, [userId]);
 
-  const loadCVFromServer = async () => {
+  const loadCVFromServer =  useCallback(async () => {
     try {
       const cvId = getCurrentCVId();
       if (!cvId) {
@@ -89,7 +96,7 @@ function CvOuResume() {
     } catch (error) {
       console.error('Erreur lors du chargement du CV:', error);
     }
-  };
+  }, [userId, getCurrentCVId]); 
 
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
@@ -102,7 +109,7 @@ function CvOuResume() {
         margin: -0.5,
         filename: 'mon_cv.pdf',
         image: { type: 'jpeg', quality: 1 }, // Amélioration de la qualité de l'image
-        html2canvas: { scale: 3, logging: true, dpi: 192, letterRendering: true }, // Augmenter l'échelle pour une meilleure résolution
+        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true, width: element.clientWidth, height: element.clientHeight },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } // S'assurer que le format est A4
     };
 
@@ -120,6 +127,7 @@ function CvOuResume() {
         console.error('Élément avec l\'ID "cv-content" introuvable.');
         return;
       }
+      
 
       const url = await htmlToImage.toPng(element, { quality: 0.8, width: 1100});
       setImageURL(url);
@@ -170,6 +178,7 @@ function CvOuResume() {
                 <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
                 <span className={styles.text}>{cvModel.email}</span>
               </li>
+              
               <li>
                 <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
                 <span className={styles.text}>{cvModel.website}</span>

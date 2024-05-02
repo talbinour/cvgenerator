@@ -1,26 +1,26 @@
 .cv-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Augmenter la largeur minimale des conteneurs */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
-  margin-top: 20px; /* Espacement au-dessus de la première ligne */
+  margin-top: 20px;
 }
 
 .cv-item {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Répartit l'espace verticalement */
-  background: #fff; /* Couleur de fond blanc */
-  border-radius: 10px; /* Arrondir les coins */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre portée légère */
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 5px;
-  height: 450px; /* Hauteur fixe pour tous les conteneurs */
+  height: 450px;
 }
 
 .cv-image {
   width: 100%;
-  height: 350px; /* Hauteur fixe pour les images */
-  object-fit: cover; /* S'assurer que l'image couvre l'espace disponible sans se déformer */
-  border-radius: 5px; /* Coins arrondis pour les images */
+  height: 350px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
 .cv-details {
@@ -29,7 +29,7 @@
 
 .cv-title {
   font-size: 18px;
-  margin-bottom: 5px; /* Réduit la marge en dessous du titre */
+  margin-bottom: 5px;
 }
 
 .cv-actions {
@@ -40,4 +40,88 @@
 .action-icon {
   cursor: pointer;
   margin-left: 10px;
+}
+
+.alert-area {
+  position: fixed;
+  top: 8.5%;
+  right: 0;
+  overflow-y: auto;
+  width: 37%;
+  height: calc(100% - 9%);
+  border-radius: 3px;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  flex-direction: column;
+}
+
+.alert-area button {
+  font-size: 20px;
+  z-index: 10;
+  
+}
+
+.h5 {
+  font-size: medium;
+  color: #1f4172;
+  margin-left: auto; 
+  
+}
+
+.cv-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  overflow: hidden;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0px;
+}
+
+.full-cv-image {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
+  object-fit: cover;
+}
+
+.download-button,
+.delete-button {
+  margin-top: 10px;
+  color: #fff;
+  border-radius: 5px;
+  height: 40px;
+  width: 200px;
+  padding: 0;
+}
+
+.download-button:hover,
+.delete-button:hover {
+  opacity: 0.8;
+}
+
+.delete-button {
+  background-color: #980110;
+  margin-left: 20px;
+}
+
+.download-button {
+  background-color: #053466;
+}
+
+.close-button {
+  font-size: 20px;
+  margin-left: auto; /* Alignement à droite */
 }

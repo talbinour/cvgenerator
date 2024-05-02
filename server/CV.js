@@ -11,7 +11,7 @@ const cvSchema = new Schema({
     required: true
   },
   name: String,
-  jobTitle: String,
+  profession : String,
   phone: String,
   email: String,
   website: String,
