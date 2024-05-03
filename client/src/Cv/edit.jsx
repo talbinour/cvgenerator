@@ -8,11 +8,6 @@ import {  useNavigate } from "react-router-dom";
 
 //import { Link } from 'react-router-dom';
 const ParentComponent = () => {
-  const [additionalEducation, setAdditionalEducation] = useState([]);
-  const [additionalLanguages, setAdditionalLanguages] = useState([]);
-  const [additionalExperiences, setAdditionalExperiences] = useState([]);
-  const [additionalSkills, setAdditionalSkills] = useState([]);
-  const [additionalInterests, setAdditionalInterests] = useState([]);
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
@@ -205,24 +200,44 @@ const ParentComponent = () => {
   }
  // Fonctions pour ajouter du contenu supplémentaire
  const addEducation = () => {
-  setAdditionalEducation([...additionalEducation, { startDate: '', endDate: '', degree: '', institution: '' }]);
+  // Créer une nouvelle éducation avec des valeurs par défaut
+  const newEducation = { startDate: '', endDate: '', degree: '', institution: '' };
+
+  // Mettre à jour le state en ajoutant la nouvelle éducation à la liste existante
+  setCvModel(prevModel => ({
+    ...prevModel,
+    education: [...prevModel.education, newEducation]
+  }));
 };
 
 const addLanguage = () => {
-  setAdditionalLanguages([...additionalLanguages, { name: '', proficiency: 0 }]);
+  setCvModel(prevModel => ({
+    ...prevModel,
+    languages: [...prevModel.languages, { name: '', proficiency: 0 }]
+  }));
 };
 
 const addExperience = () => {
-  setAdditionalExperiences([...additionalExperiences, { period: { startDate: '', endDate: '' }, companyName: '', jobTitle: '', description: '' }]);
+  setCvModel(prevModel => ({
+    ...prevModel,
+    experiences: [...prevModel.experiences, { period: { startDate: '', endDate: '' }, companyName: '', jobTitle: '', description: '' }]
+  }));
 };
 
 const addSkill = () => {
-  setAdditionalSkills([...additionalSkills, { skillName: '', proficiency: 0 }]);
+  setCvModel(prevModel => ({
+    ...prevModel,
+    professionalSkills: [...prevModel.professionalSkills, { skillName: '', proficiency: 0 }]
+  }));
 };
 
 const addInterest = () => {
-  setAdditionalInterests([...additionalInterests, '']);
+  setCvModel(prevModel => ({
+    ...prevModel,
+    interests: [...prevModel.interests, '']
+  }));
 };
+
 
 
 
