@@ -1,0 +1,22 @@
+/* StylePalette.module.css */
+
+.palette-container {
+    margin: 20px;
+  }
+  
+  .palette-label {
+    margin-bottom: 8px;
+  }
+  
+  .palette-input {
+    margin-bottom: 16px;
+  }
+  
+  .palette-text {
+    color: #000000;
+    font-size: 16px;
+    font-weight: normal;
+    font-style: normal;
+    text-decoration: none;
+  }
+  
