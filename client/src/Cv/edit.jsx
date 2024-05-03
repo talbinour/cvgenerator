@@ -8,6 +8,11 @@ import {  useNavigate } from "react-router-dom";
 
 //import { Link } from 'react-router-dom';
 const ParentComponent = () => {
+  const [additionalEducation, setAdditionalEducation] = useState([]);
+  const [additionalLanguages, setAdditionalLanguages] = useState([]);
+  const [additionalExperiences, setAdditionalExperiences] = useState([]);
+  const [additionalSkills, setAdditionalSkills] = useState([]);
+  const [additionalInterests, setAdditionalInterests] = useState([]);
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
@@ -195,12 +200,33 @@ const ParentComponent = () => {
     setCvModel({ ...cvModel, education: newEducation });
   };
   
-  
-  
-  
   if (!cvModel) {
     return <CvOrResume />;
   }
+ // Fonctions pour ajouter du contenu supplémentaire
+ const addEducation = () => {
+  setAdditionalEducation([...additionalEducation, { startDate: '', endDate: '', degree: '', institution: '' }]);
+};
+
+const addLanguage = () => {
+  setAdditionalLanguages([...additionalLanguages, { name: '', proficiency: 0 }]);
+};
+
+const addExperience = () => {
+  setAdditionalExperiences([...additionalExperiences, { period: { startDate: '', endDate: '' }, companyName: '', jobTitle: '', description: '' }]);
+};
+
+const addSkill = () => {
+  setAdditionalSkills([...additionalSkills, { skillName: '', proficiency: 0 }]);
+};
+
+const addInterest = () => {
+  setAdditionalInterests([...additionalInterests, '']);
+};
+
+
+
+
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
         <div   className={styles.container}>
@@ -328,38 +354,48 @@ const ParentComponent = () => {
             ))}
 
               </ul>
+              <div className={styles.buttonContainer}>
+              <button className={styles.button} onClick={addEducation}>
+                Ajouter plus d&lsquo;éducation
+              </button>
+        </div>
             </div>
             <div className={`${styles.contactInfo} ${styles.languages}`}>
               <h3 className={styles.title}>LANGUAGES</h3>
               <ul>
               {cvModel.languages.map((lang, index) => (
-  <div className={styles.box} key={index}>
-    <input
-      type="text"
-      value={lang.name}
-      onChange={(e) => handleChangeLanguageName(e, index)}
-      className={styles.input}
-      contentEditable
-    />
-    <div className={styles.sliderContainer}>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={lang.proficiency}
-        onChange={(e) => {
-          const newLanguages = [...cvModel.languages];
-          newLanguages[index].proficiency = e.target.value;
-          setCvModel({ ...cvModel, languages: newLanguages });
-        }}
-        className={styles.slider}
-      />
-      <span>{lang.proficiency}%</span>
-    </div>
-  </div>
-))}
-              </ul>
+                      <div className={styles.box} key={index}>
+                        <input
+                          type="text"
+                          value={lang.name}
+                          onChange={(e) => handleChangeLanguageName(e, index)}
+                          className={styles.input}
+                          contentEditable
+                        />
+              <div className={styles.sliderContainer}>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={lang.proficiency}
+                  onChange={(e) => {
+                    const newLanguages = [...cvModel.languages];
+                    newLanguages[index].proficiency = e.target.value;
+                    setCvModel({ ...cvModel, languages: newLanguages });
+                  }}
+                  className={styles.slider}
+                />
+                <span>{lang.proficiency}%</span>
+              </div>
             </div>
+          ))}
+          </ul>
+            </div>
+            <div className={styles.buttonContainer}>
+            <button className={styles.button} onClick={addLanguage}>
+              Ajouter plus de langues
+            </button>
+        </div>
           </div>
           {/* Partie droite */}
           <div className={styles.right_Side}>
@@ -375,76 +411,86 @@ const ParentComponent = () => {
             <div className={styles.about}>
               <h2 className={styles.title2}>Experience</h2>
               {cvModel.experiences.map((exp, index) => (
-  <div className={styles.box} key={index}>
-    <div className={styles.year_company}>
-      <input
-        type="date"
-        value={exp.period.startDate}
-        onChange={(e) => handleExperienceChange(e, index, 'period.startDate')}
-        className={styles.input}
-        contentEditable
-        placeholder="Start Date"
-      />
-      <span className="text-gray-500 dark:text-gray-400">/</span>
-      <input
-        type="date"
-        value={exp.period.endDate}
-        onChange={(e) => handleExperienceChange(e, index, 'period.endDate')}
-        className={styles.input}
-        contentEditable
-        placeholder="End Date"
-      />
-      <input
-        type="text"
-        value={exp.companyName}
-        onChange={(e) => handleExperienceChange(e, index, 'companyName')}
-        className={styles.input}
-        contentEditable
-      />
-    </div>
-    <div className={styles.text}>
-      <input
-        type="text"
-        value={exp.jobTitle}
-        onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
-        className={styles.input}
-        contentEditable
-      />
-      <textarea
-        value={exp.description}
-        onChange={(e) => handleExperienceChange(e, index, 'description')}
-        className={styles.input}
-        placeholder="Description"
-      />
-    </div>
-  </div>
-))}
+                  <div className={styles.box} key={index}>
+                    <div className={styles.year_company}>
+                      <input
+                        type="date"
+                        value={exp.period.startDate}
+                        onChange={(e) => handleExperienceChange(e, index, 'period.startDate')}
+                        className={styles.input}
+                        contentEditable
+                        placeholder="Start Date"
+                      />
+                      <span className="text-gray-500 dark:text-gray-400">/</span>
+                      <input
+                        type="date"
+                        value={exp.period.endDate}
+                        onChange={(e) => handleExperienceChange(e, index, 'period.endDate')}
+                        className={styles.input}
+                        contentEditable
+                        placeholder="End Date"
+                      />
+                      <input
+                        type="text"
+                        value={exp.companyName}
+                        onChange={(e) => handleExperienceChange(e, index, 'companyName')}
+                        className={styles.input}
+                        contentEditable
+                      />
+                    </div>
+                    <div className={styles.text}>
+                      <input
+                        type="text"
+                        value={exp.jobTitle}
+                        onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
+                        className={styles.input}
+                        contentEditable
+                      />
+                      <textarea
+                        value={exp.description}
+                        onChange={(e) => handleExperienceChange(e, index, 'description')}
+                        className={styles.input}
+                        placeholder="Description"
+                      />
+                    </div>
+                  </div>
+                ))}
+                <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={addExperience}>
+                  Ajouter plus d&lsquo;expériences
+                </button>
+              </div>
             </div>
             <div className={`${styles.about} ${styles.skills}`}>
               <h2 className={styles.title2}>Professional Skills</h2>
               {cvModel.professionalSkills.map((skill, index) => (
-  <div className={styles.box} key={index}>
-    <input
-      type="text"
-      value={skill.skillName}
-      onChange={(e) => handleSkillChange(e, index, 'skillName')}
-      className={styles.input}
-      contentEditable
-    />
-    <div className={styles.sliderContainer}>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={skill.proficiency}
-        onChange={(e) => handleSkillChange(e, index, 'proficiency')}
-        className={styles.slider}
-      />
-      <span>{skill.proficiency}%</span>
-    </div>
-  </div>
-))}
-            </div>
+                <div className={styles.box} key={index}>
+                  <input
+                    type="text"
+                    value={skill.skillName}
+                    onChange={(e) => handleSkillChange(e, index, 'skillName')}
+                    className={styles.input}
+                    contentEditable
+                  />
+                  <div className={styles.sliderContainer}>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={skill.proficiency}
+                      onChange={(e) => handleSkillChange(e, index, 'proficiency')}
+                      className={styles.slider}
+                    />
+                    <span>{skill.proficiency}%</span>
+                  </div>
+                </div>
+              ))}
+      <div className={styles.buttonContainer}>
+                <button className={styles.button} onClick={addSkill}>
+                  Ajouter plus de compétences
+                </button>
+              </div>        
+              </div>
             <div className={styles.AboutInterest}>
               <h2 className={styles.title2}>Interest</h2>
               <ul contentEditable={true}>
@@ -452,6 +498,11 @@ const ParentComponent = () => {
                   <li key={index}><i className="fa fa-circle" aria-hidden="true"></i>{interest}</li>
                 ))}
               </ul>
+              <div className={styles.buttonContainer}>
+              <button className={styles.button} onClick={addInterest}>
+                Ajouter plus d&lsquo;intérêts
+              </button>
+            </div>
             </div>
           </div>
         </div>
