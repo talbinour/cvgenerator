@@ -37,9 +37,6 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     setConversationState(nextQuestionKey === "start" ? null : { state: nextQuestionKey });
   };
 
-
-
-  
  const sendMessage = async () => {
   // Vérifier si l'utilisateur a répondu à la question précédente
   if (!input.trim()) {
@@ -86,10 +83,6 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
   }
 };
-
-
-
-
 
   const handleSendMessage = async () => {
     await sendMessage();

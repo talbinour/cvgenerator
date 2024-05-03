@@ -1,120 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Button, ThemeProvider, createMuiTheme } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import styles from './model7.module.css';
+import React, { useState, useEffect ,useCallback } from 'react';
+import styles from './model7.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
-import ColorPicker from 'react-color-picker'; // Importez le composant ColorPicker
-
-// Création d'un thème personnalisé avec une palette de couleurs et des styles de texte
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: '#2196f3', // Couleur principale
-    },
-    secondary: {
-      main: '#f50057', // Couleur secondaire
-    },
-  },
-  typography: {
-    fontFamily: 'Arial, sans-serif', // Police par défaut
-    fontSize: 16, // Taille de la police par défaut
-    h1: {
-      fontSize: '2.5rem', // Taille du titre h1
-      fontWeight: 'bold', // Poids du titre h1
-      lineHeight: 1.2, // Hauteur de ligne du titre h1
-    },
-    h2: {
-      fontSize: '2rem', // Taille du titre h2
-      fontWeight: 'bold', // Poids du titre h2
-      lineHeight: 1.2, // Hauteur de ligne du titre h2
-    },
-    // Ajoutez d'autres styles de texte au besoin
-  },
-});
-
-// Définition des styles personnalisés
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& .MuiTextField-root': {
-      margin: theme.spacing(1),
-      width: '25ch',
-    },
-  },
-  button: {
-    margin: theme.spacing(1),
-  },
-  printArea: {
-    // Styles pour la zone d'impression
-    backgroundColor: theme.palette.background.default, // Couleur de fond
-    color: theme.palette.text.primary, // Couleur du texte
-    padding: theme.spacing(2), // Espacement intérieur
-    fontFamily: theme.typography.fontFamily, // Police de caractères
-    fontSize: theme.typography.fontSize, // Taille de la police
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  leftSide: {
-    width: '50%',
-    padding: theme.spacing(2),
-  },
-  rightSide: {
-    width: '50%',
-    padding: theme.spacing(2),
-  },
-  profileText: {
-    textAlign: 'center',
-  },
-  imgBx: {
-    width: '150px',
-    height: '150px',
-    overflow: 'hidden',
-    borderRadius: '50%',
-    margin: '0 auto',
-    '& img': {
-      width: '100%',
-      height: '100%',
-      objectFit: 'cover',
-    },
-  },
-  title: {
-    fontSize: theme.typography.h2.fontSize,
-    fontWeight: theme.typography.fontWeightBold,
-    margin: theme.spacing(2, 0),
-  },
-  subTitle: {
-    fontSize: theme.typography.h3.fontSize,
-    fontWeight: theme.typography.fontWeightBold,
-    margin: theme.spacing(1, 0),
-  },
-  text: {
-    fontSize: theme.typography.fontSize,
-    margin: theme.spacing(1, 0),
-  },
-  paletteContainer: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: theme.spacing(4),
-    padding: theme.spacing(2),
-    borderTop: `1px solid ${theme.palette.divider}`,
-  },
-  colorBox: {
-    width: '100px',
-    height: '100px',
-    borderRadius: '4px',
-  },
-}));
 
 function CvOuResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
+  const [userPhoto, setUserPhoto] = useState(null);
+
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -127,9 +24,9 @@ function CvOuResume() {
     linkedin: 'www.linkedin.com',
     address: '56e rue, Californie',
     education: [
-      { id: 1, period: '2017 - 2019', degree: 'Matric en Science', institution: 'Nom de l\'école' },
-      { id: 2, period: '2019 - 2021', degree: 'Intermédiaire en Maths', institution: 'Nom du collège' },
-      { id: 3, period: '2021 - Aujourd\'hui', degree: 'Licence en Informatique', institution: 'Nom de l\'université' }
+      { id: 1, period: { startDate: '2019', endDate: '2021'}, degree: 'Matric in Science', institution: 'School Name' },
+      { id: 2, period: { startDate: '2019', endDate: '2021'}, degree: 'Intermediate in Maths', institution: 'College Name'},
+      { id: 3, period: { startDate: '2019', endDate: '2023'}, degree: 'Undergraduate in Computer Science', institution: 'University Name'}
     ],
     languages: [
       { id: 1, name: 'Anglais', proficiency: 90 },
@@ -146,7 +43,8 @@ function CvOuResume() {
       { id: 3, skillName: 'JavaScript', proficiency: 95 },
       { id: 4, skillName: 'Python', proficiency: 75 }
     ],
-    interests: ['Trading', 'Développement', 'Gaming', 'Business']
+    interests: ['Trading', 'Développement', 'Gaming', 'Business'],
+    photo: null
   });
 
   useEffect(() => {
@@ -165,6 +63,7 @@ function CvOuResume() {
         .then((response) => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
+          setUserPhoto(response.data.user.photo);
 
           setUserId(userId);
           setCurrentCVId(userId);
@@ -175,7 +74,8 @@ function CvOuResume() {
             phone: userData.Nbphone,
             email: userData.email,
             address: userData.pays,
-            profession:userData.profession
+            profession:userData.profession,
+            photo:userData.photo,
           });
         })
         .catch((error) => {
@@ -255,125 +155,133 @@ function CvOuResume() {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
     }
   };
-
-  const classes = useStyles();
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   return (
-    <ThemeProvider theme={theme}>
-    <div className={classes.root}>
-      <ColorPicker /> {/* Intégration du composant ColorPicker */}
-      <div className={`${styles['print-area']} ${styles.resume}`}>
-        <div id="cv-content" className={styles.container}>
-          <div className={styles.editButton}>
-            <Button onClick={() => generatePDF()} className={styles['new-button']} variant="contained" color="primary"><i className="fas fa-file-pdf"></i>Télécharger</Button>
+    <div className={`${styles['print-area']} ${styles.resume}`}>
+      <div id="cv-content" className={styles.container}>
+        <div className={styles.editButton}>
+          <button onClick={() => generatePDF()} className={styles['new-button']}><i className="fas fa-file-pdf"></i>Télécharger</button>
+        </div>
+        <div className={styles.left_Side}>
+          <div className={styles.profileText}>
+          <div className={styles.imgBx}>
+            {userPhoto ? (
+                  <img src={`http://localhost:8080/${userPhoto}` } />
+                ) : (
+                  <img src={avatar} alt="Profile" />
+                )}                 
+              </div>
+            <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
+            <h3>{cvModel.profession}</h3>         
+             </div>
+          <div className={styles.contactInfo}>
+            <h3 className={styles.title}>Informations de Contact</h3>
+            <ul>
+              <li>
+                <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
+                <span className={styles.text}>{cvModel.phone}</span>
+              </li>
+              <li>
+                <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
+                <span className={styles.text}>{cvModel.email}</span>
+              </li>
+              
+              <li>
+                <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
+                <span className={styles.text}>{cvModel.website}</span>
+              </li>
+              <li>
+                <span className={styles.icon}><i className="fa fa-linkedin" aria-hidden="true"></i></span>
+                <span className={styles.text}>{cvModel.linkedin}</span>
+              </li>
+              <li>
+                <span className={styles.icon}><i className="fa fa-map-marker" aria-hidden="true"></i></span>
+                <span className={styles.text}>{cvModel.address}</span>
+              </li>
+            </ul>
           </div>
-          <div className={styles.left_Side}>
-            <div className={styles.profileText}>
-              <div className={styles.imgBx}>
-                <img src={avatar} alt="Profile" />
-              </div>
-              <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
-              <h3>{cvModel.profession}</h3>         
-              </div>
-            <div className={styles.contactInfo}>
-              <h3 className={styles.title}>Informations de Contact</h3>
-              <ul>
-                <li>
-                  <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
-                  <span className={styles.text}>{cvModel.phone}</span>
-                </li>
-                <li>
-                  <span className={styles.icon}><i className="fa fa-envelope" aria-hidden="true"></i></span>
-                  <span className={styles.text}>{cvModel.email}</span>
-                </li>
-                
-                <li>
-                  <span className={styles.icon}><i className="fa fa-globe" aria-hidden="true"></i></span>
-                  <span className={styles.text}>{cvModel.website}</span>
-                </li>
-                <li>
-                  <span className={styles.icon}><i className="fa fa-linkedin" aria-hidden="true"></i></span>
-                  <span className={styles.text}>{cvModel.linkedin}</span>
-                </li>
-                <li>
-                  <span className={styles.icon}><i className="fa fa-map-marker" aria-hidden="true"></i></span>
-                  <span className={styles.text}>{cvModel.address}</span>
-                </li>
-              </ul>
-            </div>
-            <div className={`${styles.contactInfo} ${styles.education}`}>
-              <h3 className={styles.title}>ÉDUCATION</h3>
-              <ul>
-              {cvModel.education && cvModel.education.map((edu, index) => (
+          <div className={`${styles.contactInfo} ${styles.education}`}>
+            <h3 className={styles.title}>ÉDUCATION</h3>
+            <ul>
+            {cvModel.education && cvModel.education.map((edu, index) => (
+          <li key={index}>
+            <h5>{formatDate(edu.period.startDate)} - {formatDate(edu.period.endDate)}</h5>
+            <h4>{edu.degree}</h4>
+            <h4>{edu.institution}</h4>
+          </li>
+        ))}
+
+
+            </ul>
+          </div>
+          <div className={`${styles.contactInfo} ${styles.languages}`}>
+            <h3 className={styles.title}>LANGUES</h3>
+            <ul>
+              {cvModel.languages && cvModel.languages.map((lang, index) => (
                 <li key={index}>
-                  <h5>{edu.period}</h5>
-                  <h4>{edu.degree}</h4>
-                  <h4>{edu.institution}</h4>
+                  <span className={styles.text}>{lang.name}</span>
+                  <div className={styles.percentContainer}>
+                    <div className={styles.percentBar} style={{ width: `${lang.proficiency}%` }}></div>
+                  </div>
                 </li>
               ))}
-
-              </ul>
-            </div>
-            <div className={`${styles.contactInfo} ${styles.languages}`}>
-              <h3 className={styles.title}>LANGUES</h3>
-              <ul>
-                {cvModel.languages && cvModel.languages.map((lang, index) => (
-                  <li key={index}>
-                    <span className={styles.text}>{lang.name}</span>
-                    <div className={styles.percentContainer}>
-                      <div className={styles.percentBar} style={{ width: `${lang.proficiency}%` }}></div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+            </ul>
+          </div>
+        </div>
+        <div className={styles.right_Side}>
+          <div className={styles.about}>
+            <h2 className={styles.title2}>Profil</h2>
+            <p>{cvModel.profile}</p>
+          </div>
+          <div className={styles.about}>
+            <h2 className={styles.title2}>Expérience</h2>
+            {cvModel.experiences && cvModel.experiences.length > 0 && (
+              cvModel.experiences.map((exp, index) => (
+                <div className={styles.box} key={index}>
+                  <div className={styles.year_company}>
+                    <h5>{formatDate(exp.period.startDate)} - {formatDate(exp.period.endDate)}</h5>
+                    <h5>{exp.companyName}</h5>
+                  </div>
+                  <div className={styles.text}>
+                    <h4>{exp.jobTitle}</h4>
+                    <p>{exp.description}</p>
+                  </div>
+                </div>
+              ))
+            )}
+         </div>
+    
+          <div className={`${styles.about} ${styles.skills}`}>
+            <h2 className={styles.title2}>Compétences Professionnelles</h2>
+            <div className={styles.skillContainer}>
+              {cvModel.professionalSkills.map((skill, index) => (
+                <div className={styles.skill} key={index}>
+                  <span className={styles.skillName}>{skill.skillName}</span>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progress} style={{ width: `${skill.proficiency}%` }}></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className={styles.right_Side}>
-            <div className={styles.about}>
-              <h2 className={styles.title2}>Profil</h2>
-              <p>{cvModel.profile}</p>
-            </div>
-            <div className={styles.about}>
-              <h2 className={styles.title2}>Expérience</h2>
-              {cvModel.experiences && cvModel.experiences.length > 0 && (
-                cvModel.experiences.map((exp, index) => (
-                  <div className={styles.box} key={index}>
-                    <div className={styles.year_company}>
-                      <h5>{exp.period}</h5>
-                      <h5>{exp.companyName}</h5>
-                    </div>
-                    <div className={styles.text}>
-                      <h4>{exp.jobTitle}</h4>
-                      <p>{exp.description}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-           </div>
-      
-            <div className={`${styles.about} ${styles.skills}`}>
-              <h2 className={styles.title2}>Compétences Professionnelles</h2>
-              <div className={styles.skillContainer}>
-                {cvModel.professionalSkills.map((skill, index) => (
-                  <div className={styles.skill} key={index}>
-                    <span className={styles.skillName}>{skill.skillName}</span>
-                    <div className={styles.progressBar}>
-                      <div className={styles.progress} style={{ width: `${skill.proficiency}%` }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className={styles.AboutInterest}>
-              <h2 className={styles.title2}>Centre d&apos;intérêts</h2>
-              <p>{cvModel.interests && cvModel.interests.join(', ')}</p>
-            </div>
+          <div className={styles.AboutInterest}>
+            <h2 className={styles.title2}>Intérêts</h2>
+            <ul>
+              {cvModel.interests.map((interest, index) => (
+                <li key={index}><i className="fa fa-circle" aria-hidden="true"></i>{interest}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
-      
     </div>
-    </ThemeProvider>
   );
 }
 

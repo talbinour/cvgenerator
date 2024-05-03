@@ -179,13 +179,12 @@ def save_response():
     return jsonify({"message": "Réponse enregistrée avec succès."})
 
 
-
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
     conversation_state = data.get("conversation_state")
     user_response = data.get("message")
-    
+   
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:
         conversation_state = {}
@@ -196,31 +195,46 @@ def generate_next_question_route():
     if current_question_key:
         current_question = question_generator.questions.get(current_question_key)
         if current_question:
-            if user_response and user_response.strip().lower() == current_question.strip().lower():
-                # Si la réponse de l'utilisateur est la même que la question actuelle, répéter la question
-                return jsonify({"response": current_question, "next_question_key": current_question_key, "conversation_state": conversation_state})
+            # Vérifier si toutes les questions ont été posées
+            if current_question_key == "question9":  # Modifier "question9" avec la clé de la dernière question
+                return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": None})
+            # Vérifier si l'utilisateur souhaite ajouter plus d'informations à la question actuelle
+            elif user_response and user_response.strip().lower() == "ajoute":
+                return jsonify({"response": f"Ajouter plus d'informations à la question : {current_question}", "conversation_state": conversation_state})
+            # Passer à la question précédente si l'utilisateur répond "non"
+            elif user_response and user_response.strip().lower() == "non":
+                question_number = int(current_question_key.replace("question", ""))
+                previous_question_number = question_number - 1
+                previous_question_key = f"question{previous_question_number}"
+                previous_question = question_generator.questions.get(previous_question_key)
+                conversation_state["state"] = previous_question_key
+                return jsonify({"response": previous_question, "next_question_key": previous_question_key, "conversation_state": conversation_state})
+            # Passer à la question suivante si l'utilisateur répond autre chose que "non"
             else:
-                # Si la réponse de l'utilisateur est différente de la question actuelle, passer à la question suivante
                 question_number = int(current_question_key.replace("question", ""))
                 next_question_number = question_number + 1
                 next_question_key = f"question{next_question_number}"
-                if next_question_key in question_generator.questions:
-                    next_question = question_generator.questions.get(next_question_key)
-                    conversation_state["state"] = next_question_key
-                    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
-                else:
-                    # Si toutes les questions ont été posées, la conversation est terminée
-                    return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": None})
+                next_question = question_generator.questions.get(next_question_key)
+                conversation_state["state"] = next_question_key
+                return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
         else:
             # Si la clé de la question actuelle n'existe pas dans le dictionnaire, la conversation est interrompue
             return jsonify({"response": "Une erreur est survenue. La conversation est interrompue.", "next_question_key": None, "conversation_state": None})
-    
     else:
         # Si l'état de la conversation est absent, initialiser à la première question
         next_question_key = "question1"
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
+        # Afficher les questions initiales
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

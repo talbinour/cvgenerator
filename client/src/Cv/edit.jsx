@@ -10,6 +10,7 @@ import {  useNavigate } from "react-router-dom";
 const ParentComponent = () => {
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
+  const [userPhoto, setUserPhoto] = useState(null);
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -22,18 +23,31 @@ const ParentComponent = () => {
     linkedin: 'www.linkedin.com',
     address: '56th street, California',
     education: [
-      { id: 1, period: '2017 - 2019', degree: 'Matric in Science', institution: 'School Name' },
-      { id: 2, period: '2019 - 2021', degree: 'Intermediate in Maths', institution: 'College Name' },
-      { id: 3, period: '2021 - Now', degree: 'Undergraduate in Computer Science', institution: 'University Name' }
+      { id: 1, period: { startDate: '2019-01-01', endDate: '2021-01-01'}, degree: 'Matric in Science', institution: 'School Name' },
+      { id: 2, period: { startDate: '2019-01-01', endDate: '2021-01-01'}, degree: 'Intermediate in Maths', institution: 'College Name'},
+      { id: 3, period: { startDate: '2019-01-01', endDate: '2021-01-01'}, degree: 'Undergraduate in Computer Science', institution: 'University Name'}
     ],
+    
     languages: [
       { id: 1, name: 'English', proficiency: 90 },
       { id: 2, name: 'Urdu', proficiency: 80 }
     ],
     profile: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis maxime delectus quae quo reprehenderit quas laudantium. Itaque sequi commodi vero suscipit reiciendis ea aspernatur cum. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis maxime delectus quae quo reprehenderit quas laudantium. Itaque sequi commodi vero suscipit reiciendis ea aspernatur cum.',
     experiences: [
-      { id: 1, period: '2019 - 2021', companyName: 'Company A', jobTitle: 'Senior Web Developer', description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis' },
-      { id: 2, period: '2021 - present', companyName: 'Company B', jobTitle: 'Data Analyst', description: 'Lorem ipsum,dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,tenetur architecto omnis' }
+      { 
+        id: 1, 
+        period: { startDate: '2019-01-01', endDate: '2021-01-01'}, // Assurez-vous de fournir des valeurs valides pour startDate et endDate
+        companyName: 'Company A', 
+        jobTitle: 'Senior Web Developer', 
+        description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis' 
+      },
+      { 
+        id: 2, 
+        period: { startDate: '2019-01-01', endDate: '2021-01-01'}, // Assurez-vous de fournir des valeurs valides pour startDate et endDate
+        companyName: 'Company B', 
+        jobTitle: 'Data Analyst', 
+        description: 'Lorem ipsum,dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,tenetur architecto omnis' 
+      }
     ],
     professionalSkills: [
       { id: 1, skillName: 'HTML', proficiency: 95 },
@@ -41,7 +55,8 @@ const ParentComponent = () => {
       { id: 3, skillName: 'JavaScript', proficiency: 95 },
       { id: 4, skillName: 'Python', proficiency: 75 }
     ],
-    interests: ['Trading', 'Developing', 'Gaming', 'Business']
+    interests: ['Trading', 'Developing', 'Gaming', 'Business'],
+    photo: null
   });
 
   const [userId, setUserId] = useState(null);
@@ -55,7 +70,7 @@ const ParentComponent = () => {
           .then((response) => {
               const userData = response.data.user;
               const userId = userData.id || userData.user_id;
-
+              setUserPhoto(response.data.user.photo);
               setUserId(userId);
               setCurrentCVId(userId); // Set currentCVId with userId
               setCvModel({
@@ -66,8 +81,8 @@ const ParentComponent = () => {
                 email: userData.email,
                 address: userData.pays,
                 profession:userData.profession,
-                
-                
+                photo:userData.photo,
+            
               });
           })
           .catch((error) => {
@@ -102,6 +117,7 @@ const ParentComponent = () => {
         console.error('CV ID is undefined');
         return;
       }
+     
 
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
@@ -129,7 +145,24 @@ const ParentComponent = () => {
 
   const handleExperienceChange = (e, index, field) => {
     const newExperiences = [...cvModel.experiences];
-    newExperiences[index][field] = e.target.value;
+    const { value } = e.target;
+  
+    // Update the specific field in the experiences object
+    newExperiences[index][field] = value;
+  
+    // Validate dates if both are provided
+    if (newExperiences[index].startDate && newExperiences[index].endDate) {
+      if (field === 'startDate' && value >= newExperiences[index].endDate) {
+        alert("Start date must be before end date.");
+        return;
+      }
+      if (field === 'endDate' && value <= newExperiences[index].startDate) {
+        alert("End date must be after start date.");
+        return;
+      }
+    }
+  
+    // Update the state with the modified experiences array
     setCvModel({ ...cvModel, experiences: newExperiences });
   };
 
@@ -141,9 +174,30 @@ const ParentComponent = () => {
 
   const handleEducationChange = (e, index, field) => {
     const newEducation = [...cvModel.education];
-    newEducation[index][field] = e.target.value;
+    const { value } = e.target;
+  
+    // Update the specific field in the education object
+    newEducation[index][field] = value;
+  
+    // Validate dates if both are provided
+    if (newEducation[index].startDate && newEducation[index].endDate) {
+      if (field === 'startDate' && value >= newEducation[index].endDate) {
+        alert("Start date must be before end date.");
+        return;
+      }
+      if (field === 'endDate' && value <= newEducation[index].startDate) {
+        alert("End date must be after start date.");
+        return;
+      }
+    }
+  
+    // Update the state with the modified education array
     setCvModel({ ...cvModel, education: newEducation });
   };
+  
+  
+  
+  
   if (!cvModel) {
     return <CvOrResume />;
   }
@@ -155,8 +209,14 @@ const ParentComponent = () => {
         </div>
         <div className={styles.left_Side}>
             <div className={styles.profileText}>
-              <div className={styles.imgBx}>
-                <img src={avatar} alt="Profile" />  
+            <div className={styles.imgBx}>
+            {userPhoto ? (
+                  <img src={`http://localhost:8080/${userPhoto}` } />
+                ) : (
+                  <img src={avatar} alt="Profile" />
+                )}
+
+                 
               </div>
              
                 <span 
@@ -233,31 +293,40 @@ const ParentComponent = () => {
             <div className={`${styles.contactInfo} ${styles.education}`}>
               <h3 className={styles.title}>EDUCATION</h3>
               <ul>
-                {cvModel.education.map((edu, index) => (
-                  <li key={index}>
-                    <input
-                      type="text"
-                      value={edu.period}
-                      onChange={(e) => handleEducationChange(e, index, 'period')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                    <input
-                      type="text"
-                      value={edu.degree}
-                      onChange={(e) => handleEducationChange(e, index, 'degree')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                    <input
-                      type="text"
-                      value={edu.institution}
-                      onChange={(e) => handleEducationChange(e, index, 'institution')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                  </li>
-                ))}
+                          {cvModel.education.map((edu, index) => (
+              <li key={index}>
+                <input
+                  type="date"
+                  value={edu.startDate}  // Make sure this is provided
+                  onChange={(e) => handleEducationChange(e, index, 'startDate')}
+                  className={styles.input}
+                  placeholder="Start Date"
+                />
+                <span className="text-gray-500 dark:text-gray-400">/</span>
+                <input
+                  type="date"
+                  value={edu.endDate}  // Make sure this is provided
+                  onChange={(e) => handleEducationChange(e, index, 'endDate')}
+                  className={styles.input}
+                  placeholder="End Date"
+                />
+                <input
+                  type="text"
+                  value={edu.degree}
+                  onChange={(e) => handleEducationChange(e, index, 'degree')}
+                  className={styles.input}
+                  placeholder="Degree"
+                />
+                <input
+                  type="text"
+                  value={edu.institution}
+                  onChange={(e) => handleEducationChange(e, index, 'institution')}
+                  className={styles.input}
+                  placeholder="Institution"
+                />
+              </li>
+            ))}
+
               </ul>
             </div>
             <div className={`${styles.contactInfo} ${styles.languages}`}>
@@ -306,40 +375,50 @@ const ParentComponent = () => {
             <div className={styles.about}>
               <h2 className={styles.title2}>Experience</h2>
               {cvModel.experiences.map((exp, index) => (
-                <div className={styles.box} key={index}>
-                  <div className={styles.year_company}>
-                    <input
-                      type="text"
-                      value={exp.period}
-                      onChange={(e) => handleExperienceChange(e, index, 'period')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                    <input
-                      type="text"
-                      value={exp.companyName}
-                      onChange={(e) => handleExperienceChange(e, index, 'companyName')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                  </div>
-                  <div className={styles.text}>
-                    <input
-                      type="text"
-                      value={exp.jobTitle}
-                      onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
-                      className={styles.input}
-                      contentEditable
-                    />
-                    <textarea
-                      value={exp.description}
-                      onChange={(e) => handleExperienceChange(e, index, 'description')}
-                      className={styles.input}
-                      placeholder="Description"
-                    />
-                  </div>
-                </div>
-              ))}
+  <div className={styles.box} key={index}>
+    <div className={styles.year_company}>
+      <input
+        type="date"
+        value={exp.period.startDate}
+        onChange={(e) => handleExperienceChange(e, index, 'period.startDate')}
+        className={styles.input}
+        contentEditable
+        placeholder="Start Date"
+      />
+      <span className="text-gray-500 dark:text-gray-400">/</span>
+      <input
+        type="date"
+        value={exp.period.endDate}
+        onChange={(e) => handleExperienceChange(e, index, 'period.endDate')}
+        className={styles.input}
+        contentEditable
+        placeholder="End Date"
+      />
+      <input
+        type="text"
+        value={exp.companyName}
+        onChange={(e) => handleExperienceChange(e, index, 'companyName')}
+        className={styles.input}
+        contentEditable
+      />
+    </div>
+    <div className={styles.text}>
+      <input
+        type="text"
+        value={exp.jobTitle}
+        onChange={(e) => handleExperienceChange(e, index, 'jobTitle')}
+        className={styles.input}
+        contentEditable
+      />
+      <textarea
+        value={exp.description}
+        onChange={(e) => handleExperienceChange(e, index, 'description')}
+        className={styles.input}
+        placeholder="Description"
+      />
+    </div>
+  </div>
+))}
             </div>
             <div className={`${styles.about} ${styles.skills}`}>
               <h2 className={styles.title2}>Professional Skills</h2>

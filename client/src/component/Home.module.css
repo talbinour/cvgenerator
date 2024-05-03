@@ -188,3 +188,104 @@
     color: black; /* Rendre le curseur clignotant visible */
   }
 }
+/* Styles pour l'icône du chatbot */
+/* Styles pour le conteneur de l'icône du chatbot */
+.chatIconContainer {
+  width: 100px; /* Largeur du conteneur */
+  height: 100px; /* Hauteur du conteneur */
+}
+.chatIcon {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease; /* Ajouter une transition pour un mouvement fluide */
+  width: 10%; /* Ajuster la largeur */
+  height: 20%; /* Ajuster la hauteur */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Ajuster la taille de la police */
+  animation: pulseAnimation 2s infinite; /* Ajouter l'animation de pulsation */
+}
+
+
+/* Styles pour le conteneur du chatbot */
+.chatContainer {
+  position: fixed;
+  bottom: 200px;
+  right: 50px;
+  z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
+  background-color: #ffffff; /* Couleur de fond */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
+  border-radius: 10px; /* Coins arrondis */
+  overflow: hidden; /* Masque tout contenu dépassant du conteneur */
+  max-height: 50%; /* Hauteur maximale du conteneur */
+  width: 300px; /* Largeur du conteneur */
+  height: 60%;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Ajoute une transition fluide */
+}
+
+/* Styles pour le chatbot lui-même */
+.Chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Ajouter un espacement intérieur */
+}
+
+/* Styles pour la page d'accueil */
+.container {
+  position: relative; /* Permet de positionner les éléments enfants par rapport à celui-ci */
+  z-index: 1; /* Assure que le contenu de la page d'accueil est affiché au-dessus du chatbot */
+}
+
+/* Styles pour l'overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Couleur de fond semi-transparente */
+  z-index: 998; /* Assure que l'overlay est affiché en dessous du chatbot mais au-dessus du contenu de la page d'accueil */
+  display: none; /* Masque par défaut l'overlay */
+}
+.overlay.active {
+  display: block; /* Affiche l'overlay lorsque la classe active est présente */
+}
+.chatIcon:hover {
+  transform: scale(1.1); /* Fait grossir l'icône lorsqu'elle est survolée */
+}
+
+@keyframes pulseAnimation {
+  0% {
+    transform: scale(1); /* Taille de départ */
+  }
+  50% {
+    transform: scale(1.1); /* Taille maximale à mi-chemin */
+  }
+  100% {
+    transform: scale(1); /* Retour à la taille de départ */
+  }
+}
+/* Styles pour la bulle de discussion */
+.chatIcon::before {
+  content: "Besoin d'aide ?"; /* Texte de la bulle de discussion */
+  position: absolute; /* Position absolue par rapport à l'icône du chatbot */
+  bottom: calc(100% + 10px); /* Positionner la bulle au-dessus de l'icône */
+  right: 50%; /* Centrer la bulle horizontalement */
+  transform: translateX(50%); /* Centrer la bulle horizontalement */
+  background-color: #f1f1f1; /* Couleur de fond de la bulle */
+  color: #333; /* Couleur du texte */
+  padding: 10px; /* Espacement intérieur de la bulle */
+  border-radius: 8px; /* Bord arrondi de la bulle */
+  font-size: 14px; /* Taille de la police */
+  opacity: 0; /* Rendre la bulle initialement invisible */
+  transition: opacity 0.3s ease; /* Transition pour l'opacité */
+}
+
+.chatIcon:hover::before {
+  opacity: 1; /* Rendre la bulle visible au survol */
+}

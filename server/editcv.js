@@ -98,7 +98,7 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
     if (!imageURL) {
       // Si imageURL est vide, définir une valeur par défaut ou renvoyer une erreur selon vos besoins
       // Par exemple, définir une URL par défaut :
-      imageURL = 'default_image_url.png';
+      //imageURL = 'default_image_url.png';
       // Ou lancer une erreur :
       throw new Error('Image URL is missing.');
     }

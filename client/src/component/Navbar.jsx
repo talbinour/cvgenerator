@@ -13,6 +13,7 @@ const Navbar = () => {
   const [loadingLogout, setLoadingLogout] = useState(false);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
+  const [userPhoto, setUserPhoto] = useState(null);
   const profileMenuRef = useRef(null);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ const Navbar = () => {
       axios.get('http://localhost:8080/current-username', { withCredentials: true })
         .then(response => {
           setCurrentUser(response.data.user.nom);
+          setUserPhoto(response.data.user.photo);
         })
         .catch(error => {
           console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
@@ -70,7 +72,7 @@ const Navbar = () => {
           )}
           {currentUser && (
             <li className="profile-menu" ref={profileMenuRef}>
-              <img src={defaultAvatar} alt="Avatar" className="avatar"
+              <img src={userPhoto ? `http://localhost:8080/${userPhoto}` : defaultAvatar} alt="Avatar" className="avatar"
                 onMouseEnter={() => setShowProfileMenu(true)}  // Afficher le menu au survol
               />
               {showProfileMenu && (
