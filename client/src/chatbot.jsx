@@ -84,6 +84,10 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
   }
 };
 
+
+
+
+
   const handleSendMessage = async () => {
     await sendMessage();
   };
