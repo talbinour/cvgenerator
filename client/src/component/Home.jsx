@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from './Home.module.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Chat from "../chatbot2"; // Importez le composant Chat que vous avez créé
+import Chat from "../chatbot2"; 
 import boot from '../assets/chatbot.png';
 
 const Home = () => {
@@ -14,6 +14,7 @@ const Home = () => {
   const [typedText, setTypedText] = useState(''); 
   const description = "  Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
   const [showChat, setShowChat] = useState(false); // Ajoutez une variable d'état pour contrôler l'affichage du chatbot
+  const [showChatMessage, setShowChatMessage] = useState(false); // Ajoutez une variable d'état pour contrôler l'affichage du message de chat
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -96,21 +97,45 @@ const Home = () => {
 
   const toggleChat = () => {
     setShowChat(!showChat); // Inverser la valeur de showChat lorsque l'utilisateur clique sur l'icône du chatbot
+    setShowChatMessage(false); // Réinitialiser l'état de l'affichage du message de chat
+  };
+
+  const handleChatIconMouseEnter = () => {
+    setShowChatMessage(true); // Afficher le message de chat lorsque l'utilisateur survole l'icône du chatbot
+  };
+
+  const handleChatIconMouseLeave = () => {
+    setShowChatMessage(false); // Masquer le message de chat lorsque l'utilisateur quitte l'icône du chatbot
+  };
+
+  const chatContainer = useRef(null);
+
+  const scrollToBottom = () => {
+    chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
   };
 
   return (
     <div className={styles.container}>
-     
       {showChat && (
-        <div className={styles.chatContainer}>
-          <Chat />
+        <div className={styles.chatContainer} ref={chatContainer}>
+          <Chat scrollToBottom={scrollToBottom} />
         </div>
       )}
-      
       <div className={styles.chatIconContainer}>
-        <img src={boot} alt="Chatbot" className={styles.chatIcon}  onClick={toggleChat}/>
+        <img 
+          src={boot} 
+          alt="Chatbot"
+          className={styles.chatIcon}
+          onClick={toggleChat}
+          onMouseEnter={handleChatIconMouseEnter}
+          onMouseLeave={handleChatIconMouseLeave}
+        />
+        {showChatMessage && (
+          <div className={styles.chatIconMessage}>
+            Besoin d&apos;aide ?
+          </div>
+        )}
       </div>
-
       <section className={styles.hero}>
         <h1>Bienvenue sur Cevor</h1>
         <div className={styles.descriptionContainer}>
@@ -140,3 +165,4 @@ const Home = () => {
 };
 
 export default Home;
+

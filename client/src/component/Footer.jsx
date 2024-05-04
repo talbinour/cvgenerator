@@ -20,7 +20,7 @@ const Footer = () => {
           <h3>Liens utiles</h3>
           <ul>
             <li><Link to="/faq">FAQ</Link></li>
-            <li><Link to="/cookies">Politique de cookies</Link></li>
+            <li><Link to="/cookiePolicy">Politique de cookies</Link></li>
             <li><Link to="/sitemap">Plan du site</Link></li>
           </ul>
         </div>
