@@ -46,7 +46,44 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message") # type: ignore
+
+    # Obtenir la réponse du bot
+    bot_response = str(bot.get_response(user_input))
+    
+    return jsonify({"response": bot_response})
+
+
+@app.route("/profile", methods=["POST"])
+def profile():
+    data = request.json
+    # Implémentez ici la gestion réelle des profils
+    # Enregistrez les données du profil utilisateur dans le CV
+    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
+    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
+    # user_profile = db.profiles.insert_one(data)
+    return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
+
+
+@app.route("/save-response", methods=["POST"])
+def save_response():
+    data = request.json
+    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
+    return jsonify({"message": "Réponse enregistrée avec succès."})
+
+
+
+
+
+
+
+
+
+
 
 class QuestionGenerator:
     def __init__(self):
@@ -151,40 +188,13 @@ question_generator.load_questions({
     # Ajoutez d'autres questions ici...
 })
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_input = request.json.get("message")
-
-    # Obtenir la réponse du bot
-    bot_response = str(bot.get_response(user_input))
-    
-    return jsonify({"response": bot_response})
-
-
-@app.route("/profile", methods=["POST"])
-def profile():
-    data = request.json
-    # Implémentez ici la gestion réelle des profils
-    # Enregistrez les données du profil utilisateur dans le CV
-    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
-    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(data)
-    return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
-
-
-@app.route("/save-response", methods=["POST"])
-def save_response():
-    data = request.json
-    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
-    return jsonify({"message": "Réponse enregistrée avec succès."})
-
 
 
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state")
-    user_response = data.get("message")
+    conversation_state = data.get("conversation_state") # type: ignore
+    user_response = data.get("message") # type: ignore
     
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:

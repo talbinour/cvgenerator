@@ -215,14 +215,14 @@
 .chatContainer {
   position: fixed;
   bottom: 200px;
+  overflow-y:auto ;
   right: 50px;
   z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
   background-color: #ffffff; /* Couleur de fond */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
   border-radius: 10px; /* Coins arrondis */
-  overflow: hidden; /* Masque tout contenu dépassant du conteneur */
-  max-height: 50%; /* Hauteur maximale du conteneur */
-  width: 300px; /* Largeur du conteneur */
+  max-height: 80%; /* Hauteur maximale du conteneur */
+  width:35%; /* Largeur du conteneur */
   height: 60%;
   transition: transform 0.3s ease, opacity 0.3s ease; /* Ajoute une transition fluide */
 }
@@ -270,22 +270,56 @@
     transform: scale(1); /* Retour à la taille de départ */
   }
 }
+
 /* Styles pour la bulle de discussion */
 .chatIcon::before {
-  content: "Besoin d'aide ?"; /* Texte de la bulle de discussion */
-  position: absolute; /* Position absolue par rapport à l'icône du chatbot */
-  bottom: calc(100% + 10px); /* Positionner la bulle au-dessus de l'icône */
-  right: 50%; /* Centrer la bulle horizontalement */
-  transform: translateX(50%); /* Centrer la bulle horizontalement */
-  background-color: #f1f1f1; /* Couleur de fond de la bulle */
-  color: #333; /* Couleur du texte */
-  padding: 10px; /* Espacement intérieur de la bulle */
-  border-radius: 8px; /* Bord arrondi de la bulle */
-  font-size: 14px; /* Taille de la police */
-  opacity: 0; /* Rendre la bulle initialement invisible */
-  transition: opacity 0.3s ease; /* Transition pour l'opacité */
+  content: attr(data-message); /* Affiche le contenu dynamique */
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 50%;
+  transform: translateX(50%);
+  background-color: #f1f1f1;
+  color: #333;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .chatIcon:hover::before {
-  opacity: 1; /* Rendre la bulle visible au survol */
+  opacity: 1;
+}
+
+.chatIconContainer {
+  position: relative; /* Ajouté pour positionner correctement le message par rapport à l'icône */
+}
+
+.chatIconMessage {
+  bottom: 50px; /* Distance au-dessus de l'icône */
+  transform: translateX(-50%);
+  background-color: #d5d5d5;
+  padding: 12px 20px;
+  border-radius: 10px; /* Bordures arrondies pour la bulle */
+  font-size: 16px;
+  color: #333;
+  white-space:initial;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  display: flex; 
+  position: fixed;
+  bottom: 150px;
+  right:50px;
+  width: 160px;
+  z-index: 999; 
+}
+
+.chatIconMessage::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #bebebe transparent transparent transparent;
+  transform: translateX(-50%);
 }
