@@ -144,6 +144,8 @@ class AuthController {
         role: currentUser.role,
         pays: currentUser.pays,
         profession: currentUser.profession,
+        
+         photo: currentUser.photo,
         // Ajoutez d'autres champs nécessaires
       };
   

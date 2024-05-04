@@ -17,13 +17,20 @@ const cvSchema = new Schema({
   website: String,
   linkedin: String,
   address: String,
-  education: [
-    {
-      period: String,
-      degree: String,
-      institution: String
-    }
-  ],
+  education: [{
+    period: {
+      startDate: {
+        type: Date,
+        required: true
+      },
+      endDate: {
+        type: Date,
+        required: true
+      }
+    },
+    degree: String,
+    institution: String
+  }],
   languages: [
     {
       name: String,
@@ -33,7 +40,16 @@ const cvSchema = new Schema({
   profile: String,
   experiences: [
     {
-      period: String,
+      period: {
+        startDate: {
+          type: Date,
+          required: true
+        },
+        endDate: {
+          type: Date,
+          required: true
+        }
+      },
       companyName: String,
       jobTitle: String,
       description: String
@@ -45,7 +61,8 @@ const cvSchema = new Schema({
       proficiency: Number
     }
   ],
-  interests: [String]
+  interests: [String],
+  photo:String
 });
 
 const CvModel = mongoose.model('Cv', cvSchema);

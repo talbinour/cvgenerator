@@ -9,7 +9,7 @@ const CVModel7 = () => {
   const [cvModel, setCvModel] = useState({
     name: "",
     prenom: "",
-    job: "",
+    profession: "",
     phone: "",
     email: "",
     website: "",
@@ -282,7 +282,7 @@ const CVModel7 = () => {
               <h2>
                 {cvModel.name} {cvModel.prenom}
                 <br />
-                <span>{cvModel.job}</span>
+                <span>{cvModel.profession}</span>
               </h2>
             </div>
             <h3 className={styles.title}>CONTACT INFO</h3>

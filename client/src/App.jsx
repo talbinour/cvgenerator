@@ -45,6 +45,7 @@ import CVModel7 from "./CvModelChat/CVModel7";
 import NewQuestion from "./CvModelChat/NewQuestion";
 import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
+import StylePalette from './Style/StylePalette';
 import Box from './box';
 import Sitemap from './component/sitemap'; // Assurez-vous que le chemin d'importation est correct
 import CookiePolicy from './component/CookiePolicy'; // Assurez-vous que le chemin d'importation est correct
@@ -98,6 +99,7 @@ function App() {
           <Route path='/CVModel2' element={<CVModel2 />} />
           <Route path='/CVModel3' element={<CVModel3 />} />
           <Route path='/CVModel7' element={<CVModel7 />} />
+          <Route path='/StylePalette' element={<StylePalette />} />
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/cookiePolicy" element={<CookiePolicy />} />
           <Route path='/box' element={<Box />} />

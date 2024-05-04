@@ -10,6 +10,8 @@ function CvOuResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
+  const [userPhoto, setUserPhoto] = useState(null);
+
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -22,9 +24,9 @@ function CvOuResume() {
     linkedin: 'www.linkedin.com',
     address: '56e rue, Californie',
     education: [
-      { id: 1, period: '2017 - 2019', degree: 'Matric en Science', institution: 'Nom de l\'école' },
-      { id: 2, period: '2019 - 2021', degree: 'Intermédiaire en Maths', institution: 'Nom du collège' },
-      { id: 3, period: '2021 - Aujourd\'hui', degree: 'Licence en Informatique', institution: 'Nom de l\'université' }
+      { id: 1, period: { startDate: '2019', endDate: '2021'}, degree: 'Matric in Science', institution: 'School Name' },
+      { id: 2, period: { startDate: '2019', endDate: '2021'}, degree: 'Intermediate in Maths', institution: 'College Name'},
+      { id: 3, period: { startDate: '2019', endDate: '2023'}, degree: 'Undergraduate in Computer Science', institution: 'University Name'}
     ],
     languages: [
       { id: 1, name: 'Anglais', proficiency: 90 },
@@ -41,7 +43,8 @@ function CvOuResume() {
       { id: 3, skillName: 'JavaScript', proficiency: 95 },
       { id: 4, skillName: 'Python', proficiency: 75 }
     ],
-    interests: ['Trading', 'Développement', 'Gaming', 'Business']
+    interests: ['Trading', 'Développement', 'Gaming', 'Business'],
+    photo: null
   });
 
   useEffect(() => {
@@ -60,6 +63,7 @@ function CvOuResume() {
         .then((response) => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
+          setUserPhoto(response.data.user.photo);
 
           setUserId(userId);
           setCurrentCVId(userId);
@@ -70,7 +74,8 @@ function CvOuResume() {
             phone: userData.Nbphone,
             email: userData.email,
             address: userData.pays,
-            profession:userData.profession
+            profession:userData.profession,
+            photo:userData.photo,
           });
         })
         .catch((error) => {
@@ -150,6 +155,13 @@ function CvOuResume() {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
     }
   };
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
@@ -159,9 +171,13 @@ function CvOuResume() {
         </div>
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
-            <div className={styles.imgBx}>
-              <img src={avatar} alt="Profile" />
-            </div>
+          <div className={styles.imgBx}>
+            {userPhoto ? (
+                  <img src={`http://localhost:8080/${userPhoto}` } />
+                ) : (
+                  <img src={avatar} alt="Profile" />
+                )}                 
+              </div>
             <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
             <h3>{cvModel.profession}</h3>         
              </div>
@@ -195,12 +211,13 @@ function CvOuResume() {
             <h3 className={styles.title}>ÉDUCATION</h3>
             <ul>
             {cvModel.education && cvModel.education.map((edu, index) => (
-              <li key={index}>
-                <h5>{edu.period}</h5>
-                <h4>{edu.degree}</h4>
-                <h4>{edu.institution}</h4>
-              </li>
-            ))}
+          <li key={index}>
+            <h5>{formatDate(edu.period.startDate)} - {formatDate(edu.period.endDate)}</h5>
+            <h4>{edu.degree}</h4>
+            <h4>{edu.institution}</h4>
+          </li>
+        ))}
+
 
             </ul>
           </div>
@@ -229,7 +246,7 @@ function CvOuResume() {
               cvModel.experiences.map((exp, index) => (
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
-                    <h5>{exp.period}</h5>
+                    <h5>{formatDate(exp.period.startDate)} - {formatDate(exp.period.endDate)}</h5>
                     <h5>{exp.companyName}</h5>
                   </div>
                   <div className={styles.text}>
