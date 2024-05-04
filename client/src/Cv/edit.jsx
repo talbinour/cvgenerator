@@ -430,7 +430,7 @@ const addInterest = () => {
                     <div className={styles.year_company}>
                       <input
                         type="date"
-                        value={exp.period.startDate}
+                        value={exp.startDate}
                         onChange={(e) => handleExperienceChange(e, index, 'period.startDate')}
                         className={styles.input}
                         contentEditable
@@ -439,7 +439,7 @@ const addInterest = () => {
                       <span className="text-gray-500 dark:text-gray-400">/</span>
                       <input
                         type="date"
-                        value={exp.period.endDate}
+                        value={exp.endDate}
                         onChange={(e) => handleExperienceChange(e, index, 'period.endDate')}
                         className={styles.input}
                         contentEditable

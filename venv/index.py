@@ -81,7 +81,7 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
 
 class QuestionGenerator:
     def __init__(self):
@@ -256,6 +256,30 @@ def generate_next_question_route():
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+@app.route("/previous-question", methods=["POST"])
+def handle_previous_question():
+    data = request.json
+    conversation_state = data.get("conversation_state")
+    previous_question_key = None
+    
+    # Vérifier si l'état de la conversation est présent
+    if conversation_state:
+        current_question_key = conversation_state.get("state")
+        if current_question_key:
+            # Récupérer la clé de la question précédente
+            question_number = int(current_question_key.replace("question", ""))
+            previous_question_number = question_number - 1
+            if previous_question_number > 0:
+                previous_question_key = f"question{previous_question_number}"
+    
+    if previous_question_key:
+        previous_question = question_generator.questions.get(previous_question_key)
+        updated_state = {"state": previous_question_key}
+        return jsonify({"response": previous_question, "conversation_state": updated_state})
+    else:
+        return jsonify({"response": "Aucune question précédente trouvée.", "conversation_state": conversation_state})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

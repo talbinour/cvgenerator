@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane , faPlus} from "@fortawesome/free-solid-svg-icons";
 import styles from "./chatbot.module.css";
 import axios from "axios";
 
@@ -36,6 +36,7 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
 
     setConversationState(nextQuestionKey === "start" ? null : { state: nextQuestionKey });
   };
+  
 
  const sendMessage = async () => {
   // Vérifier si l'utilisateur a répondu à la question précédente
@@ -84,10 +85,6 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
   }
 };
 
-
-
-
-
   const handleSendMessage = async () => {
     await sendMessage();
   };
@@ -106,6 +103,32 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
       setInput(event.target.value);
     }
   };
+  const handleAddResponse = async () => {
+    const response = await axios.post(
+        "http://localhost:5000/previous-question",
+        {
+            cv_title: "Titre du CV",
+            cv_content: "",
+            conversation_state: conversationState,
+        },
+        { headers: { "Content-Type": "application/json" } }
+    );
+
+    const botResponse = response.data.response;
+    const previousResponse = response.data.previous_response;
+
+    // Enregistrer la réponse précédente dans le champ du CV
+    setInput(previousResponse);
+
+    // Afficher la question précédente suivie de la réponse enregistrée
+    setMessages([...messages, { text: `Question précédente: ${botResponse}`, user: "bot" }]);
+
+    // Mettre à jour la conversation state
+    setConversationState(response.data.conversation_state);
+};
+
+  
+  
 
   return (
     <div className={styles.pageWrapper}>
@@ -122,6 +145,9 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
           <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
+          <button className={styles.addButton} onClick={handleAddResponse} disabled={conversationBlocked}>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
         </div>
       </div>
     </div>
