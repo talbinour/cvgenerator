@@ -5,9 +5,44 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
+import spacy
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 app = Flask(__name__)
 CORS(app)
+
+# Initialize SpaCy and NLTK
+nlp = spacy.load("fr_core_news_sm")
+nltk.download("stopwords")
+nltk.download("punkt")
+nltk.download("wordnet")
+stop_words = set(stopwords.words("french"))
+lemmatizer = WordNetLemmatizer()
+
+# Helper function for preprocessing user input
+def preprocess(text):
+    # Tokenization using NLTK
+    tokens = word_tokenize(text)
+    
+    # Lemmatization using SpaCy
+    lemmatized_tokens = [token.lemma_ for token in nlp(" ".join(tokens))]
+    
+    # Remove stop words using NLTK
+    filtered_tokens = [token for token in lemmatized_tokens if token.lower() not in stop_words]
+    
+    # Join tokens back into a string
+    preprocessed_text = " ".join(filtered_tokens)
+    
+    return preprocessed_text
+
+# Helper function for postprocessing bot response
+def postprocess(response):
+    # No specific postprocessing logic implemented here
+    return response
+
 bot = ChatBot(
     "chatbot",
     storage_adapter="chatterbot.storage.MongoDatabaseAdapter",
@@ -47,43 +82,6 @@ def train_from_json(directory):
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
 train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
-
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_input = request.json.get("message") # type: ignore
-
-    # Obtenir la réponse du bot
-    bot_response = str(bot.get_response(user_input))
-    
-    return jsonify({"response": bot_response})
-
-
-@app.route("/profile", methods=["POST"])
-def profile():
-    data = request.json
-    # Implémentez ici la gestion réelle des profils
-    # Enregistrez les données du profil utilisateur dans le CV
-    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
-    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(data)
-    return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
-
-
-@app.route("/save-response", methods=["POST"])
-def save_response():
-    data = request.json
-    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
-    return jsonify({"message": "Réponse enregistrée avec succès."})
-
-
-
-
-
-
-
-
-
-
 
 class QuestionGenerator:
     def __init__(self):
@@ -187,6 +185,33 @@ question_generator.load_questions({
     "question9":""
     # Ajoutez d'autres questions ici...
 })
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    user_input = request.json.get("message") # type: ignore
+
+    # Obtenir la réponse du bot
+    bot_response = str(bot.get_response(user_input))
+    
+    return jsonify({"response": bot_response})
+
+
+@app.route("/profile", methods=["POST"])
+def profile():
+    data = request.json
+    # Implémentez ici la gestion réelle des profils
+    # Enregistrez les données du profil utilisateur dans le CV
+    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
+    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
+    # user_profile = db.profiles.insert_one(data)
+    return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
+
+
+@app.route("/save-response", methods=["POST"])
+def save_response():
+    data = request.json
+    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
+    return jsonify({"message": "Réponse enregistrée avec succès."})
 
 
 
