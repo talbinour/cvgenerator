@@ -161,11 +161,11 @@ const ParentComponent = () => {
     // Validate dates if both are provided
     if (newExperiences[index].startDate && newExperiences[index].endDate) {
       if (field === 'startDate' && value >= newExperiences[index].endDate) {
-        alert("Start date must be before end date.");
+        alert("La date de début doit être après la date de fin.");
         return;
       }
       if (field === 'endDate' && value <= newExperiences[index].startDate) {
-        alert("End date must be after start date.");
+        alert("La date de fin doit être après la date de début");
         return;
       }
     }
@@ -190,11 +190,11 @@ const ParentComponent = () => {
     // Validate dates if both are provided
     if (newEducation[index].startDate && newEducation[index].endDate) {
       if (field === 'startDate' && value >= newEducation[index].endDate) {
-        alert("Start date must be before end date.");
+        alert("La date de début doit être après la date de fin.");
         return;
       }
       if (field === 'endDate' && value <= newEducation[index].startDate) {
-        alert("End date must be after start date.");
+        alert("La date de fin doit être après la date de début");
         return;
       }
     }

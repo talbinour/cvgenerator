@@ -116,7 +116,8 @@ class QuestionGenerator:
             "Quel est votre profil LinkedIn ?",
             "Dans quel pays êtes-vous basé(e) ?"
         ]
-        return contact_questions
+        reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
+        return contact_questions + [reminder_message]
 
     def generate_education_questions(self, cv_content):
         education_questions = [
@@ -124,7 +125,9 @@ class QuestionGenerator:
             "Quel est le nom de votre école/université ?",
             "Pouvez-vous préciser la période de temps de vos études ?"
         ]
-        return education_questions
+        reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
+        return education_questions + [reminder_message]
+
 
     def generate_profile_questions(self, cv_content):
         profile_questions = [
@@ -141,12 +144,15 @@ class QuestionGenerator:
             "Quelle est la date de fin de votre expérience professionnelle ?",
             "Pouvez-vous décrire votre expérience professionnelle ?"
         ]
-        return experience_professionnelle_questions
+        reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
+        return experience_professionnelle_questions + [reminder_message]
+
     def generate_skills_questions(self, cv_content):
         competence_questions = [
-            "Quelles compétences avez-vous et à quel niveau ?"
+            "Quelles compétences avez-vous ? (Veuillez spécifier le niveau pour chaque compétence, séparés par un deux-points)"
         ]
         return competence_questions
+
 
     def generate_interests_questions(self, cv_content):
         centre_interet_questions = [
@@ -156,19 +162,22 @@ class QuestionGenerator:
     
     def generate_languages_questions(self, cv_content):
         langue_questions = [
-            "Quelles langues parlez-vous et à quel niveau ?"
+            "Quelles langues parlez-vous ? (Veuillez spécifier le niveau pour chaque langue, séparés par un deux-points)"
         ]
         return langue_questions
+
     def generate_formation_questions(self, cv_content):
-        formation_questions = [
-            "Quel est votre titre de formation ?",
-            "Quel est le nom de votre établissement ?",
-            "Dans quelle ville avez-vous étudié ?",
-            "Quelle est la date de début de votre formation ?",
-            "Quelle est la date de fin de votre formation ?",
-            "Pouvez-vous décrire votre formation ?"
-        ]
-        return formation_questions
+            formation_questions = [
+                "Quel est votre titre de formation ?",
+                "Quel est le nom de votre établissement ?",
+                "Dans quelle ville avez-vous étudié ?",
+                "Quelle est la date de début de votre formation ?",
+                "Quelle est la date de fin de votre formation ?",
+                "Pouvez-vous décrire votre formation ?"
+            ]
+            reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
+            return formation_questions + [reminder_message]
+
 
 # Charger les questions pour question_generator
 # Charger les questions pour question_generator

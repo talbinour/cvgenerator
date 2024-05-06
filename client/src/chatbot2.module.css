@@ -1,55 +1,40 @@
-/* chatbot.css */
-
-/* Chat container */
-/* chatbot.css */
-
-/* Container pour la page entière */
 /* chatbot.module.css */
 
 /* Container pour la page entière */
 .pageWrapper {
-    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
-}
-
-/* Style de la partie gauche */
-.leftPanel {
-    flex: 1; /* La partie gauche prendra autant d'espace que possible */
-    padding: 20px;
-    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
-}
-
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    display: flex;
+    flex-direction: column-reverse; /* Afficher les messages de bas en haut */
+    height: 100%; /* Assurer que le chat occupe toute la hauteur de l'écran */
 }
 
 /* Message box */
 .message {
     margin-bottom: 10px;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 20px; /* Coins arrondis */
+    max-width: 70%; /* Limiter la largeur des bulles de message */
 }
 
 /* User message */
 .me {
-    background-color: #dff0d8; /* light green */
+    background-color: #007bff; /* Couleur bleue similaire à Messenger */
+    color: #fff; /* Texte blanc */
+    align-self: flex-end; /* Aligner à droite */
 }
 
 /* Bot message */
 .bot {
-    background-color: #d9edf7; /* light blue */
+    background-color: #ece5dd; /* Couleur beige similaire à Messenger */
+    align-self: flex-start; /* Aligner à gauche */
 }
 
 /* Input field */
 .inputField {
-    width: calc(100% - 80px); /* Adjust based on button width */
+    width: 80%;
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 20px; /* Coins arrondis */
 }
 
 /* Send button */
@@ -60,11 +45,19 @@
     background-color: #007bff; /* blue */
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px; /* Coins arrondis */
     cursor: pointer;
 }
 
 /* Send button hover */
 .sendButton:hover {
     background-color: #0056b3; /* Darker blue */
+}
+
+/* Avatar */
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Rendre l'avatar rond */
+    margin-right: 10px; /* Espacement entre l'avatar et le message */
 }

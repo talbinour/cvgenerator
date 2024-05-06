@@ -149,9 +149,11 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
         <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
-        <button className={styles.addButton} onClick={handleAddResponse} disabled={conversationBlocked}>
-          <FontAwesomeIcon icon={faPlus} />
-        </button>
+        {conversationState && conversationState.state === "question3" && ( // Condition pour afficher le bouton
+          <button className={styles.addButton} onClick={handleAddResponse} disabled={conversationBlocked}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+        )}
       </div>
       </div>
       

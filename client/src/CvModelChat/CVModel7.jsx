@@ -3,18 +3,19 @@ import Chat from "../chatbot";
 import axios from "axios";
 import styles from "./CVModel7.module.css";
 import avatar from "../assets/cvprofile.jpeg";
-import {  useNavigate } from "react-router-dom";
+//import {  useNavigate } from "react-router-dom";
 
 const CVModel7 = () => {
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
   //const [currentCVId] = useState(null);
-  const [currentCVId, setCurrentCVId] = useState(null);
+  //const [currentCVId, setCurrentCVId] = useState(null);
 
-  const getCurrentCVId = () => {
+  /* const getCurrentCVId = () => {
     return currentCVId;
-  };
+  }; */
+
   const [cvModel, setCvModel] = useState({
     name: "",
     prenom: "",
@@ -43,7 +44,7 @@ const CVModel7 = () => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
           setUserPhoto(response.data.user.photo);
-          setCurrentCVId(userId);
+         // setCurrentCVId(userId);
           setUserId(userId);
           setCvModel({
             name: userData.nom,
@@ -171,6 +172,7 @@ const CVModel7 = () => {
       updatedModel.website = website; // Mettre à jour le site web
       updatedModel.linkedin = linkedin; // Mettre à jour le profil LinkedIn
       updatedModel.address = address; // Mettre à jour l'adresse
+      
       break;
       }
       case "question3": {// EDUCATION
@@ -204,7 +206,7 @@ const CVModel7 = () => {
         updatedModel.profile = formationResponse; // Mettre à jour le profil
         break;
         case "question6": { // EXPÉRIENCE
-          const [period, companyName,ville, jobTitle, description] = formationResponse.split("\n").map(item => item.trim());
+          const [period, companyName,ville, jobTitle, description] = formationResponse.split(",").map(item => item.trim());
           const newExperience = {
             period,
             companyName,
@@ -275,7 +277,14 @@ const CVModel7 = () => {
   
     setCvModel(updatedModel);
   };
-  const saveCVToServer = async () => {
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+ /*  const saveCVToServer = async () => {
     try {
       const cvId = getCurrentCVId();
       if (!cvId) {
@@ -310,7 +319,7 @@ const CVModel7 = () => {
       console.error('Error loading CV:', error);
     }
   };
-  
+   */
   
 
   return (
@@ -375,7 +384,7 @@ const CVModel7 = () => {
               <ul>
               {cvModel.education && cvModel.education.map((edu, index) => (
                 <li key={index}>
-                  <h5>{edu.period && edu.period.startDate} - {edu.period && edu.period.endDate}</h5>
+                  <h5>{formatDate(edu.period && edu.period.startDate)} - {formatDate(edu.period && edu.period.endDate)}</h5>
                   <h4>{edu.degree}</h4>
                   <h4>{edu.institution}</h4>
                 </li>
@@ -416,7 +425,7 @@ const CVModel7 = () => {
                 {cvModel.experiences?.map((exp, index) => (
                     <div className={styles.box} key={index}>
                       <div className={styles.year_company}>
-                        <h5>{exp.period && exp.period.startDate} - {exp.period && exp.period.endDate}</h5>
+                        <h5>{formatDate(exp.period && exp.period.startDate)} - {formatDate(exp.period && exp.period.endDate)}</h5>
                         <h5>{exp.companyName}</h5>
                         <h5>{exp.ville}</h5>
                       </div>
@@ -457,7 +466,7 @@ const CVModel7 = () => {
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
                     <h5>{formation.formationName} {formation.establishment} {formation.city}</h5>
-                    <h5>{formation.startDate} - {formation.endDate}</h5>
+                    <h5>{formatDate(formation.startDate)} - {formatDate(formation.endDate)}</h5>
                   </div>
                   <div className={styles.text}>
                     <p>{formation.description}</p>
@@ -470,7 +479,7 @@ const CVModel7 = () => {
         </div>
 
       </div>
-      <button className={styles.finishButton} onClick={() => saveCVToServer()} >Terminer</button>
+      <button className={styles.finishButton}  >Terminer</button>
     </div>
   );
 };
