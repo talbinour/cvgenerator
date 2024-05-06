@@ -3,10 +3,10 @@ import Chat from "../chatbot";
 import axios from "axios";
 import styles from "./CVModel7.module.css";
 import avatar from "../assets/cvprofile.jpeg";
-//import {  useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 const CVModel7 = () => {
- // const navigate = useNavigate();
+ const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
   //const [currentCVId] = useState(null);
@@ -284,43 +284,15 @@ const CVModel7 = () => {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
- /*  const saveCVToServer = async () => {
+  const saveCVToServer = async () => {
     try {
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('CV ID is undefined');
-        return;
-      }
-     
-
-      const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
-      console.log('CV saved successfully:', response.data);
+      const response = await axios.post(`http://localhost:8080/cv/${userId}/`, cvModel);
+      console.log('New CV Data:', response.data);
       navigate("/model7-user");
-
     } catch (error) {
-      console.error('Error saving CV:', error);
+      console.error('Error creating CV:', error);
     }
   };
-  useEffect(() => {
-    loadCVFromServer();
-  }, [userId]);
-
-  const loadCVFromServer = async () => {
-    try {
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('CV ID is undefined');
-        return;
-      }
-
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
-      setCvModel(response.data.cvData);
-    } catch (error) {
-      console.error('Error loading CV:', error);
-    }
-  };
-   */
-  
 
   return (
     <div className={styles.pageWrapper}>
@@ -479,7 +451,7 @@ const CVModel7 = () => {
         </div>
 
       </div>
-      <button className={styles.finishButton}  >Terminer</button>
+      <button className={styles.finishButton} onClick={saveCVToServer} >Terminer</button>
     </div>
   );
 };
