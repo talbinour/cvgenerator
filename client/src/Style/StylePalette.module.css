@@ -1,39 +1,45 @@
-/* StylePalette.module.css */
-
 .palette-container {
-    margin: 20px;
-  }
-  
-  .palette-label {
-    margin-bottom: 8px;
-  }
-  
-  .palette-input {
-    margin-bottom: 16px;
-  }
-  
-  .palette-text {
-    color: #000000;
-    font-size: 16px;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: none;
-  }
-  .palette-font-weight {
-    margin-bottom: 16px;
-  }
-  
-  .palette-text {
-    color: #000000;
-    font-size: 16px;
-    font-weight: normal;
-    font-style: normal;
-    text-decoration: none;
-  }
-  /* StylePalette.module.css */
+  background-color: #f8f9fa;
+  border: 1px solid #e1e1e1;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 30px;
+  margin: 20px auto;
+  max-width: 300px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  margin-left: 30px;
+}
 
-.palette-font-style {
-    margin-bottom: 16px;
-  }
-  
-  
+.palette-label {
+  font-size: 18px;
+  color: #33475b; /* Bleu plus doux */
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.palette-input {
+  color: #4a4a4a; /* Gris foncé pour le texte standard */
+  font-size: 16px;
+  line-height: 1.8;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.palette-input:focus {
+  outline: none;
+  border-color: #21759b; /* Bleu vif pour les liens */
+  box-shadow: 0 0 5px rgba(33, 117, 155, 0.5); /* Effet d'ombre sur le focus */
+}
+
+.palette-text {
+  margin-top: 20px;
+  color: inherit; /* Utilisation de la couleur héritée */
+  font-size: inherit; /* Utilisation de la taille de police héritée */
+  font-weight: inherit; /* Utilisation du poids de police hérité */
+  font-style: inherit; /* Utilisation du style de police hérité */
+  text-decoration: inherit; /* Utilisation du décor de texte hérité */
+  font-family: inherit; /* Utilisation de la famille de police héritée */
+}

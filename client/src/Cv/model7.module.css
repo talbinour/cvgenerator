@@ -26,6 +26,7 @@
     display: grid;
     grid-template-columns: 1fr 2fr ;
     box-shadow: 0 35px 55px rgba(211, 68, 68, 0.1);
+    margin-right:300px;
 }
 .container .left_Side
 {

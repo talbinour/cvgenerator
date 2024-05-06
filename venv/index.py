@@ -218,8 +218,8 @@ def save_response():
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state") # type: ignore
-    user_response = data.get("message") # type: ignore
+    conversation_state = data.get("conversation_state")
+    user_response = data.get("message")
     
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:

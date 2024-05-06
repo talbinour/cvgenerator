@@ -112,21 +112,29 @@ const ParentComponent = () => {
 
   const saveCVToServer = async () => {
     try {
+      // Vérification des champs obligatoires
+      const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
+      const isEmptyField = requiredFields.some(field => !cvModel[field]);
+      if (isEmptyField) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+  
       const cvId = getCurrentCVId();
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
-     
-
+  
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
       navigate("/model7-user");
-
+  
     } catch (error) {
       console.error('Error saving CV:', error);
     }
   };
+  
 
   const handleChange = (e, field) => {
     const { value } = e.target;

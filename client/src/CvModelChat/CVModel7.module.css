@@ -3,16 +3,18 @@
 }
 
 .leftPanel {
-    flex: 1; /* La partie gauche prendra autant d'espace que possible */
-    padding: 20px;
-    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
+    flex: 1;
+    overflow-y: auto;
+    max-height: 80vh; /* Hauteur maximale pour la partie gauche */
 }
+
 
 /* Style de la partie droite */
 .rightPanel {
-    flex: 1; /* La partie droite prendra autant d'espace que possible */
-    padding: 20px;
-}
+    flex: 1;
+    overflow-y: auto;
+    max-height: 80vh; /* Hauteur maximale pour la partie droite */
+  }
 *
 { 
     margin:0;
@@ -355,4 +357,19 @@ textarea {
     border-radius: 5px;
   }
   
+  .finishButton {
+    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
+    top: 70px; /* Position par rapport au haut de la fenêtre */
+    right: 20px; /* Position par rapport à la droite de la fenêtre */
+    padding: 10px 20px;
+    font-size: 25px;
+    background-color: #053466;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
   
+  .finishButton:hover {
+    opacity: 0.8;
+  }
