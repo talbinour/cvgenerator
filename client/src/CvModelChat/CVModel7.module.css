@@ -1,22 +1,39 @@
 .pageWrapper {
-    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
+    display: flex;
+    flex-direction: row; /* Modifier la direction du flexbox en ligne */
+    justify-content: space-between; /* Espacement égal entre les éléments */
+    align-items: flex-start; /* Aligner les éléments en haut de la page */
+    padding-bottom: 60px; /* Ajouter de l'espace en bas pour le bouton 'Terminer' */
 }
 
+
+.leftPanel, .rightPanel {
+    overflow-y: auto;
+    max-height: 80vh;
+    width: 45%; /* Largeur du chatbot et du CV */
+}
+
+.right_Side {
+    width: 100%; /* Prend toute la largeur de la partie droite */
+    max-width: none; /* Supprimer la largeur maximale */
+   
+}
+
+
+/* Styles supplémentaires pour le chatbot si nécessaire */
 .leftPanel {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 80vh; /* Hauteur maximale pour la partie gauche */
-    margin-bottom: 0px;
+    background-color: #f0f0f0; /* Couleur de fond du chatbot */
 }
 
-
-/* Style de la partie droite */
+/* Styles supplémentaires pour le CV si nécessaire */
 .rightPanel {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 80vh; /* Hauteur maximale pour la partie droite */
-    padding: 5%;
-  }
+    background-color: #ffffff; /* Couleur de fond du CV */
+    width: 100%; /* Prend toute la largeur de la partie droite */
+    max-width: none; /* Supprimer la largeur maximale */
+    height: 100vh; /* Prend toute la hauteur de la partie droite */
+    overflow-y: auto; /* Ajoute un défilement vertical si nécessaire */
+}
+
 *
 { 
     margin:0;
@@ -25,25 +42,13 @@
     font-family: 'Poppins', sans-serif;
 
 }
-
-.print-area
-{
-    background: rgb(128, 138, 226);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height:100vh;
-}
-.container
-{
+.container {
     position: relative;
     width: 100%;
-    max-width: 1000px;
-    min-height: 1000px;
+    height: 100%;
     background: #fff;
-    margin:50px;
     display: grid;
-    grid-template-columns: 1fr 2fr ;
+    grid-template-columns: 1fr 2fr;
     box-shadow: 0 35px 55px rgba(211, 68, 68, 0.1);
 }
 .container .left_Side
@@ -360,19 +365,21 @@ textarea {
   }
   
   .finishButton {
-    position:sticky; 
+    position: fixed; /* Modifier la position en fixe */
+    left: 50%; /* Aligner le bouton au centre */
+    transform: translateX(-50%); /* Centrer horizontalement */
     padding: 10px 20px;
     font-size: 25px;
-    bottom: 0px;
+    bottom: 20px; /* Espacement du bas */
     background-color: #053466;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     display: flex;
-  }
-  
-  .finishButton:hover {
+    z-index: 999; /* Assurer que le bouton est au-dessus de tout le contenu */
+}
+
+.finishButton:hover {
     opacity: 0.8;
-  }
-  
+}

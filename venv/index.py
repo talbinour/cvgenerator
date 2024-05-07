@@ -10,10 +10,11 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
-
+from datetime import datetime
+from flask_caching import Cache
 app = Flask(__name__)
 CORS(app)
-
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 # Initialize SpaCy and NLTK
 nlp = spacy.load("fr_core_news_sm")
 nltk.download("stopwords")
@@ -232,12 +233,14 @@ def profile():
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
 
-@app.route("/save-response", methods=["POST"])
-def save_response():
+@app.route("/save-message", methods=["POST"])
+def save_message():
     data = request.json
-    # Implémentez ici la logique pour enregistrer la réponse dans un fichier ou une base de données
-    return jsonify({"message": "Réponse enregistrée avec succès."})
-
+    message = data.get("message")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Enregistrer le message et le timestamp dans une base de données ou un fichier
+    # Par exemple, vous pouvez les enregistrer dans un fichier JSON ou une base de données MongoDB
+    return jsonify({"message": "Message enregistré avec succès."})
 
 
 @app.route("/new-question", methods=["POST"])
