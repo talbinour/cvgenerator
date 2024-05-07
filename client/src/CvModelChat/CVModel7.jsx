@@ -9,13 +9,6 @@ const CVModel7 = () => {
  const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
-  //const [currentCVId] = useState(null);
-  //const [currentCVId, setCurrentCVId] = useState(null);
-
-  /* const getCurrentCVId = () => {
-    return currentCVId;
-  }; */
-
   const [cvModel, setCvModel] = useState({
     name: "",
     prenom: "",
@@ -165,107 +158,169 @@ const CVModel7 = () => {
     const updatedModel = { ...cvModel };
   
     switch (nextQuestionKey) {
-      case "question2": {// CONTACT_INFO
-      const [phone, email, website, linkedin, address] = formationResponse.split(",").map(item => item.trim());
-      updatedModel.phone = phone; // Mettre à jour le téléphone
-      updatedModel.email = email; // Mettre à jour l'e-mail
-      updatedModel.website = website; // Mettre à jour le site web
-      updatedModel.linkedin = linkedin; // Mettre à jour le profil LinkedIn
-      updatedModel.address = address; // Mettre à jour l'adresse
-      
+      case "question2": // CONTACT_INFO
+      updatedModel.phone = formationResponse; // Mettre à jour le téléphone
       break;
-      }
-      case "question3": {// EDUCATION
-      const [period, degree, institution] = formationResponse.split(",").map(item => item.trim());
-      const newEducation = { period, degree, institution };
-
-      if (Array.isArray(cvModel.education)) {
-        updatedModel.education = [...cvModel.education, newEducation];
-      } else {
-        updatedModel.education = [newEducation];
-      }
+    case "question3": // CONTACT_INFO
+      updatedModel.email = formationResponse; // Mettre à jour l'e-mail
       break;
+    case "question4": // CONTACT_INFO
+      updatedModel.website = formationResponse; // Mettre à jour le site web
+      break;
+    case "question5": // CONTACT_INFO
+      updatedModel.linkedin = formationResponse; // Mettre à jour LinkedIn
+      break;
+    case "question6": // CONTACT_INFO
+      updatedModel.address = formationResponse; // Mettre à jour l'adresse
+      break;
+    case "question7": { // EDUCATION
+        const newEducation = {
+            ...updatedModel.education[0], // Copy the existing education entry
+            period: {
+                ...updatedModel.education[0]?.period, // Copy the existing period
+                startDate: formationResponse // Update the start date with user's response
+            }
+            
+        };
+        updatedModel.education[0] = newEducation; // Update the first education entry with the modified period
+        break;
     }
-    case "question4": { // LANGUAGES
-      const [language, proficiencyString] = formationResponse.split(":").map(item => item.trim());
-      const proficiency = parseInt(proficiencyString); // Convertir la chaîne en nombre
-
-      const newLanguage = {
-        name: language,
-        proficiency: proficiency || 50, // Utiliser 50 si aucun niveau n'est spécifié
+    
+    
+    case "question8": { // EDUCATION
+      const newEducation = {
+        ...updatedModel.education[0], // Copy the existing education entry
+        period: {
+            ...updatedModel.education[0]?.period, // Copy the existing period
+            endDate: formationResponse // Update the start date with user's response
+        }
+        
+    };
+    updatedModel.education[0] = newEducation; // Update the first education entry with the modified period
+    break;
+  }
+  
+    
+    case "question9": { // EDUCATION
+        updatedModel.education[0].degree = formationResponse; // Update the degree of the first education entry
+        break;
+    }
+    
+    case "question10": { // EDUCATION
+        updatedModel.education[0].institution = formationResponse; // Update the institution of the first education entry
+        break;
+    }
+    case "question11": { // LANGUAGES
+      updatedModel.languages[0] = {
+        ...updatedModel.languages[0],
+        name:formationResponse
       };
-
-      if (Array.isArray(cvModel.languages)) {
-        updatedModel.languages = [...cvModel.languages, newLanguage];
+       
+        
+        
+      break;
+    }
+    case "question12": { // LANGUAGES    
+      if (updatedModel.languages.length > 0) {
+        updatedModel.languages[0] = {
+          ...updatedModel.languages[0],
+          proficiency: formationResponse
+        };
       } else {
-        updatedModel.languages = [newLanguage];
+        updatedModel.languages = [{
+          name: "",
+          proficiency: formationResponse
+        }];
       }
       break;
     }
-      case "question5": // PROFILE
+    
+    
+    
+      case "question13": // PROFILE
         updatedModel.profile = formationResponse; // Mettre à jour le profil
         break;
-        case "question6": { // EXPÉRIENCE
-          const [period, companyName,ville, jobTitle, description] = formationResponse.split(",").map(item => item.trim());
+        case "question14": { // EXPÉRIENCE
           const newExperience = {
-            period,
-            companyName,
-            ville,
-            jobTitle,
-            description,
-
+              ...updatedModel.experiences[0], // Copiez l'entrée d'expérience existante
+              period: {
+                  ...updatedModel.experiences[0]?.period, // Copiez la période existante
+                  startDate: formationResponse // Mettez à jour la date de début avec la réponse de l'utilisateur
+              }
           };
-    
-          if (Array.isArray(cvModel.experiences)) {
-            updatedModel.experiences = [...cvModel.experiences, newExperience];
+          updatedModel.experiences[0] = newExperience; // Mettez à jour la première entrée d'expérience avec la période modifiée
+          break;
+      }
+        case "question15": { // EXPÉRIENCE
+          const newExperience = {
+            ...updatedModel.experiences[0], // Copiez l'entrée d'expérience existante
+            period: {
+                ...updatedModel.experiences[0]?.period, // Copiez la période existante
+                endDate: formationResponse // Mettez à jour la date de début avec la réponse de l'utilisateur
+            }
+        };
+        updatedModel.experiences[0] = newExperience; // Mettez à jour la première entrée d'expérience avec la période modifiée
+        break;
+    }
+        case "question16": { // EXPÉRIENCE
+          updatedModel.experiences[0].ville= formationResponse; 
+          break;// Update the degree of the first education entry
+
+        }
+        case "question17": { // EXPÉRIENCE
+          updatedModel.experiences[0].jobTitle= formationResponse; 
+          break;// Update the degree of the first education entry
+
+        }
+        case "question18": { // EXPÉRIENCE
+          updatedModel.experiences[0].employeur= formationResponse; 
+          break;// Update the degree of the first education entry
+
+        }
+        case "question19": { // EXPÉRIENCE
+          if (updatedModel.experiences.length > 0) {
+            updatedModel.experiences[0] = {
+              ...updatedModel.experiences[0],
+              description: formationResponse
+            };
           } else {
-            updatedModel.experiences = [newExperience];
+            updatedModel.experiences = [{
+              description: formationResponse
+            }];
           }
           break;
         }
-    
-      case "question7": { // COMPÉTENCES_PROFESSIONNELLES
-        const [skillName, proficiencyString] = formationResponse.split(":").map(item => item.trim());
-        const proficiency = parseInt(proficiencyString); // Convertir la chaîne en nombre
-  
-        const newSkill = {
-          skillName,
-          proficiency: proficiency || 50, // Utiliser 50 si aucun niveau n'est spécifié
-        };
-  
-        if (Array.isArray(cvModel.professionalSkills)) {
-          updatedModel.professionalSkills = [...cvModel.professionalSkills, newSkill];
-        } else {
-          updatedModel.professionalSkills = [newSkill];
-        }
-        break;
-      }
-  
-        case "question8":{ // INTÉRÊTS
-        const interests = formationResponse.split(",").map(item => item.trim());
-      
-        if (Array.isArray(cvModel.interests)) {
-          updatedModel.interests = [...cvModel.interests, ...interests];
-        } else {
-          updatedModel.interests = interests;
-        }
-        break;
-        }
-        case "question9": {// FORMATION
-          const [formationName, establishment, city, startDate, endDate, description] = formationResponse.split(",").map(item => item.trim());
-          const newFormation = {
-            formationName,
-            establishment,
-            city,
-            startDate,
-            endDate,
-            description,
-          };
         
-          if (Array.isArray(cvModel.formation)) {
-            updatedModel.formation = [...cvModel.formation, newFormation];
+
+        case "question20": { // COMPÉTENCES_PROFESSIONNELLES
+          updatedModel.professionalSkills[0] = {
+            ...updatedModel.professionalSkills[0], // Spread the existing professional skill object
+            skillName: formationResponse // Update the name property with the user's response
+          };
+          break;
+        }
+        
+        case "question21": { // COMPÉTENCES_PROFESSIONNELLES
+          if (updatedModel.professionalSkills.length > 0) {
+            updatedModel.professionalSkills[0] = {
+              ...updatedModel.professionalSkills[0],
+              proficiency: formationResponse // Update the proficiency property with the user's response
+            };
           } else {
-            updatedModel.formation = [newFormation];
+            updatedModel.professionalSkills = [{
+              name: "", // Set default name
+              proficiency: formationResponse // Set proficiency with user's response
+            }];
+          }
+          break;
+        }
+        
+
+        case "question22": { // INTÉRÊTS
+          if (updatedModel.interests.length > 0) {
+            updatedModel.interests[0] = formationResponse; // Update the institution of the first education entry
+          } else {
+            updatedModel.interests = [formationResponse]; // Initialize the interests array with the first value
           }
           break;
         }
@@ -398,11 +453,11 @@ const CVModel7 = () => {
                     <div className={styles.box} key={index}>
                       <div className={styles.year_company}>
                         <h5>{formatDate(exp.period && exp.period.startDate)} - {formatDate(exp.period && exp.period.endDate)}</h5>
-                        <h5>{exp.companyName}</h5>
                         <h5>{exp.ville}</h5>
+                        <h5>{exp.jobTitle}</h5>
                       </div>
                       <div className={styles.text}>
-                        <h4>{exp.jobTitle}</h4>
+                        <h4>{exp.employeur}</h4>
                         <p>{exp.description}</p>
                       </div>
                     </div>
@@ -431,22 +486,7 @@ const CVModel7 = () => {
                 ))}
               </ul>
             </div>
-            <div className={styles.Aboutformation}>
-              <h2 className={styles.title2}>FORMATION</h2>
-              <ul>
-               {cvModel.formation?.map((formation, index) => (
-                <div className={styles.box} key={index}>
-                  <div className={styles.year_company}>
-                    <h5>{formation.formationName} {formation.establishment} {formation.city}</h5>
-                    <h5>{formatDate(formation.startDate)} - {formatDate(formation.endDate)}</h5>
-                  </div>
-                  <div className={styles.text}>
-                    <p>{formation.description}</p>
-                  </div>
-                </div>
-              ))}
-              </ul>
-            </div>
+            
           </div>
         </div>
 

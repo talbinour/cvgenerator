@@ -259,13 +259,16 @@ const addInterest = () => {
         <div className={styles.left_Side}>
             <div className={styles.profileText}>
             <div className={styles.imgBx}>
-            {userPhoto ? (
-                  <img src={`http://localhost:8080/${userPhoto}` } />
-                ) : (
-                  <img src={avatar} alt="Profile" />
-                )}
+                {userPhoto ? (
+                      <img src={`http://localhost:8080/${userPhoto}` } />
+                    ) : (
+                      <img src={avatar} alt="Profile" />
+                    )}
 
                  
+              
+              
+              
               </div>
              
                 <span 

@@ -47,7 +47,7 @@ const Chat = () => {
                     <div className={styles.messageContainer}>
                         {messages.map((message, index) => (
                             <div key={index} className={`${styles.message} ${message.user === 'me' ? styles.me : styles.bot}`}>
-                                {message.text}
+                                {message.user}: {message.text}
                             </div>
                         ))}
                     </div>

@@ -6,6 +6,7 @@
     flex: 1;
     overflow-y: auto;
     max-height: 80vh; /* Hauteur maximale pour la partie gauche */
+    margin-bottom: 0px;
 }
 
 
@@ -14,6 +15,7 @@
     flex: 1;
     overflow-y: auto;
     max-height: 80vh; /* Hauteur maximale pour la partie droite */
+    padding: 5%;
   }
 *
 { 
@@ -358,18 +360,19 @@ textarea {
   }
   
   .finishButton {
-    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
-    top: 70px; /* Position par rapport au haut de la fenêtre */
-    right: 20px; /* Position par rapport à la droite de la fenêtre */
+    position:sticky; 
     padding: 10px 20px;
     font-size: 25px;
+    bottom: 0px;
     background-color: #053466;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    display: flex;
   }
   
   .finishButton:hover {
     opacity: 0.8;
   }
+  

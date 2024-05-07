@@ -183,15 +183,31 @@ class QuestionGenerator:
 # Charger les questions pour question_generator
 question_generator = QuestionGenerator()
 question_generator.load_questions({
-    "question1": question_generator.generate_contact_questions(None),  # Passer None pour cv_content
-    "question2": question_generator.generate_education_questions(None),  # Passer None pour cv_content
-    "question3": question_generator.generate_languages_questions(None),  # Passer None pour cv_content
-    "question4": question_generator.generate_profile_questions(None),  # Passer None pour cv_content
-    "question5": question_generator.generate_experience_questions(None),  # Passer None pour cv_content
-    "question6": question_generator.generate_skills_questions(None),  # Passer None pour cv_content
-    "question7": question_generator.generate_interests_questions(None),  # Passer None pour cv_content
-    "question8": question_generator.generate_formation_questions(None),  # Passer None pour cv_content
-    "question9":""
+    "question1": "Quel est votre numéro de téléphone ?",  # Passer None pour cv_content
+    "question2":"Quelle est votre adresse e-mail ?",  # Passer None pour cv_content
+    "question3": "Quel est l'URL de votre site web ?",  # Passer None pour cv_content
+    "question4":"Quel est votre profil LinkedIn ?",  # Passer None pour cv_content
+    "question5":"Dans quel pays êtes-vous basé(e) ?",  # Passer None pour cv_content
+     # Passer None pour cv_content
+    
+    "question6": "Quelle est la date de début  de vos études ?",  # Passer None pour cv_content
+    "question7":  "Quelle est la date de fin de de vos études ?", 
+     "question8":  "Où avez-vous étudié ?",
+     "question9":  "Quel est le nom de votre école/université ?",
+    "question10":"Quelle langues parlez-vous ?",
+    "question11":"Quel  est ton niveau dans cette langue ?",
+    "question12":" Pouvez-vous nous parler un peu de vous ?",
+    "question13":"Quelle est la date de début de votre expérience professionnelle ?",
+    "question14":"Quelle est la date de fin de votre expérience professionnelle ?",
+    "question15":"Dans quelle ville avez-vous travaillé ?",
+    "question16":"Quel est votre poste ?",
+    "question17":"Quel est le nom de votre employeur ?",
+    "question18":"Pouvez-vous décrire votre expérience professionnelle ?",
+    "question19":"Quelle compétences avez-vous ?",
+    "question20":"Quel  est ton niveau dans cette compétences  ?",
+    "question21":"Quels sont vos centres d'intérêt ?",
+    "question22":"",
+
     # Ajoutez d'autres questions ici...
 })
 
@@ -227,8 +243,8 @@ def save_response():
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state")
-    user_response = data.get("message")
+    conversation_state = data.get("conversation_state") # type: ignore
+    user_response = data.get("message") # type: ignore
     
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:
@@ -269,7 +285,7 @@ def generate_next_question_route():
 @app.route("/previous-question", methods=["POST"])
 def handle_previous_question():
     data = request.json
-    conversation_state = data.get("conversation_state")
+    conversation_state = data.get("conversation_state") # type: ignore
     previous_question_key = None
     
     # Vérifier si l'état de la conversation est présent
