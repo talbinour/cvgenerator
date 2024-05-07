@@ -86,7 +86,7 @@ function App() {
           <Route path='/Model5' element={<Model5 />} />
           <Route path='/Model6' element={<Model6 />} />
           <Route path='/Model7' element={<Model7/>} />
-          <Route path='/model7-user' element={<ModelUser/>} />
+          <Route path='/model7-user/userId/cvId/cvDate' element={<ModelUser/>} />
           <Route path='/Model8' element={<Model8/>} />
           <Route path='/edit-cv' element={<Edit/>} />
           <Route path='/edit5-cv' element={<Edit5/>} />

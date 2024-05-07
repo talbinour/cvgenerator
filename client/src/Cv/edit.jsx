@@ -6,13 +6,18 @@ import axios from 'axios';
 import CvOrResume from './model7';
 import {  useNavigate } from "react-router-dom";
 
-//import { Link } from 'react-router-dom';
 const ParentComponent = () => {
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
+  const [currentCVDate, setCurrentCVDate] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
+
   const getCurrentCVId = () => {
     return currentCVId;
+  };
+
+  const getCurrentCVDate = () => {
+    return currentCVDate ;
   };
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
@@ -36,14 +41,14 @@ const ParentComponent = () => {
     experiences: [
       { 
         id: 1, 
-        period: { startDate: '2019-01-01', endDate: '2021-01-01'}, // Assurez-vous de fournir des valeurs valides pour startDate et endDate
+        period: { startDate: '2019-01-01', endDate: '2021-01-01'},
         companyName: 'Company A', 
         jobTitle: 'Senior Web Developer', 
         description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt, tenetur architecto omnis' 
       },
       { 
         id: 2, 
-        period: { startDate: '2019-01-01', endDate: '2021-01-01'}, // Assurez-vous de fournir des valeurs valides pour startDate et endDate
+        period: { startDate: '2019-01-01', endDate: '2021-01-01'},
         companyName: 'Company B', 
         jobTitle: 'Data Analyst', 
         description: 'Lorem ipsum,dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,tenetur architecto omnis' 
@@ -58,9 +63,7 @@ const ParentComponent = () => {
     interests: ['Trading', 'Developing', 'Gaming', 'Business'],
     photo: null
   });
-
   const [userId, setUserId] = useState(null);
-
   useEffect(() => {
     const token = localStorage.getItem('token');
 
@@ -70,13 +73,13 @@ const ParentComponent = () => {
           .then((response) => {
               const userData = response.data.user;
               const userId = userData.id || userData.user_id;
+              
               setUserPhoto(response.data.user.photo);
               setUserId(userId);
-              setCurrentCVId(userId); // Set currentCVId with userId
+              setCurrentCVId(userId); 
               setCvModel({
                 ...cvModel,
                 name: userData.nom+' '+userData.prenom,
-                
                 phone: userData.Nbphone,
                 email: userData.email,
                 address: userData.pays,
@@ -90,75 +93,67 @@ const ParentComponent = () => {
           });
     }
   }, []);
-
   useEffect(() => {
     loadCVFromServer();
   }, [userId]);
-
   const loadCVFromServer = async () => {
     try {
       const cvId = getCurrentCVId();
+      const cvDate = getCurrentCVDate();
+
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
 
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvDate}`);
+      
+      // Si le CV existe, utilisez les données du CV pour mettre à jour le modèle
+      setCurrentCVDate(response.data.date);
       setCvModel(response.data.cvData);
     } catch (error) {
       console.error('Error loading CV:', error);
+      // Si une erreur se produit ou si le CV n'existe pas, laissez le modèle tel qu'il est avec les données par défaut
     }
   };
 
-  const saveCVToServer = async () => {
+ const saveCVToServer = async () => {
     try {
-      // Vérification des champs obligatoires
       const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
       const isEmptyField = requiredFields.some(field => !cvModel[field]);
       if (isEmptyField) {
         alert('Veuillez remplir tous les champs obligatoires.');
         return;
       }
-  
-      const cvId = getCurrentCVId();
+   const cvId = getCurrentCVId();
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
-  
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
-      navigate("/model7-user");
+      navigate(`/model7-user/${userId}/${cvId}/${cvDate}`);
   
     } catch (error) {
       console.error('Error saving CV:', error);
     }
   };
-  
-
-  const handleChange = (e, field) => {
+ const handleChange = (e, field) => {
     const { value } = e.target;
     setCvModel(prevModel => ({
       ...prevModel,
       [field]: value
     }));
   };
-  
-  
   const handleChangeLanguageName = (e, index) => {
     const newLanguages = [...cvModel.languages];
     newLanguages[index].name = e.target.value;
     setCvModel({ ...cvModel, languages: newLanguages });
   };
-
   const handleExperienceChange = (e, index, field) => {
     const newExperiences = [...cvModel.experiences];
     const { value } = e.target;
-  
-    // Update the specific field in the experiences object
     newExperiences[index][field] = value;
-  
-    // Validate dates if both are provided
     if (newExperiences[index].startDate && newExperiences[index].endDate) {
       if (field === 'startDate' && value >= newExperiences[index].endDate) {
         alert("La date de début doit être après la date de fin.");
@@ -169,25 +164,17 @@ const ParentComponent = () => {
         return;
       }
     }
-  
-    // Update the state with the modified experiences array
     setCvModel({ ...cvModel, experiences: newExperiences });
   };
-
-  const handleSkillChange = (e, index, field) => {
+ const handleSkillChange = (e, index, field) => {
     const newSkills = [...cvModel.professionalSkills];
     newSkills[index][field] = e.target.value;
     setCvModel({ ...cvModel, professionalSkills: newSkills });
   };
-
-  const handleEducationChange = (e, index, field) => {
+ const handleEducationChange = (e, index, field) => {
     const newEducation = [...cvModel.education];
     const { value } = e.target;
-  
-    // Update the specific field in the education object
-    newEducation[index][field] = value;
-  
-    // Validate dates if both are provided
+   newEducation[index][field] = value;
     if (newEducation[index].startDate && newEducation[index].endDate) {
       if (field === 'startDate' && value >= newEducation[index].endDate) {
         alert("La date de début doit être après la date de fin.");
@@ -198,59 +185,44 @@ const ParentComponent = () => {
         return;
       }
     }
-  
-    // Update the state with the modified education array
     setCvModel({ ...cvModel, education: newEducation });
   };
-  
+
   if (!cvModel) {
     return <CvOrResume />;
   }
- // Fonctions pour ajouter du contenu supplémentaire
  const addEducation = () => {
-  // Créer une nouvelle éducation avec des valeurs par défaut
   const newEducation = { startDate: '', endDate: '', degree: '', institution: '' };
-
-  // Mettre à jour le state en ajoutant la nouvelle éducation à la liste existante
   setCvModel(prevModel => ({
     ...prevModel,
     education: [...prevModel.education, newEducation]
   }));
 };
-
 const addLanguage = () => {
   setCvModel(prevModel => ({
     ...prevModel,
     languages: [...prevModel.languages, { name: '', proficiency: 0 }]
   }));
 };
-
 const addExperience = () => {
   setCvModel(prevModel => ({
     ...prevModel,
     experiences: [...prevModel.experiences, { period: { startDate: '', endDate: '' }, companyName: '', jobTitle: '', description: '' }]
   }));
 };
-
 const addSkill = () => {
   setCvModel(prevModel => ({
     ...prevModel,
     professionalSkills: [...prevModel.professionalSkills, { skillName: '', proficiency: 0 }]
   }));
 };
-
 const addInterest = () => {
   setCvModel(prevModel => ({
     ...prevModel,
     interests: [...prevModel.interests, '']
   }));
 };
-
-
-
-
-
-  return (
+return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
         <div   className={styles.container}>
         <div className={styles.editButton}>
@@ -533,5 +505,4 @@ const addInterest = () => {
     </div>
   );
 }
-
 export default ParentComponent;

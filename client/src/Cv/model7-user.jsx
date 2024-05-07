@@ -7,11 +7,13 @@ import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
 import StylePalette from '../Style/StylePalette';
 function CvOuResume() {
-  const [userId, setUserId] = useState(null);
+  const [ setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
   const [cvStyle, setCvStyle] = useState({});
+  const [currentCVDate, setCurrentCVDate] = useState(null);
+  const { userId, cvId, cvDate } = useParams();
   const applyStyle = (style) => {
     setCvStyle(style);
   };
@@ -19,7 +21,9 @@ function CvOuResume() {
   // Fonction pour gérer le changement de style sélectionné
  
 
-  
+  const getCurrentCVDate = () => {
+    return currentCVDate ;
+  };
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -94,24 +98,23 @@ function CvOuResume() {
 
 
   useEffect(() => {
-    loadCVFromServer();
-  }, [userId]);
+    // Chargez le CV à partir des données récupérées des paramètres de l'URL
+    loadCVFromServer(userId, cvId, cvDate);
+  }, [userId, cvId, cvDate]); // Assurez-vous d'ajouter les paramètres de l'URL dans le tableau de dépendances
 
-  const loadCVFromServer =  useCallback(async () => {
+  const loadCVFromServer = useCallback (async (userId, cvId, cvDate) => {
     try {
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('ID du CV non défini');
-        return;
-      }
+      // Utilisez les paramètres de l'URL pour charger le CV correctement
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvDate}`);
 
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
+      // Mettez à jour le modèle de CV avec les données récupérées
       setCvModel(response.data.cvData);
+      setUserPhoto(response.data.user.photo);
     } catch (error) {
-      console.error('Erreur lors du chargement du CV:', error);
+      console.error('Error loading CV:', error);
     }
   }, [userId, getCurrentCVId]); 
-
+  
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
 
@@ -164,6 +167,7 @@ function CvOuResume() {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
     }
   };
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();

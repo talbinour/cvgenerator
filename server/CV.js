@@ -10,6 +10,10 @@ const cvSchema = new Schema({
     type: String,
     required: true
   },
+  date: {
+    type: Date,
+    default: Date.now
+  }, 
   name: String,
   profession : String,
   phone: String,
