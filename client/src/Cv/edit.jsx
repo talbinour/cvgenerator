@@ -112,21 +112,29 @@ const ParentComponent = () => {
 
   const saveCVToServer = async () => {
     try {
+      // Vérification des champs obligatoires
+      const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
+      const isEmptyField = requiredFields.some(field => !cvModel[field]);
+      if (isEmptyField) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+  
       const cvId = getCurrentCVId();
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
-     
-
+  
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
       navigate("/model7-user");
-
+  
     } catch (error) {
       console.error('Error saving CV:', error);
     }
   };
+  
 
   const handleChange = (e, field) => {
     const { value } = e.target;
@@ -153,11 +161,11 @@ const ParentComponent = () => {
     // Validate dates if both are provided
     if (newExperiences[index].startDate && newExperiences[index].endDate) {
       if (field === 'startDate' && value >= newExperiences[index].endDate) {
-        alert("Start date must be before end date.");
+        alert("La date de début doit être après la date de fin.");
         return;
       }
       if (field === 'endDate' && value <= newExperiences[index].startDate) {
-        alert("End date must be after start date.");
+        alert("La date de fin doit être après la date de début");
         return;
       }
     }
@@ -182,11 +190,11 @@ const ParentComponent = () => {
     // Validate dates if both are provided
     if (newEducation[index].startDate && newEducation[index].endDate) {
       if (field === 'startDate' && value >= newEducation[index].endDate) {
-        alert("Start date must be before end date.");
+        alert("La date de début doit être après la date de fin.");
         return;
       }
       if (field === 'endDate' && value <= newEducation[index].startDate) {
-        alert("End date must be after start date.");
+        alert("La date de fin doit être après la date de début");
         return;
       }
     }

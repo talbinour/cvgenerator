@@ -94,6 +94,7 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
       sendMessage();
     }
   };
+  
 
   const handleInputChange = (event) => {
     // Empêcher l'utilisateur d'entrer du texte si la conversation est bloquée
@@ -125,6 +126,7 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
 
     // Mettre à jour la conversation state
     setConversationState(response.data.conversation_state);
+    
 };
 
   
@@ -141,16 +143,23 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
               </div>
             ))}
           </div>
-          <input className={styles.inputField} value={input} onChange={handleInputChange} onKeyPress={handleKeyPress} disabled={conversationBlocked} />
-          <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-          <button className={styles.addButton} onClick={handleAddResponse} disabled={conversationBlocked}>
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
         </div>
+        <div className={styles.inputContainerBottom}>
+        <input className={styles.inputField} value={input} onChange={handleInputChange} onKeyPress={handleKeyPress} disabled={conversationBlocked} />
+        <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </button>
+        {conversationState && conversationState.state === "question3" && ( // Condition pour afficher le bouton
+          <button className={styles.addButton} onClick={handleAddResponse} disabled={conversationBlocked}>
+            <FontAwesomeIcon icon={faPlus} />
+          </button>
+        )}
       </div>
+      </div>
+      
+      
     </div>
+  
   );
 };
 

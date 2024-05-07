@@ -1,55 +1,40 @@
-/* chatbot.css */
-
-/* Chat container */
-/* chatbot.css */
-
-/* Container pour la page entière */
-/* chatbot.module.css */
-
 /* Container pour la page entière */
 .pageWrapper {
-    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
-}
-
-/* Style de la partie gauche */
-.leftPanel {
-    flex: 1; /* La partie gauche prendra autant d'espace que possible */
-    padding: 20px;
-    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
-}
-
-.container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 6%;
+    display: flex;
+    flex-direction: column-reverse; /* Afficher les messages de bas en haut */
+    height: 100vh; /* Hauteur de la vue à 100% de la hauteur de l'écran */
+    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
 }
 
 /* Message box */
 .message {
     margin-bottom: 10px;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 20px;
+    max-width: 70%;
 }
 
 /* User message */
 .me {
-    background-color: #dff0d8; /* light green */
+    background-color: #007bff; 
+    color: #fff; 
+    align-self: flex-end;
 }
 
 /* Bot message */
 .bot {
-    background-color: #d9edf7; /* light blue */
+    background-color: #ece5dd; 
+    align-self: flex-start;
 }
 
 /* Input field */
 .inputField {
-    width: calc(100% - 80px); /* Adjust based on button width */
+    width: calc(100% - 100px); /* Prendre la largeur restante après avoir soustrait la largeur du bouton envoyer */
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 20px; /* Coins arrondis */
 }
 
 /* Send button */
@@ -57,10 +42,11 @@
     width: 70px;
     padding: 10px;
     margin-top: 10px;
+    margin-left: 10px; /* Espacement à gauche du bouton envoyer */
     background-color: #007bff; /* blue */
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px; /* Coins arrondis */
     cursor: pointer;
 }
 
@@ -68,3 +54,52 @@
 .sendButton:hover {
     background-color: #0056b3; /* Darker blue */
 }
+
+/* Chat container */
+.chatContainer {
+    position: fixed; /* Position fixe pour rester en bas de la page */
+    bottom: 0; /* Aligner en bas */
+    right: 0; /* Aligner à droite */
+    width: 100%; /* Prendre toute la largeur */
+    max-height: 50%; /* Limiter la hauteur pour empêcher le chat de couvrir tout l'écran */
+    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+}
+/* Chatbot container */
+.chatContainer {
+    position: fixed;
+    bottom: 0px;
+    right: 0;
+    z-index: 1000;
+    
+  }
+  
+  /* Chat icon */
+  .chatIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+  /* Chat icon message */
+  .chatIconMessage {
+    position: fixed;
+    bottom: 70px;
+    right: 5px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+    z-index: 1001;
+  }
+  
+  /* Chat icon message show animation */
+  @keyframes slideInFromRight {
+    from {
+      right: -200px;
+    }
+    to {
+      right: 5px;
+    }
+  }
+  

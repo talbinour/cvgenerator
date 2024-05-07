@@ -3,9 +3,19 @@ import Chat from "../chatbot";
 import axios from "axios";
 import styles from "./CVModel7.module.css";
 import avatar from "../assets/cvprofile.jpeg";
+import {  useNavigate } from "react-router-dom";
 
 const CVModel7 = () => {
+ const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
+  const [userPhoto, setUserPhoto] = useState(null);
+  //const [currentCVId] = useState(null);
+  //const [currentCVId, setCurrentCVId] = useState(null);
+
+  /* const getCurrentCVId = () => {
+    return currentCVId;
+  }; */
+
   const [cvModel, setCvModel] = useState({
     name: "",
     prenom: "",
@@ -33,12 +43,13 @@ const CVModel7 = () => {
         .then((response) => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
-
+          setUserPhoto(response.data.user.photo);
+         // setCurrentCVId(userId);
           setUserId(userId);
           setCvModel({
             name: userData.nom,
             prenom: userData.prenom,
-            job: userData.jobTitle,
+            profession:userData.profession,
             phone: userData.phone,
             email: userData.email,
             website: userData.website,
@@ -51,6 +62,7 @@ const CVModel7 = () => {
             professionalSkills: [],
             interests: [],
             formation: [],
+            photo:userData.photo
           });
         })
         .catch((error) => {
@@ -160,6 +172,7 @@ const CVModel7 = () => {
       updatedModel.website = website; // Mettre à jour le site web
       updatedModel.linkedin = linkedin; // Mettre à jour le profil LinkedIn
       updatedModel.address = address; // Mettre à jour l'adresse
+      
       break;
       }
       case "question3": {// EDUCATION
@@ -193,7 +206,7 @@ const CVModel7 = () => {
         updatedModel.profile = formationResponse; // Mettre à jour le profil
         break;
         case "question6": { // EXPÉRIENCE
-          const [period, companyName,ville, jobTitle, description] = formationResponse.split("\n").map(item => item.trim());
+          const [period, companyName,ville, jobTitle, description] = formationResponse.split(",").map(item => item.trim());
           const newExperience = {
             period,
             companyName,
@@ -264,20 +277,38 @@ const CVModel7 = () => {
   
     setCvModel(updatedModel);
   };
-  
-  
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  const saveCVToServer = async () => {
+    try {
+      const response = await axios.post(`http://localhost:8080/cv/${userId}/`, cvModel);
+      console.log('New CV Data:', response.data);
+      navigate("/model7-user");
+    } catch (error) {
+      console.error('Error creating CV:', error);
+    }
+  };
 
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.leftPanel}>
    <Chat updateTitleContent={updateTitleContent} updateUserResponse={(formationResponse, nextQuestionKey) => updateUserResponse(formationResponse, nextQuestionKey)} />
       </div>
-      <div className={styles.rightPanel}>
+      <div className={styles.rightPanel}>  
         <div className={styles.container}>
           <div className={styles.left_Side}>
             <div className={styles.profileText}>
-              <div className={styles.imgBx}>
-                <img src={avatar} alt="Profile" />
+            <div className={styles.imgBx}>
+            {userPhoto ? (
+                  <img src={`http://localhost:8080/${userPhoto}` } />
+                ) : (
+                  <img src={avatar} alt="Profile" />
+                )}                 
               </div>
               <h2>
                 {cvModel.name} {cvModel.prenom}
@@ -323,26 +354,30 @@ const CVModel7 = () => {
             <div className={styles.education}>
               <h3 className={styles.title}>EDUCATION</h3>
               <ul>
-                {cvModel.education.map((edu, index) => (
-                  <li key={index}>
-                    <h5>{edu.period}</h5>
-                    <h4>{edu.degree}</h4>
-                    <h4>{edu.institution}</h4>
-                  </li>
-                ))}
+              {cvModel.education && cvModel.education.map((edu, index) => (
+                <li key={index}>
+                  <h5>{formatDate(edu.period && edu.period.startDate)} - {formatDate(edu.period && edu.period.endDate)}</h5>
+                  <h4>{edu.degree}</h4>
+                  <h4>{edu.institution}</h4>
+                </li>
+              ))}
+
+
+
               </ul>
             </div>
             <div className={styles.languages}>
               <h3 className={styles.title}>LANGUAGES</h3>
               <ul>
-                {cvModel.languages && cvModel.languages.map((lang, index) => (
-                  <li key={index}>
-                    <span className={styles.text}>{lang.name}</span>
-                    <div className={styles.progressBar}>
-                      <div className={styles.progress} style={{ width: `${lang.proficiency}%` }}></div>
-                    </div>
-                  </li>
-                ))}
+              {cvModel.languages?.map((lang, index) => (
+                <li key={index}>
+                  <span className={styles.text}>{lang.name}</span>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progress} style={{ width: `${lang.proficiency}%` }}></div>
+                  </div>
+                </li>
+              ))}
+
               </ul>
             </div>
           </div>
@@ -359,26 +394,26 @@ const CVModel7 = () => {
                   <h5></h5>
                 </div>
                 <div className={styles.text}>
-                {cvModel.experiences.map((exp, index) => (
-                  <div className={styles.box} key={index}>
-                    <div className={styles.year_company}>
-                      <h5>{exp.period}</h5>
-                      <h5>{exp.companyName}</h5>
-                      <h5>{exp.ville}</h5>
+                {cvModel.experiences?.map((exp, index) => (
+                    <div className={styles.box} key={index}>
+                      <div className={styles.year_company}>
+                        <h5>{formatDate(exp.period && exp.period.startDate)} - {formatDate(exp.period && exp.period.endDate)}</h5>
+                        <h5>{exp.companyName}</h5>
+                        <h5>{exp.ville}</h5>
+                      </div>
+                      <div className={styles.text}>
+                        <h4>{exp.jobTitle}</h4>
+                        <p>{exp.description}</p>
+                      </div>
                     </div>
-                    <div className={styles.text}>
-                      <h4>{exp.jobTitle}</h4>
-                      <p>{exp.description}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
                 </div>
               </div>
             </div>
             <div className={`${styles.about} ${styles.skills}`}>
               <h2 className={styles.title2}>Compétences Professionnelles</h2>
               <div className={styles.skillContainer}>
-                {cvModel.professionalSkills.map((skill, index) => (
+              {cvModel.professionalSkills?.map((skill, index) => (
                   <div className={styles.skill} key={index}>
                     <span className={styles.skillName}>{skill.skillName}</span>
                     <div className={styles.progressBar}>
@@ -391,7 +426,7 @@ const CVModel7 = () => {
             <div className={styles.AboutInterest}>
               <h2 className={styles.title2}>Intérêts</h2>
               <ul>
-                {cvModel.interests.map((interest, index) => (
+              {cvModel.interests?.map((interest, index) => (
                   <li key={index}>{interest}</li>
                 ))}
               </ul>
@@ -399,11 +434,11 @@ const CVModel7 = () => {
             <div className={styles.Aboutformation}>
               <h2 className={styles.title2}>FORMATION</h2>
               <ul>
-               {cvModel.formation.map((formation, index) => (
+               {cvModel.formation?.map((formation, index) => (
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
                     <h5>{formation.formationName} {formation.establishment} {formation.city}</h5>
-                    <h5>{formation.startDate} - {formation.endDate}</h5>
+                    <h5>{formatDate(formation.startDate)} - {formatDate(formation.endDate)}</h5>
                   </div>
                   <div className={styles.text}>
                     <p>{formation.description}</p>
@@ -414,7 +449,9 @@ const CVModel7 = () => {
             </div>
           </div>
         </div>
+
       </div>
+      <button className={styles.finishButton} onClick={saveCVToServer} >Terminer</button>
     </div>
   );
 };

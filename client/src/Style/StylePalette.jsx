@@ -1,32 +1,45 @@
 import React, { useState } from 'react';
 import styles from './StylePalette.module.css';
-
-function StylePalette() {
+import PropTypes from 'prop-types';
+function StylePalette({ applyStyle }) {
   const [textColor, setTextColor] = useState('#000000');
   const [fontSize, setFontSize] = useState(16);
   const [fontWeight, setFontWeight] = useState('normal');
   const [fontStyle, setFontStyle] = useState('normal');
   const [textDecoration, setTextDecoration] = useState('none');
+  const [fontFamily, setFontFamily] = useState('Arial');
+  //const [selectedElement] = useState(null);
 
   const handleTextColorChange = (e) => {
     setTextColor(e.target.value);
+    applyStyle({ color: e.target.value });
   };
 
   const handleFontSizeChange = (e) => {
     setFontSize(parseInt(e.target.value));
+    applyStyle({ fontSize: `${parseInt(e.target.value)}px` });
   };
 
   const handleFontWeightChange = (e) => {
     setFontWeight(e.target.value);
+    applyStyle({ fontWeight: e.target.value });
   };
 
   const handleFontStyleChange = (e) => {
     setFontStyle(e.target.value);
+    applyStyle({ fontStyle: e.target.value });
   };
 
   const handleTextDecorationChange = (e) => {
     setTextDecoration(e.target.value);
+    applyStyle({ textDecoration: e.target.value });
   };
+
+  const handleFontFamilyChange = (e) => {
+    setFontFamily(e.target.value);
+    applyStyle({ fontFamily: e.target.value });
+  };
+  
 
   return (
     <div className={styles['palette-container']}>
@@ -77,6 +90,17 @@ function StylePalette() {
           <option value="underline">Underline</option>
           <option value="line-through">Line Through</option>
           <option value="overline">Overline</option>
+          <option value="blink">Blink</option>
+        </select>
+      </label>
+      <br />
+      <label className={styles['palette-label']}>
+        Font Family:
+        <select className={styles['palette-input']} value={fontFamily} onChange={handleFontFamilyChange}>
+          <option value="Arial">Arial</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Times New Roman">Times New Roman</option>
+          {/* Ajoutez d'autres options de famille de police selon vos besoins */}
         </select>
       </label>
       <br />
@@ -86,11 +110,17 @@ function StylePalette() {
         fontWeight,
         fontStyle,
         textDecoration,
+        fontFamily,
       }}>
         Sample Text
       </div>
+      <br />
+     
     </div>
   );
 }
+StylePalette.propTypes = {
+  applyStyle: PropTypes.func.isRequired // Validation de la prop applyStyle
+};
 
 export default StylePalette;

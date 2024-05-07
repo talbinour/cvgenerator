@@ -5,13 +5,21 @@ import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
-
+import StylePalette from '../Style/StylePalette';
 function CvOuResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
+  const [cvStyle, setCvStyle] = useState({});
+  const applyStyle = (style) => {
+    setCvStyle(style);
+  };
 
+  // Fonction pour gérer le changement de style sélectionné
+ 
+
+  
   const getCurrentCVId = () => {
     return currentCVId;
   };
@@ -166,10 +174,14 @@ function CvOuResume() {
 
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
+       <StylePalette applyStyle={applyStyle} />     
+       <div style={cvStyle}>
       <div id="cv-content" className={styles.container}>
+      
         <div className={styles.editButton}>
           <button onClick={() => generatePDF()} className={styles['new-button']}><i className="fas fa-file-pdf"></i>Télécharger</button>
         </div>
+        
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
           <div className={styles.imgBx}>
@@ -183,7 +195,7 @@ function CvOuResume() {
             <h3>{cvModel.profession}</h3>         
              </div>
           <div className={styles.contactInfo}>
-            <h3 className={styles.title}>Informations de Contact</h3>
+            <h3 className={styles.title} >Informations de Contact</h3>
             <ul>
               <li>
                 <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
@@ -281,6 +293,7 @@ function CvOuResume() {
             </ul>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

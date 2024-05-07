@@ -254,3 +254,19 @@ p {
     font-size: 18px;
     width: 20px;
 }
+.finishButton {
+    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
+    top: 70px; /* Position par rapport au haut de la fenêtre */
+    right: 20px; /* Position par rapport à la droite de la fenêtre */
+    padding: 10px 20px;
+    font-size: 25px;
+    background-color: #053466;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .finishButton:hover {
+    opacity: 0.8;
+  }
