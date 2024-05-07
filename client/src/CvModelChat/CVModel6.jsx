@@ -288,7 +288,7 @@ const CVModel6 = () => {
     try {
       const response = await axios.post(`http://localhost:8080/cv/${userId}/`, cvModel);
       console.log('New CV Data:', response.data);
-      navigate("/model7-user");
+      navigate("/model6-user");
     } catch (error) {
       console.error('Error creating CV:', error);
     }

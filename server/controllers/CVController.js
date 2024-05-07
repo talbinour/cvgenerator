@@ -1,3 +1,4 @@
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const CVModel = require('../CVModel');
@@ -21,8 +22,8 @@ function saveBase64Image(base64String, filename) {
 // Function to validate base64 image data
 function isValidBase64(str) {
   return true; // Bypass validation temporarily
-}
 
+}
 // Configure storage for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -33,19 +34,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// Set up multer with the configured storage and increased file size limit to 50MB (50000000 bytes)
-// Set up multer with the configured storage and increased field size limit to 5MB (5000000 bytes)
+// Set up multer with the configured storage and increased file size limit to 2MB (2000000 bytes)
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50000000, fieldSize: 5000000 }, // 50 MB and 5 MB in bytes
+  limits: { fileSize: 50000000 }, // 2 MB in bytes
 });
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      cb(null, true);
-  } else {
-      cb(new Error('Invalid file type. Only JPEG and PNG files are allowed.'), false);
-  }
-};
 
 class CVController {
   async createCV(req, res) {
@@ -74,7 +67,9 @@ class CVController {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
+  // Fonction pour valider les données de l'image en base64
 
+  
   async getCVs(req, res) {
     try {
       const cvs = await CVModel.find();
@@ -87,7 +82,7 @@ class CVController {
 
   async getCVById(req, res) {
     try {
-      const cvId = req.params.id;
+      const cvId = req.params._id;
       const cv = await CVModel.findById(cvId);
       
       if (!cv) {
@@ -137,6 +132,7 @@ class CVController {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
+  
 }
 
 module.exports = CVController;

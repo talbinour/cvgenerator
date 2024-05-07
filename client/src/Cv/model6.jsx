@@ -2,11 +2,13 @@ import React from 'react';
 import styles from './model6.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
+import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
 
 function CvOrResume() {
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
-      <div className={styles.container}>
+      
+      <div className={styles.container}> 
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
             <div className={styles.imgBx}>
@@ -142,6 +144,9 @@ function CvOrResume() {
             </ul>
           </div>
         </div>
+        <div className={styles.editButton}>
+          <Link to="/edit6-cv"><i className="fas fa-edit"></i></Link>
+      </div>
       </div>
     </div>
   );

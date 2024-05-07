@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height:100vh;
 }
 
 .container {
@@ -23,7 +23,6 @@
     display: grid;
     grid-template-columns: 1fr 2fr ;
     box-shadow: 0 35px 55px rgba(211, 68, 68, 0.1);
-    margin-right:300px;
 }
 
 .container .left_Side {
@@ -34,7 +33,8 @@
 
 .profileText {
     position: relative;
-    display: flex;
+    margin-top: 20px;
+    display:flex;
     flex-direction: column;
     align-items: center;
     padding-bottom: 20px;
@@ -83,7 +83,9 @@
     font-weight: 600;
     letter-spacing: 1px;
     margin-bottom: 20px;
+
 }
+
 
 .contactInfo ul {
     position: relative;
@@ -129,14 +131,16 @@
 
 
 
-.percentContainer {
+.contactInfo.languages .percentContainer {
+    display: block;
+    margin-top: 5px;
     position: relative;
     width: 100%;
-    height: 10px;
+    height: 6px;
     background: #f18384;
 }
 
-.percentBar {
+.contactInfo.languages .percentContainer div {
     position: absolute;
     top: 0;
     left: 0;
@@ -147,10 +151,15 @@
     position: relative;
     background: #fff;
     padding: 40px;
+    align-items: self-start;
+    margin-top: 0;
 }
 
 .about {
     margin-bottom: 50px;
+    margin-top:50px;
+    padding-top: 20px;
+
 }
 
 .about:last-child {

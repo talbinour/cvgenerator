@@ -8,36 +8,24 @@
 
 /* Container pour la page entière */
 .pageWrapper {
-    display: flex;
-    overflow-y: auto; 
-     /* Utiliser Flexbox pour disposer les éléments horizontalement */
+    display: flex; /* Utiliser Flexbox pour disposer les éléments horizontalement */
 }
 
 /* Style de la partie gauche */
 .leftPanel {
     flex: 1; /* La partie gauche prendra autant d'espace que possible */
     padding: 20px;
-    border-right: 1px solid #ccc; 
-    overflow-y: auto;
-    /* Ajouter une bordure pour séparer les deux parties */
+    border-right: 1px solid #ccc; /* Ajouter une bordure pour séparer les deux parties */
 }
 
 .container {
-    max-width: 900px;
+    max-width: 600px;
     margin: 20px auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-.inputContainerBottom {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
-    margin-right: 20px;
-    /*border: 1px solid #ccc;*/
-    border-radius: 5px;
-    
-  }
+
 /* Message box */
 .message {
     margin-bottom: 10px;
@@ -47,55 +35,36 @@
 
 /* User message */
 .me {
-    background-color: #f8d7da; /* Lighter pink on hover */
+    background-color: #dff0d8; /* light green */
 }
 
 /* Bot message */
 .bot {
-    background-color: #F1B4BB; /* Pink button */
+    background-color: #d9edf7; /* light blue */
 }
 
 /* Input field */
 .inputField {
+    width: calc(100% - 80px); /* Adjust based on button width */
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    max-width: 800px;
-    margin-left: -20px;
 }
 
 /* Send button */
 .sendButton {
-    width: 60px;
+    width: 70px;
     padding: 10px;
     margin-top: 10px;
-    background-color: #053466; /* blue */
+    background-color: #007bff; /* blue */
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-left: -20px;
-    
 }
 
 /* Send button hover */
 .sendButton:hover {
-    opacity: 0.8; /* Darker blue */
-}
-.addButton {
-    width: 40px;
-    height: 40px;
-    padding: 10px;
-    background-color: #053466; /* Blue */
-    color: #fff;
-    border: none;
-    border-radius: 50%; /* Pour rendre le bouton rond */
-    cursor: pointer;
-    margin-left: 720px; /* Ajuster la marge pour l'espacement */
-    margin-top: 10px; /* Ajouter une marge en haut */
-}
-
-.addButton:hover {
-    opacity: 0.8; /* Darker blue on hover */
+    background-color: #0056b3; /* Darker blue */
 }

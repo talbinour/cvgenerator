@@ -252,7 +252,7 @@ const CVModel7 = () => {
         break;
         }
         case "question9": {// FORMATION
-          const [formationName, establishment, city, startDate, endDate, description] = formationResponse.split("\n").map(item => item.trim());
+          const [formationName, establishment, city, startDate, endDate, description] = formationResponse.split(",").map(item => item.trim());
           const newFormation = {
             formationName,
             establishment,
