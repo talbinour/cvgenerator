@@ -30,8 +30,10 @@ import Model5 from "./Cv/model5";
 import Model6 from "./Cv/model6";
 import Model7 from "./Cv/model7";
 import ModelUser from "./Cv/model7-user";
+import ModelUser6 from "./Cv/model6-user";
 import Model8 from "./Cv/model8";
 import Edit from "./Cv/edit";
+import Edit6 from "./Cv/edit6";
 import Edit5 from "./Cv/editmodel5";
 import ModeleEdit from "./Cv/ModeleEdit";
 import Chatbot from "./chatbot";
@@ -89,6 +91,7 @@ function App() {
           <Route path='/model7-user/userId/cvId/cvDate' element={<ModelUser/>} />
           <Route path='/Model8' element={<Model8/>} />
           <Route path='/edit-cv' element={<Edit/>} />
+          <Route path='/edit6-cv' element={<Edit6/>} />
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
           <Route path='/chatbot' element={<Chatbot />} />

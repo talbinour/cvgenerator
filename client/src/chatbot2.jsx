@@ -20,25 +20,30 @@ const Chat = () => {
         return data.response;
     };
     
-    const saveUserResponseToBackend = async (response) => {
+    const saveMessageToBackend = async (message) => {
         try {
-            const saveResponse = await axios.post("http://localhost:5000/profile", { response }, {
+            const saveResponse = await axios.post("http://localhost:5000/save-message", { message }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             console.log(saveResponse.data.message); // Affichez un message de confirmation
         } catch (error) {
-            console.error("Erreur lors de l'enregistrement de la réponse utilisateur:", error);
+            console.error("Erreur lors de l'enregistrement du message:", error);
         }
     };
     
     const handleSendMessage = async () => {
         const response = await sendMessage(input);
-        setMessages([...messages, { text: input, user: "me" }, { text: response, user: "bot" }]);
+        setMessages([...messages, { text: input, user: "me", timestamp: new Date() }, { text: response, user: "bot", timestamp: new Date() }]);
         setInput("");
-        saveUserResponseToBackend(input); // Enregistrer la réponse de l'utilisateur vers le backend
+        saveMessageToBackend(input); // Enregistrer le message de l'utilisateur vers le backend
     };
+    const handleKeyPress = (event) => {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      };
 
     return (
         <div className={styles.pageWrapper}>
@@ -51,8 +56,8 @@ const Chat = () => {
                             </div>
                         ))}
                     </div>
-                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} />
-                    <button className={styles.sendButton} onClick={handleSendMessage}>
+                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
+                    <button className={styles.sendButton} onClick={handleSendMessage} >
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
                 </div>
