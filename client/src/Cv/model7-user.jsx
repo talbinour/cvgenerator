@@ -144,6 +144,7 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
+      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',

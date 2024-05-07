@@ -350,6 +350,7 @@ const addInterest = () => {
                   onChange={(e) => handleEducationChange(e, index, 'endDate')}
                   className={styles.input}
                   placeholder="End Date"
+                  
                 />
                 <input
                   type="text"

@@ -57,6 +57,35 @@ router.use(express.json());
       res.status(500).json({ error: 'Failed to save CV' });
     }
   });
+
+const { v4: uuidv4 } = require('uuid'); // Assurez-vous d'importer uuid pour générer des IDs uniques
+router.post('/cv/:userId/', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
+        const cvId = uuidv4(); // Générer un nouvel ID unique pour le CV
+
+        // Créer un nouveau document CV
+        const newCV = new CvModel({
+            userId: userId,
+            cvId: cvId,
+            ...cvData
+        });
+
+        // Enregistrer le nouveau CV dans la base de données
+        const savedCV = await newCV.save();
+
+        console.log('New CV Data:', savedCV);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.status(201).json({ message: 'New CV created successfully', cvId: cvId, cvData: savedCV });
+    } catch (error) {
+        console.error('Error creating CV:', error);
+        res.status(500).json({ error: 'Failed to create CV' });
+    }
+});
+
 router.get('/cv/:userId/:cvId', async (req, res) => {
   try {
     const userId = req.params.userId;
