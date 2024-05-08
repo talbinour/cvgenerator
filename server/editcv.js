@@ -21,21 +21,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // Enregistrer un CV spécifique par son ID
 router.use(express.json());
-  router.put('/cv/:userId/:cvId/:date', async (req, res) => {
+  router.put('/cv/:userId/:cvId/:id', async (req, res) => {
     try {
       const userId = req.params.userId;
       const cvId = req.params.cvId;
-      const date = req.params.date;
+      const id = req.params._id;
       const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
     
-      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId ,date: date });
+      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId ,id: id });
 
       if (!existingCV) {
         // Si le CV n'existe pas, créer un nouveau document CV
         existingCV = new CvModel({
           userId: userId,
           cvId: cvId,
-          date: date,
+          id: id,
           ...cvData
         });
       } else {
@@ -62,11 +62,12 @@ router.use(express.json());
 
 
 
-router.post('/cv/:userId/', async (req, res) => {
+router.post('/cv/:userId/:cvId/', async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
-        const cvId = uuidv4(); // Générer un nouvel ID unique pour le CV
+      const cvData = req.body; 
+      const userId = req.params.userId;
+      const cvId = req.params.cvId;
+         // Générer un nouvel ID unique pour le CV
 
         // Créer un nouveau document CV
         const newCV = new CvModel({
@@ -89,14 +90,14 @@ router.post('/cv/:userId/', async (req, res) => {
     }
 });
 
-router.get('/cv/:userId/:cvId/:date', async (req, res) => {
+router.get('/cv/:userId/:cvId/:id', async (req, res) => {
   try {
     const userId = req.params.userId;
     const cvId = req.params.cvId;
-    const date = req.params.date;
+    const id = req.params._id;
 
     // Recherche du CV dans la base de données en fonction de l'ID utilisateur et de l'ID du CV
-    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId,date:date });
+    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId,id:id });
 
     if (!cvData) {
       // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found

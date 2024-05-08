@@ -9,17 +9,14 @@ import {  useNavigate } from "react-router-dom";
 const ParentComponent = () => {
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
-  const [currentCVDate, setCurrentCVDate] = useState(null);
+  //const [currentCVDate] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
   //const [date] = useState(null);
 
   const getCurrentCVId = () => {
     return currentCVId;
   };
-  const getCurrentCVDate = () => {
-    return currentCVDate;
-  };
-
+ 
  
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
@@ -79,6 +76,7 @@ const ParentComponent = () => {
               setUserPhoto(response.data.user.photo);
               setUserId(userId);
               setCurrentCVId(userId);
+              
               setCvModel({
                 ...cvModel,
                 name: userData.nom+' '+userData.prenom,
@@ -95,7 +93,7 @@ const ParentComponent = () => {
           });
     }
   }, []);
- useEffect(() => {
+/*  useEffect(() => {
   loadCVFromServer();
 }, [userId,currentCVDate]); // Assurez-vous d'inclure cvDate dans les dépendances de useEffect
 
@@ -103,7 +101,7 @@ const loadCVFromServer = async () => {
   try {
     const cvId = getCurrentCVId();
     const date = getCurrentCVDate(); // Get the currentCVDate
-
+    console.log('Date:', date);
     if (!cvId) {
       console.error('CV ID is undefined');
       return;
@@ -117,13 +115,13 @@ const loadCVFromServer = async () => {
   } catch (error) {
     console.error('Error loading CV:', error);
   }
-};
+}; */
 
 
 const saveCVToServer = async () => {
   try {
     // Vérifiez si la date est nulle, et attribuez-lui une valeur par défaut si c'est le cas
-    const date = getCurrentCVDate() || new Date().toISOString(); // Utilisez la date actuelle comme valeur par défaut
+    //const date = getCurrentCVDate() || new Date().toISOString(); // Utilisez la date actuelle comme valeur par défaut
     const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
     const isEmptyField = requiredFields.some(field => !cvModel[field]);
     if (isEmptyField) {
@@ -135,9 +133,10 @@ const saveCVToServer = async () => {
       console.error('CV ID is undefined');
       return;
     }
-    const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}/${date}`, cvModel);
+    const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
     console.log('CV saved successfully:', response.data);
-    navigate(`/model7-user/${userId}/${cvId}/${date}`);
+    const id = response.data.cvData._id;
+    navigate(`/model7-user/${userId}/${cvId}/${id}`);
   } catch (error) {
     console.error('Error saving CV:', error);
   }
