@@ -9,16 +9,12 @@ import {  useNavigate } from "react-router-dom";
 const ParentComponent = () => {
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
-  const [currentCVDate, setCurrentCVDate] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
 
   const getCurrentCVId = () => {
     return currentCVId;
   };
 
-  const getCurrentCVDate = () => {
-    return currentCVDate ;
-  };
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
     jobTitle: 'Web Developer',
@@ -93,29 +89,7 @@ const ParentComponent = () => {
           });
     }
   }, []);
-  useEffect(() => {
-    loadCVFromServer();
-  }, [userId]);
-  const loadCVFromServer = async () => {
-    try {
-      const cvId = getCurrentCVId();
-      const cvDate = getCurrentCVDate();
-
-      if (!cvId) {
-        console.error('CV ID is undefined');
-        return;
-      }
-
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvDate}`);
-      
-      // Si le CV existe, utilisez les données du CV pour mettre à jour le modèle
-      setCurrentCVDate(response.data.date);
-      setCvModel(response.data.cvData);
-    } catch (error) {
-      console.error('Error loading CV:', error);
-      // Si une erreur se produit ou si le CV n'existe pas, laissez le modèle tel qu'il est avec les données par défaut
-    }
-  };
+ 
 
  const saveCVToServer = async () => {
     try {
@@ -132,7 +106,9 @@ const ParentComponent = () => {
       }
       const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
       console.log('CV saved successfully:', response.data);
-      navigate(`/model7-user/${userId}/${cvId}/${cvDate}`);
+      const id = response.data.cvData._id;
+      console.log('id ', id);
+      navigate(`/model7-user/${id}`);
   
     } catch (error) {
       console.error('Error saving CV:', error);
@@ -237,10 +213,6 @@ return (
                       <img src={avatar} alt="Profile" />
                     )}
 
-                 
-              
-              
-              
               </div>
              
                 <span 

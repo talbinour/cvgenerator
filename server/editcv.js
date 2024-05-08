@@ -23,12 +23,13 @@ const upload = multer({ storage: storage });
 router.use(express.json());
   router.put('/cv/:userId/:cvId/', async (req, res) => {
     try {
-      const userId = req.params.userId;
+    const userId = req.params.userId;
     const cvId = req.params.cvId;
-    const date = req.params.date;
+    const id = req.params._id;
+    console.log(id)
     const cvData = req.body;
 
-    let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId ,cvDate: date});
+    let existingCV = await CvModel.findOne({id : id});
 
       if (!existingCV) {
         // Si le CV n'existe pas, créer un nouveau document CV
@@ -47,8 +48,8 @@ router.use(express.json());
       const savedCV = await existingCV.save();
 
       // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
-      const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId ,cvDate: date});
-      console.log('Updated CV Data:', reloadedCV);
+      const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId});
+        console.log('Updated CV Data:', reloadedCV);
         // Ajoutez des en-têtes pour empêcher la mise en cache des réponses
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         res.setHeader('Pragma', 'no-cache');
@@ -60,29 +61,28 @@ router.use(express.json());
     }
   });
 
-
-router.get('/cv/:userId/:cvId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const cvId = req.params.cvId;
-    const date = req.params.date;
-    // Recherche du CV dans la base de données en fonction de l'ID utilisateur et de l'ID du CV
-    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId ,cvDate: date});
-
-    if (!cvData) {
-      // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found
-      return res.status(404).json({ error: 'CV not found' });
+  router.get('/cv/:id', async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      // Recherche du CV dans la base de données en fonction de l'ID du CV
+      const cvData = await CvModel.findById(id);
+  
+      if (!cvData) {
+        // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found
+        return res.status(404).json({ error: 'CV not found' });
+      }
+  
+      // Si le CV est trouvé, renvoyer les données du CV dans la réponse
+      res.status(200).json({ cvData: cvData });
+    } catch (error) {
+      console.error('Error loading CV:', error);
+      // En cas d'erreur, renvoyer une réponse 500 Internal Server Error
+      res.status(500).json({ error: 'Failed to load CV' });
     }
-
-    // Si le CV est trouvé, renvoyer les données du CV dans la réponse
-    res.status(200).json({ cvData: cvData });
-  } catch (error) {
-    console.error('Error loading CV:', error);
-    // En cas d'erreur, renvoyer une réponse 500 Internal Server Error
-    res.status(500).json({ error: 'Failed to load CV' });
-  }
-});
-
+  });
+  
+  
 // Route to save base64 image and compress it
 router.post('/api/save-image', upload.single('image'), async (req, res) => {
   try {
@@ -127,7 +127,7 @@ router.get('/user-cvs/:userId', async (req, res) => {
     const userId = req.params.userId;
 
     // Recherche des CV dans la base de données en fonction de l'ID de l'utilisateur
-    const userCvs = await ImageModel.find({ userId: userId });
+    const userCvs = await ImageModel.find({   });
 
     // Renvoyer les CV trouvés dans la réponse
     res.status(200).json(userCvs);
@@ -180,10 +180,5 @@ router.post('/cv/:userId/', async (req, res) => {
       res.status(500).json({ error: 'Failed to create CV' });
   }
 });
-
-
-
-
-
 
 module.exports = router;
