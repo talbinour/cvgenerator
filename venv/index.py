@@ -11,10 +11,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from datetime import datetime
-from flask_caching import Cache
+from chatterbot.conversation import Statement
+from functools import lru_cache
 app = Flask(__name__)
 CORS(app)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
 # Initialize SpaCy and NLTK
 nlp = spacy.load("fr_core_news_sm")
 nltk.download("stopwords")
@@ -23,6 +24,14 @@ nltk.download("wordnet")
 stop_words = set(stopwords.words("french"))
 lemmatizer = WordNetLemmatizer()
 
+@lru_cache(maxsize=128)
+def get_bot_response(user_input):
+    # Créer un objet Statement à partir de l'entrée utilisateur
+    statement = Statement(user_input)
+
+    # Obtenir la réponse du bot
+    bot_response = bot.get_response(statement)
+    return str(bot_response)
 # Helper function for preprocessing user input
 def preprocess(text):
     # Tokenization using NLTK
@@ -212,15 +221,25 @@ question_generator.load_questions({
     # Ajoutez d'autres questions ici...
 })
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    user_input = request.json.get("message") # type: ignore
-
+@lru_cache(maxsize=128)
+def get_bot_response(user_input):
     # Obtenir la réponse du bot
     bot_response = str(bot.get_response(user_input))
-    
-    return jsonify({"response": bot_response})
+    return bot_response
 
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json
+    user_input = data.get("message")
+
+    # Vérifiez si le message est présent
+    if user_input:
+        # Obtenez la réponse du bot à partir du cache s'il existe
+        bot_response = get_bot_response(user_input)
+        return jsonify({"response": bot_response})
+    else:
+        return jsonify({"response": "Aucun message n'a été reçu."})
 
 @app.route("/profile", methods=["POST"])
 def profile():

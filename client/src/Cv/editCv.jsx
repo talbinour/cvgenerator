@@ -9,14 +9,12 @@ import {  useNavigate } from "react-router-dom";
 const ParentComponent = () => {
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
-  //const [currentCVDate] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
-  //const [date] = useState(null);
+ 
 
   const getCurrentCVId = () => {
     return currentCVId;
   };
- 
  
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
@@ -93,31 +91,49 @@ const ParentComponent = () => {
           });
     }
   }, []);
- 
+  useEffect(() => {
+    loadCVFromServer();
+  }, [userId]);
 
-
-  const saveCVToServer = async () => {
+  const loadCVFromServer = useCallback(async () => {
     try {
-      const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
-      const isEmptyField = requiredFields.some(field => !cvModel[field]);
-      if (isEmptyField) {
-        alert('Veuillez remplir tous les champs obligatoires.');
-        return;
-      }
       const cvId = getCurrentCVId();
       if (!cvId) {
-        console.error('CV ID is undefined');
+        console.error('ID du CV non défini');
         return;
       }
-      const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
-      console.log('CV saved successfully:', response.data);
-      const id = response.data.cvData._id;
-      navigate(`/model7-user/${userId}/${cvId}/${id}`);
+
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvId}`);
+      setCvModel(response.data.cvData);
     } catch (error) {
-      console.error('Error saving CV:', error);
+      console.error('Erreur lors du chargement du CV:', error);
     }
-    
-  };
+  }, [userId, getCurrentCVId]); 
+
+
+const saveCVToServer = async () => {
+  try {
+    // Vérifiez si la date est nulle, et attribuez-lui une valeur par défaut si c'est le cas
+    //const date = getCurrentCVDate() || new Date().toISOString(); // Utilisez la date actuelle comme valeur par défaut
+    const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
+    const isEmptyField = requiredFields.some(field => !cvModel[field]);
+    if (isEmptyField) {
+      alert('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+    const cvId = getCurrentCVId();
+    if (!cvId) {
+      console.error('CV ID is undefined');
+      return;
+    }
+    const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}/${cvModel._id}`, cvModel);
+    console.log('CV saved successfully:', response.data);
+    const id = response.data.cvData._id;
+    navigate(`/model7-user/${userId}/${cvId}/${id}`);
+  } catch (error) {
+    console.error('Error saving CV:', error);
+  }
+};
 
  const handleChange = (e, field) => {
     const { value } = e.target;
@@ -218,6 +234,10 @@ return (
                       <img src={avatar} alt="Profile" />
                     )}
 
+                 
+              
+              
+              
               </div>
              
                 <span 

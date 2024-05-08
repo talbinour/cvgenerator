@@ -1,32 +1,21 @@
-import React, { useState, useEffect ,useCallback } from 'react';
-import styles from './model7.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
+import React, { useState, useEffect, useCallback } from 'react';
+import styles from './model7.module.css'; 
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
-import StylePalette from '../Style/StylePalette';
-import { useParams } from 'react-router-dom'; 
+
 function CvOuResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
-  const [cvStyle, setCvStyle] = useState({});
 
-  const { id } = useParams();
-
-  const applyStyle = (style) => {
-    setCvStyle(style);
-  };
-
-  // Fonction pour gérer le changement de style sélectionné
- 
-
-  
   const getCurrentCVId = () => {
     return currentCVId;
   };
+
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
     jobTitle: 'Développeur Web',
@@ -101,15 +90,14 @@ function CvOuResume() {
     loadCVFromServer();
   }, [userId]);
 
-  const loadCVFromServer =  useCallback(async () => {
+  const loadCVFromServer = useCallback(async () => {
     try {
       const cvId = getCurrentCVId();
       if (!cvId) {
         console.error('ID du CV non défini');
         return;
       }
-
-      const response = await axios.get(`http://localhost:8080/cv/${id}`);
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvId}`);
       setCvModel(response.data.cvData);
     } catch (error) {
       console.error('Erreur lors du chargement du CV:', error);
@@ -156,7 +144,6 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
-      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',
@@ -168,6 +155,7 @@ function CvOuResume() {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
     }
   };
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -178,14 +166,10 @@ function CvOuResume() {
 
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
-       <StylePalette applyStyle={applyStyle} />     
-       <div style={cvStyle}>
       <div id="cv-content" className={styles.container}>
-      
         <div className={styles.editButton}>
           <button onClick={() => generatePDF()} className={styles['new-button']}><i className="fas fa-file-pdf"></i>Télécharger</button>
         </div>
-        
         <div className={styles.left_Side}>
           <div className={styles.profileText}>
           <div className={styles.imgBx}>
@@ -199,7 +183,7 @@ function CvOuResume() {
             <h3>{cvModel.profession}</h3>         
              </div>
           <div className={styles.contactInfo}>
-            <h3 className={styles.title} >Informations de Contact</h3>
+            <h3 className={styles.title}>Informations de Contact</h3>
             <ul>
               <li>
                 <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
@@ -297,7 +281,6 @@ function CvOuResume() {
             </ul>
           </div>
         </div>
-      </div>
       </div>
     </div>
   );

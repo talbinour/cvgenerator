@@ -17,26 +17,25 @@ const storage = multer.diskStorage({
     cb(null, file.originalname); // Définir le nom du fichier téléchargé
   }
 });
-const upload = multer({ storage: storage });
 
+const upload = multer({ storage: storage });
 // Enregistrer un CV spécifique par son ID
 router.use(express.json());
-  router.put('/cv/:userId/:cvId/', async (req, res) => {
+  router.put('/cv/:userId/:cvId/:id', async (req, res) => {
     try {
-    const userId = req.params.userId;
-    const cvId = req.params.cvId;
-    const id = req.params._id;
-    console.log(id)
-    const cvData = req.body;
-
-    let existingCV = await CvModel.findOne({id : id});
+      const userId = req.params.userId;
+      const cvId = req.params.cvId;
+      const id = req.params._id;
+      const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
+    
+      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId ,id: id });
 
       if (!existingCV) {
         // Si le CV n'existe pas, créer un nouveau document CV
         existingCV = new CvModel({
           userId: userId,
-          cvId: uuidv4(),
-          
+          cvId: cvId,
+          id: id,
           ...cvData
         });
       } else {
@@ -48,8 +47,8 @@ router.use(express.json());
       const savedCV = await existingCV.save();
 
       // Récupérer à nouveau le CV depuis la base de données pour refléter les modifications
-      const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId});
-        console.log('Updated CV Data:', reloadedCV);
+      const reloadedCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+      console.log('Updated CV Data:', reloadedCV);
         // Ajoutez des en-têtes pour empêcher la mise en cache des réponses
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
         res.setHeader('Pragma', 'no-cache');
@@ -61,28 +60,59 @@ router.use(express.json());
     }
   });
 
-  router.get('/cv/:id', async (req, res) => {
+
+
+router.post('/cv/:userId/:cvId/', async (req, res) => {
     try {
-      const id = req.params.id;
-  
-      // Recherche du CV dans la base de données en fonction de l'ID du CV
-      const cvData = await CvModel.findById(id);
-  
-      if (!cvData) {
-        // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found
-        return res.status(404).json({ error: 'CV not found' });
-      }
-  
-      // Si le CV est trouvé, renvoyer les données du CV dans la réponse
-      res.status(200).json({ cvData: cvData });
+      const cvData = req.body; 
+      const userId = req.params.userId;
+      const cvId = req.params.cvId;
+         // Générer un nouvel ID unique pour le CV
+
+        // Créer un nouveau document CV
+        const newCV = new CvModel({
+            userId: userId,
+            cvId: cvId,
+            ...cvData
+        });
+
+        // Enregistrer le nouveau CV dans la base de données
+        const savedCV = await newCV.save();
+
+        console.log('New CV Data:', savedCV);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.status(201).json({ message: 'New CV created successfully', cvId: cvId, cvData: savedCV });
     } catch (error) {
-      console.error('Error loading CV:', error);
-      // En cas d'erreur, renvoyer une réponse 500 Internal Server Error
-      res.status(500).json({ error: 'Failed to load CV' });
+        console.error('Error creating CV:', error);
+        res.status(500).json({ error: 'Failed to create CV' });
     }
-  });
-  
-  
+});
+
+router.get('/cv/:userId/:cvId/:id', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const cvId = req.params.cvId;
+    const id = req.params._id;
+
+    // Recherche du CV dans la base de données en fonction de l'ID utilisateur et de l'ID du CV
+    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId,id:id });
+
+    if (!cvData) {
+      // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found
+      return res.status(404).json({ error: 'CV not found' });
+    }
+
+    // Si le CV est trouvé, renvoyer les données du CV dans la réponse
+    res.status(200).json({ cvData: cvData });
+  } catch (error) {
+    console.error('Error loading CV:', error);
+    // En cas d'erreur, renvoyer une réponse 500 Internal Server Error
+    res.status(500).json({ error: 'Failed to load CV' });
+  }
+});
+
 // Route to save base64 image and compress it
 router.post('/api/save-image', upload.single('image'), async (req, res) => {
   try {
@@ -100,7 +130,10 @@ router.post('/api/save-image', upload.single('image'), async (req, res) => {
 
     // Vérifier si imageURL est défini
     if (!imageURL) {
-   
+      // Si imageURL est vide, définir une valeur par défaut ou renvoyer une erreur selon vos besoins
+      // Par exemple, définir une URL par défaut :
+      //imageURL = 'default_image_url.png';
+      // Ou lancer une erreur :
       throw new Error('Image URL is missing.');
     }
 
