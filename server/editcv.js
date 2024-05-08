@@ -21,19 +21,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // Enregistrer un CV spécifique par son ID
 router.use(express.json());
-  router.put('/cv/:userId/:cvId/', async (req, res) => {
+  router.put('/cv/:userId/:cvId/:date', async (req, res) => {
     try {
       const userId = req.params.userId;
       const cvId = req.params.cvId;
+      const date = req.params.date;
       const cvData = req.body; // Les données du formulaire de CV sont envoyées dans le corps de la requête
     
-      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId });
+      let existingCV = await CvModel.findOne({ userId: userId, cvId: cvId ,date: date });
 
       if (!existingCV) {
         // Si le CV n'existe pas, créer un nouveau document CV
         existingCV = new CvModel({
           userId: userId,
           cvId: cvId,
+          date: date,
           ...cvData
         });
       } else {
@@ -57,6 +59,8 @@ router.use(express.json());
       res.status(500).json({ error: 'Failed to save CV' });
     }
   });
+
+
 
 router.post('/cv/:userId/', async (req, res) => {
     try {
@@ -85,13 +89,14 @@ router.post('/cv/:userId/', async (req, res) => {
     }
 });
 
-router.get('/cv/:userId/:cvId', async (req, res) => {
+router.get('/cv/:userId/:cvId/:date', async (req, res) => {
   try {
     const userId = req.params.userId;
     const cvId = req.params.cvId;
+    const date = req.params.date;
 
     // Recherche du CV dans la base de données en fonction de l'ID utilisateur et de l'ID du CV
-    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId });
+    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId,date:date });
 
     if (!cvData) {
       // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found

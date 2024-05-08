@@ -6,11 +6,13 @@ import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
 import StylePalette from '../Style/StylePalette';
+
 function CvOuResume() {
   const [userId, setUserId] = useState(null);
   const [currentCVId, setCurrentCVId] = useState(null);
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
+  const [currentCVDate,] = useState(null);
   const [cvStyle, setCvStyle] = useState({});
   const applyStyle = (style) => {
     setCvStyle(style);
@@ -18,7 +20,9 @@ function CvOuResume() {
 
   // Fonction pour gérer le changement de style sélectionné
  
-
+  const getCurrentCVDate = () => {
+    return currentCVDate;
+  };
   
   const getCurrentCVId = () => {
     return currentCVId;
@@ -95,17 +99,18 @@ function CvOuResume() {
 
   useEffect(() => {
     loadCVFromServer();
-  }, [userId]);
+  }, [userId,currentCVDate]);
 
   const loadCVFromServer =  useCallback(async () => {
     try {
       const cvId = getCurrentCVId();
+      const date = getCurrentCVDate();
       if (!cvId) {
         console.error('ID du CV non défini');
         return;
       }
 
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${date}`);
       setCvModel(response.data.cvData);
     } catch (error) {
       console.error('Erreur lors du chargement du CV:', error);
@@ -152,7 +157,6 @@ function CvOuResume() {
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
-      formData.append('pageURL', window.location.pathname); 
 
       const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
         method: 'POST',
