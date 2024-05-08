@@ -98,7 +98,7 @@ function CvOuResume() {
         return;
       }
 
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvId}`);
+      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvModel._id}`);
       setCvModel(response.data.cvData);
     } catch (error) {
       console.error('Erreur lors du chargement du CV:', error);
