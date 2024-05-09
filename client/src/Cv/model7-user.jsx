@@ -109,7 +109,7 @@ function CvOuResume() {
       }
       
 
-      const url = await htmlToImage.toPng(element, { quality: 0.7, width: 1000});
+      const url = await htmlToImage.toPng(element, { quality: 0.8, width: 1100});
       setImageURL(url);
 
       const response = await fetch(url);
