@@ -265,8 +265,8 @@ def save_message():
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state") # type: ignore
-    user_response = data.get("message") # type: ignore
+    conversation_state = data.get("conversation_state")
+    user_response = data.get("message")
     
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:
@@ -289,7 +289,15 @@ def generate_next_question_route():
                 if next_question_key in question_generator.questions:
                     next_question = question_generator.questions.get(next_question_key)
                     conversation_state["state"] = next_question_key
-                    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+                    # Afficher le message "Est-ce qu'il y a quelque chose à ajouter ?" pour les questions spécifiques
+                    if next_question_key in ['question10', 'question12', 'question19', 'question21', 'question21']:
+                        response_message = "Est-ce qu'il y a quelque chose à ajouter ?"
+                        response_message =handle_previous_question()
+                    else:
+                        response_message = next_question
+
+                    return jsonify({"response": response_message, "next_question_key": next_question_key, "conversation_state": conversation_state})
                 else:
                     # Si toutes les questions ont été posées, la conversation est terminée
                     return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": None})
@@ -303,6 +311,42 @@ def generate_next_question_route():
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+
+# Gestion de la vérification de la réponse "oui" à la question 10
+@app.route("/verify-add-response", methods=["POST"])
+def verify_add_response():
+    data = request.json
+    user_response = data.get("response")
+    conversation_state = data.get("conversation_state") # type: ignore
+    previous_question_key = None
+    
+    # Vérifiez si la réponse est "oui" ou "non"
+    if user_response.strip().lower() == "oui":
+       # Vérifier si l'état de la conversation est présent
+        if conversation_state:
+            current_question_key = conversation_state.get("state")
+            if current_question_key:
+                # Récupérer la clé de la question précédente
+                question_number = int(current_question_key.replace("question", ""))
+                previous_question_number = question_number - 1
+                if previous_question_number > 0:
+                    previous_question_key = f"question{previous_question_number}"
+        if previous_question_key:
+            previous_question = question_generator.questions.get(previous_question_key)
+            updated_state = {"state": previous_question_key}
+            return jsonify({"response": previous_question, "conversation_state": updated_state})
+        else:
+            return jsonify({"response": "Aucune question précédente trouvée.", "conversation_state": conversation_state})
+
+
+    else:
+        # Passer à la question suivante
+        return jsonify({"next_question_key": "question11", "conversation_state": {"state": "question11"}})
+
+
+
+
 
 @app.route("/previous-question", methods=["POST"])
 def handle_previous_question():

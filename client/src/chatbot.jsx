@@ -12,66 +12,87 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
   const [previousResponse, setPreviousResponse] = useState("");
   const [conversationBlocked, setConversationBlocked] = useState(false);
 
-  const handleAddResponse = async () => {
+// Gestion de l'envoi de la réponse précédente
+const handleAddResponse = async () => {
+  const response = await axios.post(
+    "http://localhost:5000/previous-question",
+    {
+      cv_title: "Titre du CV",
+      cv_content: "",
+      conversation_state: conversationState,
+    },
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  const botResponse = response.data.response;
+  const previousResponse = response.data.previous_response;
+
+  setInput(previousResponse);
+  setMessages([...messages, { text: `Question précédente: ${botResponse}`, user: "bot" }]);
+  setConversationState(response.data.conversation_state);
+};
+
+// Envoi du message
+const sendMessage = async () => {
+  if (!input.trim()) {
+    setMessages([...messages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
+    return;
+  }
+
+  const response = await axios.post(
+    "http://localhost:5000/new-question",
+    {
+      cv_title: "Titre du CV",
+      cv_content: input,
+      conversation_state: conversationState,
+      previous_response: previousResponse,
+    },
+    { headers: { "Content-Type": "application/json" } }
+  );
+
+  const botResponse = response.data.response;
+  const nextQuestionKey = response.data.next_question_key;
+
+  setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
+  setInput("");
+  setPreviousResponse(input);
+
+  if (updateUserResponse) {
+    updateUserResponse(input, nextQuestionKey);
+  }
+
+  if (nextQuestionKey) {
+    setConversationState({ state: nextQuestionKey });
+  } else {
+    setConversationState(null);
+    setConversationBlocked(true);
+    setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+  }
+
+  if (updateTitleContent) {
+    updateTitleContent(botResponse, input);
+  }
+
+  // Vérification de la redirection
+  if (nextQuestionKey === "question10") {
     const response = await axios.post(
-      "http://localhost:5000/previous-question",
-      {
-        cv_title: "Titre du CV",
-        cv_content: "",
-        conversation_state: conversationState,
-      },
+      "http://localhost:5000/verify-add-response",
+      { response: input }, // Envoyer la réponse de l'utilisateur au backend
       { headers: { "Content-Type": "application/json" } }
     );
 
-    const botResponse = response.data.response;
-    const previousResponse = response.data.previous_response;
-
-    setInput(previousResponse);
-    setMessages([...messages, { text: `Question précédente: ${botResponse}`, user: "bot" }]);
-    setConversationState(response.data.conversation_state);
-  };
-
-  const sendMessage = async () => {
-    if (!input.trim()) {
-      setMessages([...messages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
-      return;
-    }
-
-    const response = await axios.post(
-      "http://localhost:5000/new-question",
-      {
-        cv_title: "Titre du CV",
-        cv_content: input,
-        conversation_state: conversationState,
-        previous_response: previousResponse,
-      },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    const botResponse = response.data.response;
-    const nextQuestionKey = response.data.next_question_key;
-
-    setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
-    setInput("");
-    setPreviousResponse(input);
-
-    if (updateUserResponse) {
-      updateUserResponse(input, nextQuestionKey);
-    }
-
-    if (nextQuestionKey) {
-      setConversationState({ state: nextQuestionKey });
+    const verified = response.data.verified;
+    if (verified) {
+      // Rediriger vers la question 6
+      setConversationState({ state: "question6" });
     } else {
-      setConversationState(null);
-      setConversationBlocked(true);
-      setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+      // Passer à la question suivante
+      setConversationState({ state: "question10" });
     }
+  }
+};
 
-    if (updateTitleContent) {
-      updateTitleContent(botResponse, input);
-    }
-  };
-
+  
   useEffect(() => {
     const sendHelloMessage = async () => {
       const response = await axios.post(
@@ -149,3 +170,4 @@ Chat.propTypes = {
 };
 
 export default Chat;
+
