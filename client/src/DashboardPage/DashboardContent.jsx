@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaTrash, FaDownload } from 'react-icons/fa';
+import { FaTrash, FaDownload, FaEdit } from 'react-icons/fa';
 import moment from 'moment'; // Import de Moment.js
 import styles from './DashboardContent.module.css';
 
@@ -44,8 +44,9 @@ const DashboardContent = () => {
     return moment(dateString).format('DD MMMM YYYY'); // Formatage de la date avec Moment.js
   };
 
-  const handleImageClick = (cvId, imageUrl, pageURL, date) => {
-    setSelectedCV({ cvId, imageUrl, pageURL, date });
+  const handleImageClick = (cvId, imageUrl, pageURL, date, userId, id, imageName) => {
+    setSelectedCV({ cvId, imageUrl, pageURL, date, userId, id, imageName });
+
   };
 
   const handleDeleteClick = async (cvId) => {
@@ -80,7 +81,7 @@ const DashboardContent = () => {
               src={cv.imageUrl}
               alt={cv.imageName}
               className={styles['cv-image']}
-              onClick={() => handleImageClick(cv._id, cv.imageUrl, cv.pageURL, cv.date)}
+              onClick={() => handleImageClick( cv.cvId, cv.imageUrl, cv.pageURL, cv.date, cv.userId,cv.id, cv.imageName)}
             />
             <div className={styles['cv-details']}>
               <p className={styles['cv-title']}>{cv.imageName}</p>
@@ -103,6 +104,9 @@ const DashboardContent = () => {
           <img src={selectedCV.imageUrl} alt="Selected CV" className={styles['full-cv-image']} />
         </div>
         <div className={styles['button-container']}>
+          <button className={styles['edit-button']} onClick={() => window.open(`/editcv/${selectedCV.userId}/${selectedCV.cvId}/${selectedCV.id}`, '_blank')}>
+            Edit  <FaEdit /> 
+          </button>
           <button className={styles['download-button']} onClick={() => window.open(selectedCV.pageURL, '_blank')}>
             Télécharger <FaDownload />
           </button>

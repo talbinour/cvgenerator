@@ -7,11 +7,17 @@ const imageSchema = new mongoose.Schema({
     required: true,
     
   },
-  idCV :{
+  cvId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-  
+    
   },
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    
+  },
+
   imageName: { type: String, required: true },
   imagePath: { type: String, required: true },
   imageSize: { type: Number, required: true },

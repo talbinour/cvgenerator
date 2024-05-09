@@ -51,7 +51,7 @@ import StylePalette from './Style/StylePalette';
 import Box from './box';
 import Sitemap from './component/sitemap'; // Assurez-vous que le chemin d'importation est correct
 import CookiePolicy from './component/CookiePolicy'; // Assurez-vous que le chemin d'importation est correct
-
+import EditCv from "./Cv/editCv.jsx"; 
 
 function App() {
   return (
@@ -92,6 +92,7 @@ function App() {
           <Route path='/model6-user/userId/cvId/cvDate' element={<ModelUser6/>} />
           <Route path='/Model8' element={<Model8/>} />
           <Route path='/edit-cv' element={<Edit/>} />
+          <Route path='/editcv/:userId/:cvId/:id' element={<EditCv/>} />
           <Route path='/edit6-cv' element={<Edit6/>} />
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />

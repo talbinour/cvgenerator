@@ -94,10 +94,10 @@ router.get('/cv/:userId/:cvId/:id', async (req, res) => {
   try {
     const userId = req.params.userId;
     const cvId = req.params.cvId;
-    const id = req.params._id;
+    const id = req.params.id; // Utilisez req.params.id pour récupérer l'ID du CV
 
     // Recherche du CV dans la base de données en fonction de l'ID utilisateur et de l'ID du CV
-    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId,id:id });
+    const cvData = await CvModel.findOne({ userId: userId, cvId: cvId, _id: id });
 
     if (!cvData) {
       // Si aucun CV correspondant n'est trouvé, renvoyer une réponse 404 Not Found
@@ -113,54 +113,67 @@ router.get('/cv/:userId/:cvId/:id', async (req, res) => {
   }
 });
 
-// Route to save base64 image and compress it
-router.post('/api/save-image', upload.single('image'), async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    const image = req.file;
-    let imageURL = req.body.imageURL; // Récupérer l'URL de l'image depuis le corps de la requête
 
-    console.log('userId received:', userId);
-    console.log('image received:', image);
-    console.log('imageURL received:', imageURL);
+// Route to save base64 image and compress it
+router.post('/api/save-image/:userId/:cvId/:id', upload.single('image'), async (req, res) => {
+  try {
+    const image = req.file;
+    const imageURL = req.body.imageURL;
+    const userId = req.params.userId;
+    const cvId = req.params.cvId;
+    const id = req.params.id;
 
     if (!userId || !image) {
       throw new Error('Invalid request: userId or image is missing.');
     }
 
-    // Vérifier si imageURL est défini
-    if (!imageURL) {
-      // Si imageURL est vide, définir une valeur par défaut ou renvoyer une erreur selon vos besoins
-      // Par exemple, définir une URL par défaut :
-      //imageURL = 'default_image_url.png';
-      // Ou lancer une erreur :
-      throw new Error('Image URL is missing.');
+    // Recherchez d'abord s'il existe déjà une image avec le même ID dans la base de données
+    let existingImage = await ImageModel.findOne({ userId, cvId, id });
+
+    if (existingImage) {
+      // Si une image avec le même ID est trouvée, mettez à jour ses données
+      existingImage.imageName = image.originalname;
+      existingImage.imagePath = image.path;
+      existingImage.imageSize = image.size;
+      existingImage.pageURL = req.body.pageURL;
+      existingImage.imageUrl = imageURL;
+
+      // Enregistrez les modifications apportées à l'image existante
+      existingImage = await existingImage.save();
+
+      // Répondre avec un message de succès
+      return res.status(200).json({ message: 'Image updated successfully', image: existingImage });
     }
 
-    // Créer une nouvelle instance du modèle d'image avec les données reçues
+    // Si aucune image avec le même ID n'est trouvée, créez une nouvelle instance d'image
     const newImage = new ImageModel({
-      userId: userId,
+      userId,
+      cvId,
+      id,
       imageName: image.originalname,
       imagePath: image.path,
       imageSize: image.size,
       pageURL: req.body.pageURL,
-      imageUrl: imageURL // Ajouter l'URL de l'image au modèle
+      imageUrl: imageURL
     });
-    // Sauvegarder l'image en base de données
+
+    // Sauvegarder la nouvelle image dans la base de données
     const savedImage = await newImage.save();
+
     // Répondre avec un message de succès
     res.status(200).json({ message: 'Image saved successfully', image: savedImage });
   } catch (error) {
-    console.error('Error saving image:', error);
-    res.status(500).json({ error: 'Failed to save image' });
+    console.error('Error saving/updating image:', error);
+    res.status(500).json({ error: 'Failed to save/update image' });
   }
 });
+
 router.get('/user-cvs/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
     // Recherche des CV dans la base de données en fonction de l'ID de l'utilisateur
-    const userCvs = await ImageModel.find({   });
+    const userCvs = await ImageModel.find({ userId  });
 
     // Renvoyer les CV trouvés dans la réponse
     res.status(200).json(userCvs);

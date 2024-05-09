@@ -24,29 +24,8 @@ nltk.download("wordnet")
 stop_words = set(stopwords.words("french"))
 lemmatizer = WordNetLemmatizer()
 
-@lru_cache(maxsize=128)
-def get_bot_response(user_input):
-    # Créer un objet Statement à partir de l'entrée utilisateur
-    statement = Statement(user_input)
 
-    # Obtenir la réponse du bot
-    bot_response = bot.get_response(statement)
-    return str(bot_response)
-# Helper function for preprocessing user input
-def preprocess(text):
-    # Tokenization using NLTK
-    tokens = word_tokenize(text)
-    
-    # Lemmatization using SpaCy
-    lemmatized_tokens = [token.lemma_ for token in nlp(" ".join(tokens))]
-    
-    # Remove stop words using NLTK
-    filtered_tokens = [token for token in lemmatized_tokens if token.lower() not in stop_words]
-    
-    # Join tokens back into a string
-    preprocessed_text = " ".join(filtered_tokens)
-    
-    return preprocessed_text
+
 
 # Helper function for postprocessing bot response
 def postprocess(response):
@@ -91,7 +70,7 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
 
 class QuestionGenerator:
     def __init__(self):
@@ -231,7 +210,7 @@ def get_bot_response(user_input):
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
-    user_input = data.get("message")
+    user_input = data.get("message") # type: ignore
 
     # Vérifiez si le message est présent
     if user_input:
@@ -255,7 +234,7 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message = data.get("message")
+    message = data.get("message") # type: ignore
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # Enregistrer le message et le timestamp dans une base de données ou un fichier
     # Par exemple, vous pouvez les enregistrer dans un fichier JSON ou une base de données MongoDB
