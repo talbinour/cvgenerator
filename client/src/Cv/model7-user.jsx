@@ -1,21 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect} from 'react';
 import styles from './model7.module.css'; 
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
 import html2pdf from 'html2pdf.js';
+import { useParams } from 'react-router-dom'; // Importer useParams depuis react-router-dom
 
 function CvOuResume() {
-  const [userId, setUserId] = useState(null);
-  const [currentCVId, setCurrentCVId] = useState(null);
+  const { userId, cvId, id } = useParams(); // Récupérer les paramètres userId, cvId et _id de l'URL
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
-
-  const getCurrentCVId = () => {
-    return currentCVId;
-  };
-
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
     jobTitle: 'Développeur Web',
@@ -49,61 +44,41 @@ function CvOuResume() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      axios
-        .get('http://localhost:8080/current-username', { 
-          withCredentials: true ,
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
+    console.log( userId, cvId, id);
+      // Charger les données de l'utilisateur
+      axios.get('http://localhost:8080/current-username', {  
+        withCredentials: true, 
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0' 
         }
       })
-        .then((response) => {
-          const userData = response.data.user;
-          const userId = userData.id || userData.user_id;
-          setUserPhoto(response.data.user.photo);
+      .then((userResponse) => {
+        const userData = userResponse.data.user;
+        setUserPhoto(userData.photo);
 
-          setUserId(userId);
-          setCurrentCVId(userId);
+        // Charger les données du CV en utilisant les paramètres d'URL
+        axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${id}`)
+        .then((cvResponse) => {
+          const cvData = cvResponse.data.cvData;
+            console.log(cvData )
+          // Mettre à jour le state cvModel avec les données du CV et de l'utilisateur
           setCvModel({
-            ...cvModel,
-            name: userData.nom,
-            prenom: userData.prenom,
-            phone: userData.Nbphone,
-            email: userData.email,
-            address: userData.pays,
-            profession:userData.profession,
-            photo:userData.photo,
+            ...cvData,
+           
           });
         })
-        .catch((error) => {
-          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        .catch((cvError) => {
+          console.error('Erreur lors du chargement du CV:', cvError);
         });
-    }
-  }, []);
+      })
+      .catch((userError) => {
+        console.error('Erreur lors de la récupération des informations utilisateur:', userError);
+      });
+    
+  }, [userId, cvId, id]); // Ajouter userId, cvId et _id à la liste des dépendances pour recharger les données lorsque les paramètres d'URL changent
 
-
-  useEffect(() => {
-    loadCVFromServer();
-  }, [userId]);
-
-  const loadCVFromServer = useCallback(async () => {
-    try {
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('ID du CV non défini');
-        return;
-      }
-
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${cvModel._id}`);
-      setCvModel(response.data.cvData);
-    } catch (error) {
-      console.error('Erreur lors du chargement du CV:', error);
-    }
-  }, [userId, getCurrentCVId]); 
 
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
@@ -140,13 +115,15 @@ function CvOuResume() {
       const response = await fetch(url);
       const blob = await response.blob();
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      console.log(userId, cvId, id)
       const formData = new FormData();
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
-
-      const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
+      formData.append('pageURL', window.location.pathname); 
+      formData.append('cvId', cvId); 
+      formData.append('id', id); 
+      const uploadResponse = await fetch(`http://localhost:8080/api/save-image/${userId}/${cvId}/${id}`, {
         method: 'POST',
         body: formData
       });

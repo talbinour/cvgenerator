@@ -3,20 +3,16 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import styles from './edit.module.css';
 import axios from 'axios'; 
-import CvOrResume from './model7';
 import {  useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom'; // Importer useParams depuis react-router-dom
 
 const ParentComponent = () => {
+  const { userId, cvId, id } = useParams(); // Récupérer les paramètres userId, cvId et _id de l'URL
   const navigate = useNavigate();
-  const [currentCVId, setCurrentCVId] = useState(null);
-  //const [currentCVDate] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
-  //const [date] = useState(null);
-
-  const getCurrentCVId = () => {
-    return currentCVId;
-  };
  
+
+  
  
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
@@ -62,62 +58,61 @@ const ParentComponent = () => {
     interests: ['Trading', 'Developing', 'Gaming', 'Business'],
     photo: null
   });
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    const token = localStorage.getItem('token');
 
-    if (token) {
-      axios
-          .get('http://localhost:8080/current-username', { withCredentials: true })
-          .then((response) => {
-              const userData = response.data.user;
-              const userId = userData.id || userData.user_id;
-              
-              setUserPhoto(response.data.user.photo);
-              setUserId(userId);
-              setCurrentCVId(userId);
-              
-              setCvModel({
-                ...cvModel,
-                name: userData.nom+' '+userData.prenom,
-                phone: userData.Nbphone,
-                email: userData.email,
-                address: userData.pays,
-                profession:userData.profession,
-                photo:userData.photo,
-            
-              });
-          })
-          .catch((error) => {
-              console.error('Erreur lors de la récupération des informations utilisateur:', error);
-          });
-    }
-  }, []);
  
+  useEffect(() => {
+    
+      // Charger les données de l'utilisateur
+      axios.get('http://localhost:8080/current-username', {  
+        withCredentials: true, 
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0' 
+        }
+      }) 
+      .then((userResponse) => {
+        const userData = userResponse.data.user;
+        setUserPhoto(userData.photo);
+
+        // Charger les données du CV en utilisant les paramètres d'URL
+        axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${id}`)
+        .then((cvResponse) => {
+          const cvData = cvResponse.data.cvData;
+            console.log(cvData )
+          // Mettre à jour le state cvModel avec les données du CV et de l'utilisateur
+          setCvModel({
+            ...cvData,
+          });
+        })
+        .catch((cvError) => {
+          console.error('Erreur lors du chargement du CV:', cvError);
+        });
+      })
+      .catch((userError) => {
+        console.error('Erreur lors de la récupération des informations utilisateur:', userError);
+      });
+    
+  }, [userId, cvId, id]); // Ajouter userId, cvId et _id à la liste des dépendances pour recharger les données lorsque les paramètres d'URL changent
 
 
-  const saveCVToServer = async () => {
-    try {
-      const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
-      const isEmptyField = requiredFields.some(field => !cvModel[field]);
-      if (isEmptyField) {
-        alert('Veuillez remplir tous les champs obligatoires.');
-        return;
-      }
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('CV ID is undefined');
-        return;
-      }
-      const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
-      console.log('CV saved successfully:', response.data);
-      const id = response.data.cvData._id;
-      navigate(`/model7-user/${userId}/${cvId}/${id}`);
-    } catch (error) {
-      console.error('Error saving CV:', error);
+const saveCVToServer = async () => {
+  try {
+   
+    const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
+    const isEmptyField = requiredFields.some(field => !cvModel[field]);
+    if (isEmptyField) {
+      alert('Veuillez remplir tous les champs obligatoires.');
+      return;
     }
     
-  };
+    const response = await axios.put(`http://localhost:8080/cv/${userId}/${cvId}/${id}`, cvModel);
+    console.log('CV saved successfully:', response.data);
+    navigate(`/model7-user/${userId}/${cvId}/${id}`);
+  } catch (error) {
+    console.error('Error saving CV:', error);
+  }
+};
 
  const handleChange = (e, field) => {
     const { value } = e.target;
@@ -169,9 +164,6 @@ const ParentComponent = () => {
     setCvModel({ ...cvModel, education: newEducation });
   };
 
-  if (!cvModel) {
-    return <CvOrResume />;
-  }
  const addEducation = () => {
   const newEducation = { startDate: '', endDate: '', degree: '', institution: '' };
   setCvModel(prevModel => ({
@@ -218,6 +210,10 @@ return (
                       <img src={avatar} alt="Profile" />
                     )}
 
+                 
+              
+              
+              
               </div>
              
                 <span 

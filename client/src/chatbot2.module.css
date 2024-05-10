@@ -49,6 +49,18 @@
     border-radius: 20px; /* Coins arrondis */
     cursor: pointer;
 }
+.avatar {
+  width: 30px; /* Ajustez la taille de l'avatar selon vos préférences */
+  height: 30px; /* Ajustez la taille de l'avatar selon vos préférences */
+  border-radius: 50%; /* Rend l'image circulaire */
+  object-fit: cover; /* Évite que l'image ne soit déformée */
+}
+.messageTimestamp {
+  font-size: 12px; /* Taille de la police */
+  color: #666; /* Couleur du texte */
+  margin-top: 5px; /* Espacement par rapport au message */
+}
+
 
 /* Send button hover */
 .sendButton:hover {

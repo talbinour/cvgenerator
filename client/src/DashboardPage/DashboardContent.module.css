@@ -86,7 +86,7 @@
 .button-container {
   display: flex;
   justify-content: flex-end;
-  padding: 0px;
+  padding: 0p
 }
 
 .full-cv-image {
@@ -98,7 +98,7 @@
 }
 
 .download-button,
-.delete-button {
+.delete-button ,.edit-button{
   margin-top: 10px;
   color: #fff;
   border-radius: 5px;
@@ -108,13 +108,17 @@
 }
 
 .download-button:hover,
-.delete-button:hover {
+.delete-button:hover ,.edit-button:hover{
   opacity: 0.8;
 }
 
 .delete-button {
   background-color: #980110;
   margin-left: 20px;
+}
+.edit-button {
+  background-color: #757575;
+  margin-right: 20px;
 }
 
 .download-button {

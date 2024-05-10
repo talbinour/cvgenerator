@@ -13,6 +13,12 @@ from nltk.stem import WordNetLemmatizer
 from datetime import datetime
 from chatterbot.conversation import Statement
 from functools import lru_cache
+from pymongo import MongoClient
+
+# Initialisation de la connexion MongoDB et de la collection de messages
+client = MongoClient('mongodb://localhost:27017/')
+db = client['chatbot_database']
+messages_collection = db['messages']
 app = Flask(__name__)
 CORS(app)
 
@@ -24,29 +30,8 @@ nltk.download("wordnet")
 stop_words = set(stopwords.words("french"))
 lemmatizer = WordNetLemmatizer()
 
-@lru_cache(maxsize=128)
-def get_bot_response(user_input):
-    # Créer un objet Statement à partir de l'entrée utilisateur
-    statement = Statement(user_input)
 
-    # Obtenir la réponse du bot
-    bot_response = bot.get_response(statement)
-    return str(bot_response)
-# Helper function for preprocessing user input
-def preprocess(text):
-    # Tokenization using NLTK
-    tokens = word_tokenize(text)
-    
-    # Lemmatization using SpaCy
-    lemmatized_tokens = [token.lemma_ for token in nlp(" ".join(tokens))]
-    
-    # Remove stop words using NLTK
-    filtered_tokens = [token for token in lemmatized_tokens if token.lower() not in stop_words]
-    
-    # Join tokens back into a string
-    preprocessed_text = " ".join(filtered_tokens)
-    
-    return preprocessed_text
+
 
 # Helper function for postprocessing bot response
 def postprocess(response):
@@ -221,25 +206,16 @@ question_generator.load_questions({
     # Ajoutez d'autres questions ici...
 })
 
-@lru_cache(maxsize=128)
-def get_bot_response(user_input):
-    # Obtenir la réponse du bot
-    bot_response = str(bot.get_response(user_input))
-    return bot_response
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.json
-    user_input = data.get("message")
+    user_input = request.json.get("message")
 
-    # Vérifiez si le message est présent
-    if user_input:
-        # Obtenez la réponse du bot à partir du cache s'il existe
-        bot_response = get_bot_response(user_input)
-        return jsonify({"response": bot_response})
-    else:
-        return jsonify({"response": "Aucun message n'a été reçu."})
+    # Obtenir la réponse du bot
+    bot_response = str(bot.get_response(user_input))
+    
+    return jsonify({"response": bot_response})
+
 
 @app.route("/profile", methods=["POST"])
 def profile():
@@ -256,17 +232,19 @@ def profile():
 def save_message():
     data = request.json
     message = data.get("message")
+    user_id = data.get("user_id")  # Assurez-vous que l'identifiant de l'utilisateur est envoyé depuis le front-end
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrer le message et le timestamp dans une base de données ou un fichier
-    # Par exemple, vous pouvez les enregistrer dans un fichier JSON ou une base de données MongoDB
+    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur
+    messages_collection.insert_one({"user_id": user_id, "message": message, "timestamp": timestamp})
     return jsonify({"message": "Message enregistré avec succès."})
+
 
 
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state")
-    user_response = data.get("message")
+    conversation_state = data.get("conversation_state") # type: ignore
+    user_response = data.get("message") # type: ignore
     
     # Vérifier si conversation_state est None, sinon initialiser à un état de conversation par défaut
     if conversation_state is None:
@@ -289,15 +267,7 @@ def generate_next_question_route():
                 if next_question_key in question_generator.questions:
                     next_question = question_generator.questions.get(next_question_key)
                     conversation_state["state"] = next_question_key
-
-                    # Afficher le message "Est-ce qu'il y a quelque chose à ajouter ?" pour les questions spécifiques
-                    if next_question_key in ['question10', 'question12', 'question19', 'question21', 'question21']:
-                        response_message = "Est-ce qu'il y a quelque chose à ajouter ?"
-                        response_message =handle_previous_question()
-                    else:
-                        response_message = next_question
-
-                    return jsonify({"response": response_message, "next_question_key": next_question_key, "conversation_state": conversation_state})
+                    return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
                 else:
                     # Si toutes les questions ont été posées, la conversation est terminée
                     return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": None})
@@ -311,42 +281,6 @@ def generate_next_question_route():
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
-
-
-# Gestion de la vérification de la réponse "oui" à la question 10
-@app.route("/verify-add-response", methods=["POST"])
-def verify_add_response():
-    data = request.json
-    user_response = data.get("response")
-    conversation_state = data.get("conversation_state") # type: ignore
-    previous_question_key = None
-    
-    # Vérifiez si la réponse est "oui" ou "non"
-    if user_response.strip().lower() == "oui":
-       # Vérifier si l'état de la conversation est présent
-        if conversation_state:
-            current_question_key = conversation_state.get("state")
-            if current_question_key:
-                # Récupérer la clé de la question précédente
-                question_number = int(current_question_key.replace("question", ""))
-                previous_question_number = question_number - 1
-                if previous_question_number > 0:
-                    previous_question_key = f"question{previous_question_number}"
-        if previous_question_key:
-            previous_question = question_generator.questions.get(previous_question_key)
-            updated_state = {"state": previous_question_key}
-            return jsonify({"response": previous_question, "conversation_state": updated_state})
-        else:
-            return jsonify({"response": "Aucune question précédente trouvée.", "conversation_state": conversation_state})
-
-
-    else:
-        # Passer à la question suivante
-        return jsonify({"next_question_key": "question11", "conversation_state": {"state": "question11"}})
-
-
-
-
 
 @app.route("/previous-question", methods=["POST"])
 def handle_previous_question():

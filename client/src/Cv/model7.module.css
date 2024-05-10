@@ -6,13 +6,18 @@
     font-family: 'Poppins', sans-serif;
 
 }
-
+h1, h2, h3, h4, h5, h6 {
+    font-size: 99%; /* Diminue la taille des titres */
+  }
+* {
+    font-size: 99%; /* Diminue la taille de la police */
+  }
 .print-area
 {
     background: rgb(128, 138, 226);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: self-start;
     min-height:100vh;
 }
 .container
@@ -20,19 +25,22 @@
     position: relative;
     width: 100%;
     max-width: 1000px;
-    min-height: 1000px;
+    min-height: 1350px;
     background: #fff;
     margin:50px;
     display: grid;
     grid-template-columns: 1fr 2fr ;
-    box-shadow: 0 35px 55px rgba(211, 68, 68, 0.1);
+    box-shadow: 0 35px 55px rgba(76, 72, 72, 0.1);
     margin-right:300px;
 }
 .container .left_Side
 {
     position: relative;
     background: #054792;
-    padding: 40px;
+    min-height: 1350px;
+    padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
 }
 .profileText
 {
