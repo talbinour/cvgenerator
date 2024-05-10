@@ -17,7 +17,7 @@
 
 /* User message */
 .me {
-    background-color: #007bff; 
+    background-color: #1d3063; 
     color: #fff; 
     align-self: flex-end;
 }
@@ -57,8 +57,9 @@
 }
 .messageTimestamp {
   font-size: 12px; /* Taille de la police */
-  color: #666; /* Couleur du texte */
-  margin-top: 5px; /* Espacement par rapport au message */
+  color: #fff; /* Couleur du texte */
+  margin-top: 5px;
+   /* Espacement par rapport au message */
 }
 
 

@@ -201,8 +201,8 @@
   z-index: 1000;
   cursor: pointer;
   transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease; /* Ajouter une transition pour un mouvement fluide */
-  width: 10%; /* Ajuster la largeur */
-  height: 20%; /* Ajuster la hauteur */
+  width: 5%; /* Ajuster la largeur */
+  height: 10%; /* Ajuster la hauteur */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -214,15 +214,15 @@
 /* Styles pour le conteneur du chatbot */
 .chatContainer {
   position: fixed;
-  bottom: 200px;
+  bottom: 150px;
   overflow-y:auto ;
   right: 50px;
   z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
   background-color: #ffffff; /* Couleur de fond */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
   border-radius: 10px; /* Coins arrondis */
-  max-height: 80%; /* Hauteur maximale du conteneur */
-  width:35%; /* Largeur du conteneur */
+  max-height: 70%; /* Hauteur maximale du conteneur */
+  width:25%; /* Largeur du conteneur */
   height: 60%;
   transition: transform 0.3s ease, opacity 0.3s ease; /* Ajoute une transition fluide */
 }

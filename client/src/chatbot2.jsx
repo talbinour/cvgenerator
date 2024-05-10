@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot2.module.css'; // Import CSS module
 import axios from 'axios';
-import logoImage from './assets/logo1.png';
+import logoImage from './assets/chatbot.png';
 import defaultAvatar from './assets/user.png';
 
 const Chat = () => {
@@ -98,7 +98,7 @@ const Chat = () => {
                         {messages.map((message, index) => (
                             <div key={index} className={`${styles.message} ${message.user === 'me' ? styles.me : styles.bot}`}>
                                 {message.user === 'me' && <img src={userPhoto ? `http://localhost:8080/${userPhoto}` : defaultAvatar} alt="Avatar" className="avatar"  />}
-                                {message.user === 'Cevor' && <img src={logoImage} alt="Logo" className='logo-png' style={{ width: '5%', height: '50px' }} />}
+                                {message.user === 'Cevor' && <img src={logoImage} alt="Logo" className='logo-png' style={{ width: '50px', height: '50px' }} />}
                                 <div className={styles.messageText}>{message.text}</div>
                                 <div className={styles.messageTimestamp}>{message.timestamp.toLocaleString()}</div> {/* Ajout du timestamp */}
                             </div>

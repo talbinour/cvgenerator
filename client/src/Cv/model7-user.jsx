@@ -4,8 +4,9 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
-import html2pdf from 'html2pdf.js';
 import { useParams } from 'react-router-dom'; // Importer useParams depuis react-router-dom
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 function CvOuResume() {
   const { userId, cvId, id } = useParams(); // Récupérer les paramètres userId, cvId et _id de l'URL
@@ -82,22 +83,28 @@ function CvOuResume() {
 
   const generatePDF = () => {
     const element = document.getElementById('cv-content');
-
     if (!element) {
       console.error('Élément avec l\'ID "cv-content" introuvable.');
       return;
     }
 
-    const opt = {
-        margin: -0.5,
-        filename: 'mon_cv.pdf',
-        image: { type: 'jpeg', quality: 1 }, // Amélioration de la qualité de l'image
-        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true, width: element.clientWidth, height: element.clientHeight },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } // S'assurer que le format est A4
-    };
-
-    html2pdf().from(element).set(opt).save();
-    handleDownload();
+    html2canvas(element, {
+      scale: 2, // Augmentation de la résolution
+      useCORS: true, // Permet de charger des images de sources externes
+      onclone: (document) => {
+        document.getElementById('cv-content').style.visibility = 'visible';
+      }
+    }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: [canvas.width, canvas.height]
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('downloaded-cv.pdf');
+      handleDownload();
+    });
   };
 
   const handleDownload = async () => {
