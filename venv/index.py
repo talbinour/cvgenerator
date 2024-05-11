@@ -76,7 +76,7 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
 
 class QuestionGenerator:
     def __init__(self):
@@ -231,13 +231,13 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message = data.get("message") # type: ignore
-    user_id = data.get("user_id")  # type: ignore # Assurez-vous que l'identifiant de l'utilisateur est envoyé depuis le front-end
+    message = data.get("message")
+    user_id = data.get("user_id")
+    conversation_id = data.get("conversation_id")  # Ajouter l'identifiant de conversation
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur
-    messages_collection.insert_one({"user_id": user_id, "message": message, "timestamp": timestamp})
+    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur et de la conversation
+    messages_collection.insert_one({"user_id": user_id, "conversation_id": conversation_id, "message": message, "timestamp": timestamp})
     return jsonify({"message": "Message enregistré avec succès."})
-
 
 
 @app.route("/new-question", methods=["POST"])
@@ -281,6 +281,10 @@ def generate_next_question_route():
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+
+
+
 
 @app.route("/previous-question", methods=["POST"])
 def handle_previous_question():
