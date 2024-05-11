@@ -209,7 +209,7 @@ question_generator.load_questions({
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_input = request.json.get("message")
+    user_input = request.json.get("message") # type: ignore
 
     # Obtenir la réponse du bot
     bot_response = str(bot.get_response(user_input))
@@ -224,7 +224,7 @@ def profile():
     # Enregistrez les données du profil utilisateur dans le CV
     # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
     # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(data)
+    # user_profile = db.profiles.insert_one(édata)
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
 
@@ -232,12 +232,12 @@ def profile():
 def save_message():
     data = request.json
     message = data.get("message")
-    user_id = data.get("user_id")  # Assurez-vous que l'identifiant de l'utilisateur est envoyé depuis le front-end
+    user_id = data.get("user_id")
+    conversation_id = data.get("conversation_id")  # Ajouter l'identifiant de conversation
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur
-    messages_collection.insert_one({"user_id": user_id, "message": message, "timestamp": timestamp})
+    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur et de la conversation
+    messages_collection.insert_one({"user_id": user_id, "conversation_id": conversation_id, "message": message, "timestamp": timestamp})
     return jsonify({"message": "Message enregistré avec succès."})
-
 
 
 @app.route("/new-question", methods=["POST"])
@@ -281,6 +281,10 @@ def generate_next_question_route():
         next_question = question_generator.questions.get(next_question_key)
         conversation_state["state"] = next_question_key
         return jsonify({"response": next_question, "next_question_key": next_question_key, "conversation_state": conversation_state})
+
+
+
+
 
 @app.route("/previous-question", methods=["POST"])
 def handle_previous_question():

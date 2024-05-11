@@ -258,6 +258,7 @@ background: rgb(31, 8, 148);
 .editButton {
     position: absolute;
     top: 20px;
+    box-shadow: 0 35px 55px rgba(211, 68, 68, 0.1);
     left:107%;
     right: 10px;
     opacity: 0.7;

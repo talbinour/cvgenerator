@@ -81,7 +81,13 @@ function CvOuResume() {
   }, [userId, cvId, id]); // Ajouter userId, cvId et _id à la liste des dépendances pour recharger les données lorsque les paramètres d'URL changent
 
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
+
+    const imageDownloadResult = await handleDownload();
+    if (!imageDownloadResult.success) {
+      window.alert("Le téléchargement de  cv a échoué, veuillez réessayer.");
+      return;
+    }
     const element = document.getElementById('cv-content');
     if (!element) {
       console.error('Élément avec l\'ID "cv-content" introuvable.');
@@ -112,8 +118,7 @@ function CvOuResume() {
       const element = document.getElementById('cv-content');
       if (!element) {
         console.error('Élément avec l\'ID "cv-content" introuvable.');
-        return;
-      }
+        return { success: false };      }
       
 
       const url = await htmlToImage.toPng(element, { quality: 0.8, width: 1100});
@@ -134,10 +139,11 @@ function CvOuResume() {
         method: 'POST',
         body: formData
       });
-
-      console.log('Réponse de téléchargement de l\'image:', uploadResponse);
+      if (!uploadResponse.ok) throw new Error('Failed to upload image');
+      return { success: true };
     } catch (error) {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
+      return { success: false };
     }
   };
 

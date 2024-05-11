@@ -5,12 +5,15 @@ import styles from './chatbot2.module.css'; // Import CSS module
 import axios from 'axios';
 import logoImage from './assets/chatbot.png';
 import defaultAvatar from './assets/user.png';
+import { v4 as uuidv4 } from 'uuid';
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [userPhoto, setUserPhoto] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [conversationId, setConversationId] = useState("");
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -19,6 +22,7 @@ const Chat = () => {
                 .then(response => {
                     setUserPhoto(response.data.user.photo);
                     setUserId(response.data.user.id || response.data.user.user_id);
+                    setConversationId(uuidv4());
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
@@ -58,16 +62,16 @@ const Chat = () => {
     const handleSendMessage = async () => {
         const timestamp = new Date();
         const response = await sendMessage(input);
-        const userMessage = { text: input, user: "me", timestamp, user_id: userId };
-        const botMessage = { text: response, user: "Cevor", timestamp, user_id: userId };
-
+        const userMessage = { text: input, user: "me", timestamp, user_id: userId, conversation_id: conversationId }; // Inclure conversationId
+        const botMessage = { text: response, user: "Cevor", timestamp, user_id: userId, conversation_id: conversationId }; // Inclure conversationId
+    
         saveMessageToList(userMessage);
         saveMessageToList(botMessage);
-
-        saveMessageToBackend({ message: input, response, user_id: userId });
-
+        saveMessageToBackend({ message: input, response, user_id: userId, conversation_id: conversationId }); // Envoyer conversationId
+    
         setInput("");
     };
+    
 
     const handleKeyPress = (event) => {
         if (event.key === "Enter") {
@@ -75,10 +79,7 @@ const Chat = () => {
         }
     };
 
-    const handleDisconnect = () => {
-        messages.forEach(message => saveMessageToBackend(message));
-        setMessages([]);
-    };
+   
 
     return (
         <div className={styles.pageWrapper}>
@@ -107,7 +108,6 @@ const Chat = () => {
                     <button className={styles.sendButton} onClick={handleSendMessage}>
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
-                    <button onClick={handleDisconnect}>Disconnect</button>
                 </div>
             </div>
         </div>
