@@ -1,0 +1,52 @@
+.container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .form {
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .resultsTitle {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .jobContainer {
+    border: 1px solid #ccc;
+    padding: 20px;
+    cursor: pointer;
+  }
+  
+  .jobHeader {
+    margin-bottom: 10px;
+  }
+  
+  .jobDescription {
+    display: none;
+  }
+  
+  .jobContainer:hover .jobDescription {
+    display: block;
+  }
+  
