@@ -13,6 +13,12 @@ from nltk.stem import WordNetLemmatizer
 from datetime import datetime
 from chatterbot.conversation import Statement
 from functools import lru_cache
+from pymongo import MongoClient
+
+# Initialisation de la connexion MongoDB et de la collection de messages
+client = MongoClient('mongodb://localhost:27017/')
+db = client['chatbot_database']
+messages_collection = db['messages']
 app = Flask(__name__)
 CORS(app)
 
@@ -200,25 +206,16 @@ question_generator.load_questions({
     # Ajoutez d'autres questions ici...
 })
 
-@lru_cache(maxsize=128)
-def get_bot_response(user_input):
-    # Obtenir la réponse du bot
-    bot_response = str(bot.get_response(user_input))
-    return bot_response
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.json
-    user_input = data.get("message") # type: ignore
+    user_input = request.json.get("message") # type: ignore
 
-    # Vérifiez si le message est présent
-    if user_input:
-        # Obtenez la réponse du bot à partir du cache s'il existe
-        bot_response = get_bot_response(user_input)
-        return jsonify({"response": bot_response})
-    else:
-        return jsonify({"response": "Aucun message n'a été reçu."})
+    # Obtenir la réponse du bot
+    bot_response = str(bot.get_response(user_input))
+    
+    return jsonify({"response": bot_response})
+
 
 @app.route("/profile", methods=["POST"])
 def profile():
@@ -227,7 +224,7 @@ def profile():
     # Enregistrez les données du profil utilisateur dans le CV
     # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
     # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(data)
+    # user_profile = db.profiles.insert_one(édata)
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
 
@@ -235,10 +232,12 @@ def profile():
 def save_message():
     data = request.json
     message = data.get("message") # type: ignore
+    user_id = data.get("user_id")  # type: ignore # Assurez-vous que l'identifiant de l'utilisateur est envoyé depuis le front-end
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrer le message et le timestamp dans une base de données ou un fichier
-    # Par exemple, vous pouvez les enregistrer dans un fichier JSON ou une base de données MongoDB
+    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur
+    messages_collection.insert_one({"user_id": user_id, "message": message, "timestamp": timestamp})
     return jsonify({"message": "Message enregistré avec succès."})
+
 
 
 @app.route("/new-question", methods=["POST"])

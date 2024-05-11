@@ -354,7 +354,8 @@ const CVModel7 = () => {
       <div className={styles.leftPanel}>
    <Chat updateTitleContent={updateTitleContent} updateUserResponse={(formationResponse, nextQuestionKey) => updateUserResponse(formationResponse, nextQuestionKey)} />
       </div>
-      <div className={styles.rightPanel}>  
+      <div className={styles.rightPanel}> 
+       
         <div className={styles.container}>
           <div className={styles.left_Side}>
             <div className={styles.profileText}>
