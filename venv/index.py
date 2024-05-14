@@ -14,11 +14,14 @@ from datetime import datetime
 from chatterbot.conversation import Statement
 from functools import lru_cache
 from pymongo import MongoClient
+from bson import ObjectId
+from pymongo import MongoClient
 
 # Initialisation de la connexion MongoDB et de la collection de messages
 client = MongoClient('mongodb://localhost:27017/')
 db = client['chatbot_database']
 messages_collection = db['messages']
+
 app = Flask(__name__)
 CORS(app)
 
@@ -76,7 +79,7 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
 
 class QuestionGenerator:
     def __init__(self):
@@ -173,8 +176,6 @@ class QuestionGenerator:
             reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
             return formation_questions + [reminder_message]
 
-
-# Charger les questions pour question_generator
 # Charger les questions pour question_generator
 question_generator = QuestionGenerator()
 question_generator.load_questions({
@@ -231,13 +232,42 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message = data.get("message")
-    user_id = data.get("user_id")
-    conversation_id = data.get("conversation_id")  # Ajouter l'identifiant de conversation
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur et de la conversation
-    messages_collection.insert_one({"user_id": user_id, "conversation_id": conversation_id, "message": message, "timestamp": timestamp})
+    message_data = data.get("message")  # type: ignore # Get the message data
+    user_id = data.get("user_id") # type: ignore 
+    conversation_id = data.get("conversation_id") # type: ignore 
+
+    # Recherchez la discussion de l'utilisateur dans la base de données
+    conversation = messages_collection.find_one({"user_id": user_id, "conversation_id": conversation_id})
+
+    if conversation:
+        # Si la discussion existe, ajoutez simplement le nouveau message à la liste des messages
+        messages_collection.update_one(
+            {"user_id": user_id, "conversation_id": conversation_id},
+            {"$push": {"messages": {"message": message_data, "timestamp": datetime.now()}}}
+        )
+    else:
+        # Si la discussion n'existe pas, créez une nouvelle entrée dans la collection
+        messages_collection.insert_one({
+            "user_id": user_id,
+            "conversation_id": conversation_id,
+            "messages": [{"message": message_data, "timestamp": datetime.now()}]
+        })
+
     return jsonify({"message": "Message enregistré avec succès."})
+
+@app.route("/conversations/<user_id>", methods=["GET"])
+def get_conversations(user_id):
+    # Récupérer toutes les conversations de l'utilisateur avec l'ID spécifié
+    conversations = messages_collection.find({"user_id": user_id})
+
+    # Créer une liste de conversations avec les titres comme premiers messages et les dates
+    conversation_list = []
+    for conv in conversations:
+        title = conv["messages"][0]["message"]  # Le premier message comme titre
+        date = conv["messages"][0]["timestamp"]  # La date du premier message
+        conversation_list.append({"title": title, "date": date, "conversation_id": conv["conversation_id"]})
+
+    return jsonify(conversation_list)
 
 
 @app.route("/new-question", methods=["POST"])

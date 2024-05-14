@@ -97,7 +97,7 @@ function App() {
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
           <Route path='/chatbot' element={<Chatbot />} />
-          <Route path='/chatbot2' element={<Chatbot2 />} />
+          <Route path='/chatbot2/:conversation_id' element={<Chatbot2 />} />
           <Route path='/CVModel6' element={<CVModel6 />} />
           <Route path='/CVModel' element={<CVModel />} />
           <Route path='/CVModel5' element={<CVModel5 />} />
