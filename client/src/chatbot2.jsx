@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,43 +6,70 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot2.module.css';
 import logoImage from './assets/chatbot.png';
 import defaultAvatar from './assets/user.png';
-//import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [userPhoto, setUserPhoto] = useState(null);
     const [userId, setUserId] = useState(null);
-    const [setConversationId] = useState("");
-    
-    const { conversationId } = useParams();
+    const [conversationId, setConversationId] = useState("");
+    const messageQueueRef = useRef([]); // Store messages to send when conversationId is ready
+
+ 
+    const { conversationId: paramConversationId } = useParams();
 
     useEffect(() => {
+        console.log("Paramètre de l'URL conversationId:", paramConversationId); // Log de l'ID de conversation
+
         const token = localStorage.getItem('token');
         if (token) {
             axios.get('http://localhost:8080/current-username', { withCredentials: true })
                 .then(response => {
                     setUserPhoto(response.data.user.photo);
                     setUserId(response.data.user.id || response.data.user.user_id);
-                    setConversationId(conversationId);
-                    // Une fois que nous avons l'identifiant de la conversation, nous devons charger les messages associés
-                    loadMessages(conversationId);
+                    if (paramConversationId) {
+                        console.log("Utilisation de paramConversationId pour définir conversationId:", paramConversationId); // Log de l'ID de conversation à utiliser
+                        setConversationId(paramConversationId);
+                        loadMessages(paramConversationId);
+                    } else {
+                        const newConversationId = uuidv4();
+                        console.log("Génération d'un nouvel ID de conversation:", newConversationId); // Log du nouvel ID de conversation généré
+                        setConversationId(newConversationId);
+                        processMessageQueue(newConversationId);
+                    }
                 })
                 .catch(error => {
                     console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
                 });
         }
+    }, [paramConversationId]);
+
+    useEffect(() => {
+        if (conversationId) {
+            console.log("Chargement des messages pour conversationId:", conversationId); // Log de l'ID de conversation pour le chargement des messages
+            loadMessages(conversationId);
+        }
     }, [conversationId]);
 
     const loadMessages = (conversationId) => {
-        // Appel à l'API pour récupérer les messages de la conversation
+        console.log("Requête GET pour récupérer les messages de la conversation:", conversationId); // Log de la requête GET
         axios.get(`http://localhost:5000/messages/${conversationId}`)
             .then(response => {
-                setMessages(response.data);
+                console.log("Réponse de la requête GET:", response.data); // Log de la réponse de la requête GET
+                setMessages(response.data.messages || []);
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des messages de la conversation :', error);
             });
+    };
+
+    const processMessageQueue = (conversationId) => {
+        const queue = messageQueueRef.current;
+        queue.forEach(({ message, response }) => {
+            saveMessageToBackend(message, response, conversationId);
+        });
+        messageQueueRef.current = [];
     };
 
     const sendMessage = async (message) => {
@@ -57,7 +84,7 @@ const Chat = () => {
         return data.response;
     };
 
-    const saveMessageToBackend = async (message, response) => {
+    const saveMessageToBackend = async (message, response, conversationId) => {
         try {
             const saveResponse = await axios.post("http://localhost:5000/save-message", {
                 message, response, user_id: userId, conversation_id: conversationId
@@ -84,7 +111,12 @@ const Chat = () => {
 
         saveMessageToList(userMessage);
         saveMessageToList(botMessage);
-        saveMessageToBackend(input, response);
+
+        if (conversationId) {
+            saveMessageToBackend(input, response, conversationId);
+        } else {
+            messageQueueRef.current.push({ input, response });
+        }
 
         setInput("");
     };

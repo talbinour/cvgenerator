@@ -269,6 +269,19 @@ def get_conversations(user_id):
 
     return jsonify(conversation_list)
 
+@app.route("/messages/<conversation_id>", methods=["GET"])
+def get_messages_by_conversation_id(conversation_id):
+    try:
+        # Récupérer les messages de la conversation spécifiée
+        conversation = messages_collection.find_one({"conversation_id": conversation_id})
+        if conversation:
+            messages = conversation.get("messages", [])
+            return jsonify({"messages": messages}), 200
+        else:
+            return jsonify({"message": "Conversation not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
