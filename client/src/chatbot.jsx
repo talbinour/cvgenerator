@@ -21,16 +21,14 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
     }
 
     const response = await axios.post(
-        "http://localhost:5000/new-question",
-        {
-            cv_title: "Titre du CV",
-            cv_content: input,
-            conversation_state: conversationState,
-            previous_response: previousResponse, // Envoyez la réponse précédente
-        },
-        { headers: { "Content-Type": "application/json" } }
-    );
-
+      "http://localhost:5000/new-question",
+      {
+          message: input, // Assurez-vous que input contient la réponse de l'utilisateur
+          conversation_state: conversationState,
+          previous_response: previousResponse,
+      },
+      { headers: { "Content-Type": "application/json" } }
+  );
     const botResponse = response.data.response;
     const nextQuestionKey = response.data.next_question_key;
 
@@ -56,30 +54,21 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
 };
 
 
-  useEffect(() => {
-    const sendHelloMessage = async () => {
-      const response = await axios.post(
-        "http://localhost:5000/new-question",
-        {
-          cv_title: "Titre du CV",
-          cv_content: "",
-          conversation_state: conversationState,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+useEffect(() => {
+  const sendInitialMessage = async () => {
+    const response = await axios.post(
+      "http://localhost:5000/new-question",
+      { conversation_state: null },
+      { headers: { "Content-Type": "application/json" } }
+    );
 
-      const botResponse = response.data.response;
-      const nextQuestionKey = response.data.next_question_key;
+    const botResponse = response.data.response;
+    setMessages([...messages, { text: botResponse, user: "bot" }]);
+    setConversationState(response.data.conversation_state);
+  };
 
-      if (!conversationBlocked) {
-        setMessages([...messages, { text: botResponse, user: "bot" }]);
-      }
-
-      setConversationState(nextQuestionKey === "start" ? null : { state: nextQuestionKey });
-    };
-
-    sendHelloMessage();
-  }, []);
+  sendInitialMessage();
+}, []);
 
   const handleSendMessage = async () => {
     await sendMessage();

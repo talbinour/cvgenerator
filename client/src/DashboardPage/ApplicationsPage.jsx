@@ -4,7 +4,7 @@ const Applications = () => {
   return (
     <>
     <section className='hero'>
-      <h1>ApplicationsPage !</h1>
+      <h1>Historique des conversations !</h1>
     </section>
   </>
   );
