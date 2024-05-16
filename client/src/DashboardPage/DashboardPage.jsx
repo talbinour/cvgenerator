@@ -65,7 +65,7 @@ const DashboardPage = () => {
             <i className="fas fa-briefcase"></i> Offres d&apos;emplois
           </li>
           <li onClick={() => handleItemClick("applications")} className={selectedItem === 'applications' ? styles['selected'] : ''}>
-            <i className="fas fa-file"></i> Candidatures
+            <i className="fas fa-file"></i> Historique des conversations
           </li>
           <li onClick={() => handleItemClick("test")} className={selectedItem === 'test' ? styles['selected'] : ''}>
             <i className="fas fa-file"></i> Test
