@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
+//import { useNavigate } from 'react-router-dom';
+
 
 const Applications = () => {
   const [conversations, setConversations] = useState([]);
   const [userId, setUserId] = useState('');
-
+// let navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
