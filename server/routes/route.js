@@ -14,7 +14,7 @@ const editRouter = require('../editcv');
 const bcrypt = require('bcrypt'); // Import bcrypt
 const bodyParser = require('body-parser');
 const multer = require('multer');
-
+const CookieAcceptance = require('../CookieAcceptance');
 // Configure storage for multer
 
 // Configure bodyParser middleware to handle URL-encoded data with an increased parameter limit
@@ -96,5 +96,26 @@ async function verifyTokenByEmail(email, token) {
         return false; // Assume token is invalid in case of an error
     }
 }
+router.post('/accept-cookies', async (req, res) => {
+    const { userId } = req.body;
+    try {
+      // Vérifiez si l'acceptation des cookies pour cet utilisateur existe déjà
+      let acceptance = await CookieAcceptance.findOne({ userId });
+  
+      if (!acceptance) {
+        // Si aucune acceptation n'existe, créez-en une nouvelle
+        acceptance = new CookieAcceptance({ userId });
+      }
+  
+      // Mettez à jour le statut d'acceptation des cookies
+      acceptance.accepted = true;
+      await acceptance.save();
+  
+      res.status(200).json({ message: 'Acceptation des cookies enregistrée avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'acceptation des cookies :', error);
+      res.status(500).json({ error: 'Erreur serveur lors de la mise à jour de l\'acceptation des cookies' });
+    }
+  });
 
 module.exports = router;

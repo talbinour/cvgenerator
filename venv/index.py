@@ -15,10 +15,14 @@ from chatterbot.conversation import Statement
 from functools import lru_cache
 from pymongo import MongoClient
 import unicodedata
+from bson import ObjectId
+from pymongo import MongoClient
+
 # Initialisation de la connexion MongoDB et de la collection de messages
 client = MongoClient('mongodb://localhost:27017/')
 db = client['chatbot_database']
 messages_collection = db['messages']
+
 app = Flask(__name__)
 CORS(app)
 
@@ -173,8 +177,6 @@ class QuestionGenerator:
             reminder_message = "(Veuillez respecter l'ordre des questions lors de la réponse et ajouter une virgule entre chaque réponse.)"
             return formation_questions + [reminder_message]
 
-
-# Charger les questions pour question_generator
 # Charger les questions pour question_generator
 question_generator = QuestionGenerator()
 question_generator.load_questions({
@@ -231,13 +233,60 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message = data.get("message")
-    user_id = data.get("user_id")
-    conversation_id = data.get("conversation_id")  # Ajouter l'identifiant de conversation
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Enregistrez le message dans MongoDB avec l'identifiant de l'utilisateur et de la conversation
-    messages_collection.insert_one({"user_id": user_id, "conversation_id": conversation_id, "message": message, "timestamp": timestamp})
+    message_data = data.get("message")  # type: ignore # Get the message data
+    user_id = data.get("user_id") # type: ignore 
+    conversation_id = data.get("conversation_id") # type: ignore 
+
+    # Recherchez la discussion de l'utilisateur dans la base de données
+    conversation = messages_collection.find_one({"user_id": user_id, "conversation_id": conversation_id})
+
+    if conversation:
+        # Si la discussion existe, ajoutez simplement le nouveau message à la liste des messages
+        messages_collection.update_one(
+            {"user_id": user_id, "conversation_id": conversation_id},
+            {"$push": {"messages": {"message": message_data, "timestamp": datetime.now()}}}
+        )
+    else:
+        # Si la discussion n'existe pas, créez une nouvelle entrée dans la collection
+        messages_collection.insert_one({
+            "user_id": user_id,
+            "conversation_id": conversation_id,
+            "messages": [{"message": message_data, "timestamp": datetime.now()}]
+        })
+
     return jsonify({"message": "Message enregistré avec succès."})
+
+
+
+@app.route("/conversations/<user_id>", methods=["GET"])
+def get_conversations(user_id):
+    # Récupérer toutes les conversations de l'utilisateur avec l'ID spécifié
+    conversations = messages_collection.find({"user_id": user_id})
+
+    # Créer une liste de conversations avec les titres comme premiers messages et les dates
+    conversation_list = []
+    for conv in conversations:
+        title = conv["messages"][0]["message"]  # Le premier message comme titre
+        date = conv["messages"][0]["timestamp"]  # La date du premier message
+        conversation_list.append({"title": title, "date": date, "conversation_id": conv["conversation_id"]})
+
+    return jsonify(conversation_list)
+
+@app.route("/messages/<conversation_id>", methods=["GET"])
+def get_messages_by_conversation_id(conversation_id):
+    try:
+        # Récupérer les messages de la conversation spécifiée
+        conversation = messages_collection.find_one({"conversation_id": conversation_id})
+        if conversation:
+            messages = conversation.get("messages", [])
+            return jsonify({"messages": messages}), 200
+        else:
+            return jsonify({"message": "Conversation not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 
 def load_cv_questions(file_path):
     try:
@@ -280,47 +329,82 @@ def generate_next_question_route():
 
     if current_question_key == "waiting_for_section":
         # Récupérer les questions de la section choisie par l'utilisateur
-        section_title = user_response.strip().lower()
+        section_title = user_response.strip().capitalize()  # Assurez-vous que la capitalisation est correcte
         section_matched = None
         for section in cv_questions["sections"]:
-            if unicodedata.normalize("NFKD", section_title) == unicodedata.normalize("NFKD", section["section_title"].lower()):
+            if section_title.lower() == section["section_title"].lower():
                 section_matched = section
                 break
 
         if section_matched:
-            # Commencer à poser les questions de la section correspondante
-            section_questions = section_matched["questions"]
+            # Commencer à poser toutes les questions de la section correspondante
+            section_title = section_matched["section_title"]
+            section_questions = section_matched.get("questions", [])
+            conversation_state["section_title"] = section_title
             conversation_state["section_questions"] = section_questions
             conversation_state["current_question_index"] = 0
             conversation_state["state"] = "section"
-            next_question = section_questions[0]["example"]
-            # Increment current_question_index for the next question
-            conversation_state["current_question_index"] += 1
-
-            print("Section questions:", section_questions)
-            print("Current question index:", conversation_state["current_question_index"])
-            print("Next question:", next_question)
-
+            
+            # Enregistrez section_matched dans conversation_state pour une utilisation future
+            conversation_state["section_matched"] = section_matched
+            
+            # Vérifiez si des questions existent dans la section
+            if section_questions:
+                next_question = section_questions[0]["example"]
+                print("Section questions:", section_questions)
+                print("Current question index:", conversation_state["current_question_index"])
+                print("Next question:", next_question)
+            else:
+                next_question = f"Aucune question disponible dans la section '{section_title}'."
+            
             return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
         else:
-            next_question = "La section que vous avez choisie n'existe pas. Veuillez réessayer."
+            # Aucune section correspondante trouvée
+            return jsonify({"response": "La section que vous avez choisie n'existe pas. Veuillez réessayer.", "next_question_key": "waiting_for_section", "conversation_state": {"state": "waiting_for_section"}})
+    
+    elif current_question_key == "section":
+        # Récupérer la réponse de l'utilisateur et poser la prochaine question de la section
+        section_questions = conversation_state.get("section_questions", [])
+        current_index = conversation_state.get("current_question_index", 0)
 
-            return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
-
-    elif current_question_key == "section":  
-        section_questions = conversation_state.get("section_questions")
-        current_index = conversation_state.get("current_question_index")
-        user_answer = user_response.strip()
-
-        if section_questions is not None and current_index < len(section_questions) - 1:  
-            next_question = get_next_question(section_questions, current_index)
-            if next_question is not None:
+        if current_index < len(section_questions):
+                # Poser la prochaine question de la section
+                next_question = section_questions[current_index]["example"]
                 conversation_state["current_question_index"] += 1
-                conversation_state["state"] = "section"
                 return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
+
         else:
-            # Aucune question suivante dans la section ou toutes les questions ont été posées
-            return jsonify({"response": "Merci pour les informations. Votre CV est complet.", "next_question_key": None, "conversation_state": {"state": "end"}})
+            # Indiquer que toutes les questions de la section ont été posées
+            section_title = conversation_state.get("section_title", "Section inconnue")
+            # Réinitialiser l'index des questions de la section si nécessaire
+            conversation_state["current_question_index"] = 0
+            
+            # Passer à la section suivante si elle existe
+            section_matched = conversation_state.get("numbers_questions")
+            if section_matched is not None:
+                next_section_index = cv_questions["sections"].index(section_matched) + 1
+                if next_section_index <= len(cv_questions["sections"]):
+                    next_section = cv_questions["sections"][next_section_index]
+                    next_section_title = next_section.get("section_title", "Section inconnue")
+                    next_section_questions = next_section.get("questions", [])
+                    if next_section_questions:
+                        next_question = next_section_questions[0]["example"]
+                        conversation_state["section_title"] = next_section_title
+                        conversation_state["section_questions"] = next_section_questions
+                        conversation_state["state"] = "section"
+                        # Mise à jour de section_matched pour la prochaine section
+                        conversation_state["section_matched"] = next_section
+                        return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
+            # Si aucune section suivante n'existe, afficher un message indiquant de choisir une autre section
+            return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "next_question_key": "waiting_for_section", "conversation_state": {"state": "waiting_for_section"}})
+
+    
+    else:
+        # Gérer toute autre condition ou erreur
+        return jsonify({"response": "Une erreur s'est produite. Veuillez réessayer.", "next_question_key": "waiting_for_section", "conversation_state": {"state": "waiting_for_section"}})
+
+
+
 
 
 @app.route("/previous-question", methods=["POST"])

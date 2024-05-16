@@ -52,7 +52,7 @@ import Box from './box';
 import Sitemap from './component/sitemap'; // Assurez-vous que le chemin d'importation est correct
 import CookiePolicy from './component/CookiePolicy'; // Assurez-vous que le chemin d'importation est correct
 import EditCv from "./Cv/editCv.jsx"; 
-
+import CookieConsentBanner from './component/CookieConsentBanner';
 function App() {
   return (
     <>
@@ -63,7 +63,7 @@ function App() {
           <Route path='/about' element={<About />} />
           <Route path='/skills' element={<Skills />} />
           <Route path='/login' element={<Login />} />
-        <Route path='/' element={<Home />} />
+          <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />}  />
           <Route path='/cvselection' element={<CVSelection />}  />
           <Route path='/test' element={<TestUpdate />}  />
@@ -97,7 +97,7 @@ function App() {
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
           <Route path='/chatbot' element={<Chatbot />} />
-          <Route path='/chatbot2' element={<Chatbot2 />} />
+          <Route path='/chatbot2/:conversation_id' element={<Chatbot2 />} />
           <Route path='/CVModel6' element={<CVModel6 />} />
           <Route path='/CVModel' element={<CVModel />} />
           <Route path='/CVModel5' element={<CVModel5 />} />
@@ -114,6 +114,7 @@ function App() {
           {/* <Route path='/login' element={<Login />} exact />
               <Route path='/signup' element={<SignUp />} exact /> */}
         </Routes>
+        <CookieConsentBanner />
         <Footer /> {/* Ajoutez le composant Footer ici */}
       </Router>
     </>

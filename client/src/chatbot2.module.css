@@ -4,28 +4,60 @@
     display: flex;
     flex-direction: column-reverse; /* Afficher les messages de bas en haut */
     height: 100vh; /* Hauteur de la vue à 100% de la hauteur de l'écran */
-    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+    overflow-y:hidden; /* Activer le défilement vertical si nécessaire */
 }
 
 /* Message box */
 .message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 20px;
+    margin:5px;
     max-width: 70%;
+    display: flex;
+    flex-direction: column; /* Pour aligner la date et l'heure en dessous */
 }
 
 /* User message */
 .me {
-    background-color: #1d3063; 
-    color: #fff; 
     align-self: flex-end;
 }
 
 /* Bot message */
 .bot {
-    background-color: #ece5dd; 
     align-self: flex-start;
+}
+
+/* Texte du message */
+.messageText {
+    padding: 0px;
+    border-radius: 20px;
+    color: #fff;
+    word-wrap: break-word; /* Ajout de la propriété pour gérer les messages longs */
+
+}
+
+/* Date du message */
+.messageTimestamp {
+    font-size: 12px;
+    color: #fff;
+    margin-top: 2px;
+}
+
+/* Couleur du texte de l'utilisateur */
+.userMessage {
+    background-color: #F1B4BB; /* Bleu */
+    color: #fff; /* Blanc */
+    border-radius: 20px; /* Coins arrondis */
+    border: 1px solid #ccc;
+    margin: 3px;
+
+}
+
+/* Couleur du texte du chatbot */
+.botMessage {
+    background-color: #ece5dd; /* Gris clair */
+    color: #000; /* Noir */
+    border-radius: 20px; /* Coins arrondis */
+    border: 1px solid #ccc;
+    margin: 3px;
 }
 
 /* Input field */
@@ -43,29 +75,19 @@
     padding: 10px;
     margin-top: 10px;
     margin-left: 10px; /* Espacement à gauche du bouton envoyer */
-    background-color: #007bff; /* blue */
+    background-color:  #1d3063; /* blue */
     color: #fff;
     border: none;
     border-radius: 20px; /* Coins arrondis */
     cursor: pointer;
 }
-.avatar {
-  width: 30px; /* Ajustez la taille de l'avatar selon vos préférences */
-  height: 30px; /* Ajustez la taille de l'avatar selon vos préférences */
-  border-radius: 50%; /* Rend l'image circulaire */
-  object-fit: cover; /* Évite que l'image ne soit déformée */
-}
-.messageTimestamp {
-  font-size: 12px; /* Taille de la police */
-  color: #fff; /* Couleur du texte */
-  margin-top: 5px;
-   /* Espacement par rapport au message */
-}
 
-
-/* Send button hover */
-.sendButton:hover {
-    background-color: #0056b3; /* Darker blue */
+/* Avatar */
+.Avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 /* Chat container */
@@ -75,27 +97,27 @@
     right: 0; /* Aligner à droite */
     width: 100%; /* Prendre toute la largeur */
     max-height: 50%; /* Limiter la hauteur pour empêcher le chat de couvrir tout l'écran */
-    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+    overflow-y:hidden; /* Activer le défilement vertical si nécessaire */
 }
+
 /* Chatbot container */
 .chatContainer {
     position: fixed;
     bottom: 0px;
     right: 0;
     z-index: 1000;
-    
-  }
-  
-  /* Chat icon */
-  .chatIcon {
+}
+
+/* Chat icon */
+.chatIcon {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     cursor: pointer;
-  }
-  
-  /* Chat icon message */
-  .chatIconMessage {
+}
+
+/* Chat icon message */
+.chatIconMessage {
     position: fixed;
     bottom: 70px;
     right: 5px;
@@ -104,15 +126,14 @@
     padding: 5px 10px;
     border-radius: 10px;
     z-index: 1001;
-  }
-  
-  /* Chat icon message show animation */
-  @keyframes slideInFromRight {
+}
+
+/* Chat icon message show animation */
+@keyframes slideInFromRight {
     from {
-      right: -200px;
+        right: -200px;
     }
     to {
-      right: 5px;
+        right: 5px;
     }
-  }
-  
+}
