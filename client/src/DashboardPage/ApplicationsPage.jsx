@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Importez Link depuis react-router-dom
-//import { useNavigate } from 'react-router-dom';
-
-
+import { Link } from 'react-router-dom'; 
+import './ApplicationsPage.module.css';
 const Applications = () => {
   const [conversations, setConversations] = useState([]);
   const [userId, setUserId] = useState('');

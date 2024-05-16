@@ -1,0 +1,28 @@
+/* Style du conteneur principal */
+.container {
+    max-width: 600px; /* Largeur maximale du conteneur */
+    margin: 0 auto; /* Centrage horizontal du conteneur */
+    padding: 20px; /* Espacement intérieur du conteneur */
+  }
+  
+  /* Style des conteneurs individuels des conversations */
+  .conversation {
+    border: 1px solid #ccc; /* Bordure autour de chaque conversation */
+    border-radius: 5px; /* Bordure arrondie */
+    padding: 15px; /* Espacement intérieur */
+    margin-bottom: 15px; /* Marge en bas pour séparer les conversations */
+  }
+  
+  /* Style du lien vers la conversation */
+  .conversation a {
+    color: #333; /* Couleur du texte */
+    text-decoration: none; /* Pas de soulignement */
+    font-weight: bold; /* Texte en gras */
+  }
+  
+  /* Style de la date de la conversation */
+  .conversation p {
+    margin-top: 5px; /* Marge en haut pour la date */
+    color: #777; /* Couleur de la date */
+  }
+  
