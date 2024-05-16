@@ -229,35 +229,41 @@ def profile():
     # user_profile = db.profiles.insert_one(édata)
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
-
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message_data = data.get("message")  # type: ignore # Get the message data
-    user_id = data.get("user_id") # type: ignore 
-    conversation_id = data.get("conversation_id") # type: ignore 
+    message_data = data.get("message")  # type: ignore # Obtenez les données du message de la requête
+    user_id = data.get("user_id")  # type: ignore 
+    conversation_id = data.get("conversation_id")  # type: ignore 
 
-    # Recherchez la discussion de l'utilisateur dans la base de données
+    # Obtenez la réponse du chatbot
+    bot_response = bot.get_response(message_data)
+
+    # Recherchez la conversation de l'utilisateur dans la base de données
     conversation = messages_collection.find_one({"user_id": user_id, "conversation_id": conversation_id})
 
     if conversation:
-        # Si la discussion existe, ajoutez simplement le nouveau message à la liste des messages
+        # Si la conversation existe, ajoutez le nouveau message de l'utilisateur et la réponse du chatbot à la liste des messages
         messages_collection.update_one(
             {"user_id": user_id, "conversation_id": conversation_id},
-            {"$push": {"messages": {"message": message_data, "timestamp": datetime.now()}}}
+            {"$push": {"messages": {"user_message": message_data, "bot_response": str(bot_response), "timestamp": datetime.now()}}}
         )
     else:
-        # Si la discussion n'existe pas, créez une nouvelle entrée dans la collection
+        # Si la conversation n'existe pas, créez une nouvelle entrée dans la collection avec le message de l'utilisateur et la réponse du chatbot
         messages_collection.insert_one({
             "user_id": user_id,
             "conversation_id": conversation_id,
-            "messages": [{"message": message_data, "timestamp": datetime.now()}]
+            "messages": [{"user_message": message_data, "bot_response": str(bot_response), "timestamp": datetime.now()}]
         })
 
     return jsonify({"message": "Message enregistré avec succès."})
 
+<<<<<<< HEAD
 
 
+=======
+    
+>>>>>>> 1eb71df03971a2d2f84a028ad99c8e3a9fb0b73e
 @app.route("/conversations/<user_id>", methods=["GET"])
 def get_conversations(user_id):
     # Récupérer toutes les conversations de l'utilisateur avec l'ID spécifié
@@ -266,9 +272,10 @@ def get_conversations(user_id):
     # Créer une liste de conversations avec les titres comme premiers messages et les dates
     conversation_list = []
     for conv in conversations:
-        title = conv["messages"][0]["message"]  # Le premier message comme titre
-        date = conv["messages"][0]["timestamp"]  # La date du premier message
-        conversation_list.append({"title": title, "date": date, "conversation_id": conv["conversation_id"]})
+        if "messages" in conv and conv["messages"]:
+            title = conv["messages"][0]["user_message"]  # Le premier message comme titre
+            date = conv["messages"][0]["timestamp"]  # La date du premier message
+            conversation_list.append({"title": title, "date": date, "conversation_id": conv["conversation_id"]})
 
     return jsonify(conversation_list)
 
@@ -280,6 +287,7 @@ def get_messages_by_conversation_id(conversation_id):
         if conversation:
             messages = conversation.get("messages", [])
             return jsonify({"messages": messages}), 200
+            
         else:
             return jsonify({"message": "Conversation not found"}), 404
     except Exception as e:
