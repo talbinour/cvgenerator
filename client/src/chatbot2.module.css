@@ -4,12 +4,12 @@
     display: flex;
     flex-direction: column-reverse; /* Afficher les messages de bas en haut */
     height: 100vh; /* Hauteur de la vue à 100% de la hauteur de l'écran */
-    overflow-y:hidden; /* Activer le défilement vertical si nécessaire */
+    overflow-y: hidden; /* Activer le défilement vertical si nécessaire */
 }
 
 /* Message box */
 .message {
-    margin:5px;
+    margin: 5px;
     max-width: 70%;
     display: flex;
     flex-direction: column; /* Pour aligner la date et l'heure en dessous */
@@ -27,11 +27,10 @@
 
 /* Texte du message */
 .messageText {
-    padding: 0px;
+    padding: 10px;
     border-radius: 20px;
     color: #fff;
     word-wrap: break-word; /* Ajout de la propriété pour gérer les messages longs */
-
 }
 
 /* Date du message */
@@ -48,7 +47,6 @@
     border-radius: 20px; /* Coins arrondis */
     border: 1px solid #ccc;
     margin: 3px;
-
 }
 
 /* Couleur du texte du chatbot */
@@ -75,7 +73,7 @@
     padding: 10px;
     margin-top: 10px;
     margin-left: 10px; /* Espacement à gauche du bouton envoyer */
-    background-color:  #1d3063; /* blue */
+    background-color: #1d3063; /* Bleu */
     color: #fff;
     border: none;
     border-radius: 20px; /* Coins arrondis */
@@ -97,15 +95,8 @@
     right: 0; /* Aligner à droite */
     width: 100%; /* Prendre toute la largeur */
     max-height: 50%; /* Limiter la hauteur pour empêcher le chat de couvrir tout l'écran */
-    overflow-y:hidden; /* Activer le défilement vertical si nécessaire */
-}
-
-/* Chatbot container */
-.chatContainer {
-    position: fixed;
-    bottom: 0px;
-    right: 0;
-    z-index: 1000;
+    overflow-y: hidden; /* Activer le défilement vertical si nécessaire */
+    z-index: 1000; /* Assurez-vous que le conteneur de chat est au-dessus des autres éléments */
 }
 
 /* Chat icon */
@@ -125,7 +116,7 @@
     color: #fff;
     padding: 5px 10px;
     border-radius: 10px;
-    z-index: 1001;
+    z-index: 1001; /* Assurez-vous que l'icône de message de chat est au-dessus du conteneur de chat */
 }
 
 /* Chat icon message show animation */

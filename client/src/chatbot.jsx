@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import styles from "./chatbot.module.css";
 import axios from "axios";
 
@@ -9,66 +9,55 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [conversationState, setConversationState] = useState(null);
-  const [previousResponse, setPreviousResponse] = useState("");
   const [conversationBlocked, setConversationBlocked] = useState(false);
-
-  
 
   const sendMessage = async () => {
     if (!input.trim()) {
-        setMessages([...messages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
-        return;
+      setMessages((prevMessages) => [...prevMessages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
+      return;
     }
 
-    const response = await axios.post(
-      "http://localhost:5000/new-question",
-      {
-          message: input, // Assurez-vous que input contient la réponse de l'utilisateur
-          conversation_state: conversationState,
-          previous_response: previousResponse,
-      },
-      { headers: { "Content-Type": "application/json" } }
-  );
+    const response = await axios.post("http://localhost:5000/new-question", {
+      message: input,
+      conversation_state: conversationState,
+    });
+
     const botResponse = response.data.response;
     const nextQuestionKey = response.data.next_question_key;
 
-    setMessages([...messages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
+    setMessages((prevMessages) => [...prevMessages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
     setInput("");
-    setPreviousResponse(input); // Stockez la réponse précédente
+    setConversationState(response.data.conversation_state);
 
-    if (updateUserResponse) {
-        updateUserResponse(input, nextQuestionKey);
+    if (!response.data.conversation_state) {
+      setConversationBlocked(true);
+      setMessages((prevMessages) => [...prevMessages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+    } else {
+      setConversationBlocked(false);
     }
 
-    if (nextQuestionKey) {
-        setConversationState({ state: nextQuestionKey });
-    } else {
-        setConversationState(null);
-        setConversationBlocked(true);
-        setMessages([...messages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
+    if (updateUserResponse) {
+      updateUserResponse(input, nextQuestionKey);
     }
 
     if (updateTitleContent) {
-        updateTitleContent(botResponse, input);
+      updateTitleContent(botResponse, input);
     }
-};
-
-
-useEffect(() => {
-  const sendInitialMessage = async () => {
-    const response = await axios.post(
-      "http://localhost:5000/new-question",
-      { conversation_state: null },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    const botResponse = response.data.response;
-    setMessages([...messages, { text: botResponse, user: "bot" }]);
-    setConversationState(response.data.conversation_state);
   };
 
-  sendInitialMessage();
-}, []);
+  useEffect(() => {
+    const sendInitialMessage = async () => {
+      const response = await axios.post("http://localhost:5000/new-question", {
+        conversation_state: null,
+      });
+
+      const botResponse = response.data.response;
+      setMessages([{ text: botResponse, user: "bot" }]);
+      setConversationState(response.data.conversation_state);
+    };
+
+    sendInitialMessage();
+  }, []);
 
   const handleSendMessage = async () => {
     await sendMessage();
@@ -101,11 +90,16 @@ useEffect(() => {
           </div>
         </div>
         <div className={styles.inputContainerBottom}>
-          <input className={styles.inputField} value={input} onChange={handleInputChange} onKeyPress={handleKeyPress} disabled={conversationBlocked} />
+          <input
+            className={styles.inputField}
+            value={input}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            disabled={conversationBlocked}
+          />
           <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
-          
         </div>
       </div>
     </div>

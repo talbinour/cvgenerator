@@ -52,13 +52,36 @@ const Chat = () => {
     const loadMessages = (conversationId) => {
         axios.get(`http://localhost:5000/messages/${conversationId}`)
             .then(response => {
-                setMessages(response.data.messages || []);
+                const newMessages = response.data.messages.flatMap(msg => {
+                    const userMessage = {
+                        text: msg.user_message,
+                        sender: 'user',
+                        timestamp: new Date(msg.timestamp)
+                    };
+    
+                    const botMessage = {
+                        text: msg.bot_response,
+                        sender: 'bot',
+                        timestamp: new Date(msg.timestamp)
+                    };
+    
+                    // Retourner un tableau contenant à la fois le message de l'utilisateur et la réponse du bot
+                    return [userMessage, botMessage];
+                });
+                
+                setMessages(prevMessages => {
+                    // Concaténer les nouveaux messages avec les messages existants
+                    return [...prevMessages, ...newMessages];
+                });
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des messages de la conversation :', error);
             });
     };
-
+    
+    
+    
+    
     const sendMessage = async (message) => {
         const response = await fetch("http://localhost:5000/chat", {
             method: "POST",
@@ -133,11 +156,11 @@ const Chat = () => {
                     ))}
 
                     </div>
-
                     <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
                     <button className={styles.sendButton} onClick={handleSendMessage}>
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
+
                 </div>
             </div>
         </div>
