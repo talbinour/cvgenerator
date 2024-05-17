@@ -56,8 +56,11 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
       setConversationState(response.data.conversation_state);
     };
 
-    sendInitialMessage();
-  }, []);
+    // Utilisation de `messages.length` pour éviter de répéter la question initiale.
+    if (messages.length === 0) {
+      sendInitialMessage();
+    }
+  }, [messages]);
 
   const handleSendMessage = async () => {
     await sendMessage();

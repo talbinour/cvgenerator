@@ -1,6 +1,5 @@
 import json
 import os
-import re
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from chatterbot import ChatBot
@@ -8,14 +7,8 @@ from chatterbot.trainers import ListTrainer
 import spacy
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from datetime import datetime
-from chatterbot.conversation import Statement
-from functools import lru_cache
-from pymongo import MongoClient
-import unicodedata
-from bson import ObjectId
 from pymongo import MongoClient
 
 # Initialisation de la connexion MongoDB et de la collection de messages
@@ -34,12 +27,8 @@ nltk.download("wordnet")
 stop_words = set(stopwords.words("french"))
 lemmatizer = WordNetLemmatizer()
 
-
-
-
 # Helper function for postprocessing bot response
 def postprocess(response):
-    # No specific postprocessing logic implemented here
     return response
 
 bot = ChatBot(
@@ -64,7 +53,7 @@ def train_from_json(directory):
             try:
                 with open(file_path, 'r', encoding='utf-8') as file:
                     data = file.read()
-                    if data.strip():  # Vérifie si le fichier n'est pas vide
+                    if data.strip():
                         json_data = json.loads(data)
                         for entry in json_data:
                             if "patterns" in entry and "responses" in entry:
@@ -81,47 +70,35 @@ def train_from_json(directory):
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
 train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
+
 @app.route("/chat", methods=["POST"])
 def chat():
     user_input = request.json.get("message") # type: ignore
-
-    # Obtenir la réponse du bot
     bot_response = str(bot.get_response(user_input))
-    
     return jsonify({"response": bot_response})
-
 
 @app.route("/profile", methods=["POST"])
 def profile():
     data = request.json
-    # Implémentez ici la gestion réelle des profils
-    # Enregistrez les données du profil utilisateur dans le CV
-    # Enregistrez également les données dans une base de données ou un fichier JSON si nécessaire
-    # Par exemple, pour enregistrer les données dans une base de données MongoDB :
-    # user_profile = db.profiles.insert_one(édata)
     return jsonify({"message": "Données du profil utilisateur enregistrées avec succès."})
 
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message_data = data.get("message")  # type: ignore # Obtenez les données du message de la requête
-    user_id = data.get("user_id")  # type: ignore 
-    conversation_id = data.get("conversation_id")  # type: ignore 
+    message_data = data.get("message")# type: ignore
+    user_id = data.get("user_id")# type: ignore
+    conversation_id = data.get("conversation_id")# type: ignore
 
-    # Obtenez la réponse du chatbot
     bot_response = bot.get_response(message_data)
 
-    # Recherchez la conversation de l'utilisateur dans la base de données
     conversation = messages_collection.find_one({"user_id": user_id, "conversation_id": conversation_id})
 
     if conversation:
-        # Si la conversation existe, ajoutez le nouveau message de l'utilisateur et la réponse du chatbot à la liste des messages
         messages_collection.update_one(
             {"user_id": user_id, "conversation_id": conversation_id},
             {"$push": {"messages": {"user_message": message_data, "bot_response": str(bot_response), "timestamp": datetime.now()}}}
         )
     else:
-        # Si la conversation n'existe pas, créez une nouvelle entrée dans la collection avec le message de l'utilisateur et la réponse du chatbot
         messages_collection.insert_one({
             "user_id": user_id,
             "conversation_id": conversation_id,
@@ -132,28 +109,22 @@ def save_message():
 
 @app.route("/conversations/<user_id>", methods=["GET"])
 def get_conversations(user_id):
-    # Récupérer toutes les conversations de l'utilisateur avec l'ID spécifié
     conversations = messages_collection.find({"user_id": user_id})
-
-    # Créer une liste de conversations avec les titres comme premiers messages et les dates
     conversation_list = []
     for conv in conversations:
         if "messages" in conv and conv["messages"]:
-            title = conv["messages"][0]["user_message"]  # Le premier message comme titre
-            date = conv["messages"][0]["timestamp"]  # La date du premier message
+            title = conv["messages"][0]["user_message"]
+            date = conv["messages"][0]["timestamp"]
             conversation_list.append({"title": title, "date": date, "conversation_id": conv["conversation_id"]})
-
     return jsonify(conversation_list)
 
 @app.route("/messages/<conversation_id>", methods=["GET"])
 def get_messages_by_conversation_id(conversation_id):
     try:
-        # Récupérer les messages de la conversation spécifiée
         conversation = messages_collection.find_one({"conversation_id": conversation_id})
         if conversation:
             messages = conversation.get("messages", [])
             return jsonify({"messages": messages}), 200
-            
         else:
             return jsonify({"message": "Conversation not found"}), 404
     except Exception as e:
@@ -173,6 +144,9 @@ def load_cv_questions(file_path):
 
 cv_questions = load_cv_questions('cvtitre.json')
 
+# Sections qui peuvent avoir plusieurs réponses
+multi_entry_sections = ["education", "experience", "competences professionnelles", "languages", "interets"]
+
 def get_next_question(conversation_state):
     section_questions = conversation_state.get("section_questions", [])
     current_index = conversation_state.get("current_question_index", 0)
@@ -186,13 +160,13 @@ def get_next_question(conversation_state):
 @app.route("/new-question", methods=["POST"]) # type: ignore
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state", {}) # type: ignore
+    conversation_state = data.get("conversation_state", {})# type: ignore
     user_response = data.get("message")# type: ignore
 
     if not conversation_state:
         next_question = "À quelle section souhaitez-vous commencer ?"
         conversation_state = {"state": "waiting_for_section"}
-        return jsonify({"response": next_question, "next_question_key": "waiting_for_section", "conversation_state": conversation_state})
+        return jsonify({"response": next_question, "conversation_state": conversation_state})
 
     if conversation_state.get("state") == "waiting_for_section":
         section_title = user_response.strip().lower()
@@ -205,59 +179,41 @@ def generate_next_question_route():
                 "state": "section",
                 "section_title": section_title,
                 "section_questions": section_questions,
-                "current_question_index": 0
+                "current_question_index": 0,
+                "multi_entry": section_title.lower() in multi_entry_sections,
+                "adding_more": False
             })
             next_question = section_questions[0]["example"] if section_questions else None
-            return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
+            return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": section_title, "question_number": 1})
         else:
-            return jsonify({"response": "La section que vous avez choisie n'existe pas. Veuillez réessayer.", "next_question_key": "waiting_for_section", "conversation_state": {"state": "waiting_for_section"}})
+            return jsonify({"response": "La section que vous avez choisie n'existe pas. Veuillez réessayer.", "conversation_state": {"state": "waiting_for_section"}})
 
     elif conversation_state.get("state") == "section":
-        next_question, conversation_state = get_next_question(conversation_state)
-        if next_question:
-            return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
-        else:
+        if conversation_state.get("adding_more"):
+            conversation_state["adding_more"] = False
+            return jsonify({"response": "Voulez-vous ajouter un autre exemple dans cette section ? (oui/non)", "conversation_state": conversation_state})
+
+        if user_response.lower() == "oui":
+            conversation_state["current_question_index"] = 0
+
+        elif user_response.lower() == "non":
             section_title = conversation_state.get("section_title", "Section inconnue")
-            return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "next_question_key": "waiting_for_section", "conversation_state": {"state": "waiting_for_section"}})
+            conversation_state["state"] = "waiting_for_section"
+            return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "conversation_state": conversation_state})
 
-if __name__ == "__main__":
-    app.run(debug=True)
-def ask_next_question(section_questions, conversation_state):
-    # Vérifier s'il y a d'autres questions dans la section
-    current_index = conversation_state.get("current_question_index", 0)
-    if current_index < len(section_questions):
-        # Poser la prochaine question de la section
-        next_question = section_questions[current_index]["example"]
-        conversation_state["current_question_index"] += 1
-        return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
-    else:
-        # Indiquer que toutes les questions de la section ont été posées
-        return move_to_next_section(cv_questions["sections"], conversation_state) # type: ignore
+        next_question, conversation_state = get_next_question(conversation_state)
+        question_number = conversation_state.get("current_question_index", 0) + 1
 
-def move_to_next_section(sections, conversation_state):
-    current_section_title = conversation_state.get("section_title")
-    current_section_index = None
-    for i, section in enumerate(sections):
-        if section["section_title"] == current_section_title:
-            current_section_index = i
-            break
-    
-    if current_section_index is not None and current_section_index < len(sections) - 1:
-        # Passer à la section suivante
-        next_section = sections[current_section_index + 1]
-        next_section_title = next_section["section_title"]
-        next_section_questions = next_section.get("questions", [])
-        if next_section_questions:
-            # Poser la première question de la prochaine section
-            next_question = next_section_questions[0]["example"]
-            conversation_state["section_title"] = next_section_title
-            conversation_state["section_questions"] = next_section_questions
-            conversation_state["current_question_index"] = 1  # Remettre l'index à 1 pour la première question
-            conversation_state["state"] = "section"
-            return jsonify({"response": next_question, "next_question_key": "section", "conversation_state": conversation_state})
-    else:
-        # Aucune section suivante, terminer la conversation
-        return jsonify({"response": "Vous avez répondu à toutes les questions du CV.", "next_question_key": "conversation_end", "conversation_state": None})
+        if next_question:
+            return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": conversation_state["section_title"], "question_number": question_number})
+        else:
+            if conversation_state["multi_entry"]:
+                conversation_state["adding_more"] = True
+                return jsonify({"response": "Voulez-vous ajouter un autre exemple dans cette section ? (oui/non)", "conversation_state": conversation_state})
+            else:
+                section_title = conversation_state.get("section_title", "Section inconnue")
+                conversation_state["state"] = "waiting_for_section"
+                return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "conversation_state": conversation_state})
 
 if __name__ == "__main__":
     app.run(debug=True)
