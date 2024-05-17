@@ -130,9 +130,6 @@ def get_messages_by_conversation_id(conversation_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-
-
 def load_cv_questions(file_path):
     try:
         with open(file_path, 'r') as f:
@@ -160,7 +157,7 @@ def get_next_question(conversation_state):
     else:
         return None, conversation_state
 
-@app.route("/new-question", methods=["POST"])# type: ignore
+@app.route("/new-question", methods=["POST"]) # type: ignore
 def generate_next_question_route():
     data = request.json
     conversation_state = data.get("conversation_state", {})# type: ignore
@@ -187,29 +184,28 @@ def generate_next_question_route():
                 "adding_more": False
             })
             next_question = section_questions[0]["example"] if section_questions else None
-            return jsonify({"response": next_question, "conversation_state": conversation_state})
+            return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": section_title, "question_number": 1})
         else:
             return jsonify({"response": "La section que vous avez choisie n'existe pas. Veuillez réessayer.", "conversation_state": {"state": "waiting_for_section"}})
 
     elif conversation_state.get("state") == "section":
         if conversation_state.get("adding_more"):
-            # Demander si l'utilisateur veut ajouter un autre exemple
             conversation_state["adding_more"] = False
             return jsonify({"response": "Voulez-vous ajouter un autre exemple dans cette section ? (oui/non)", "conversation_state": conversation_state})
-        
+
         if user_response.lower() == "oui":
-            # Réinitialiser l'index pour recommencer à poser les questions de la section actuelle
             conversation_state["current_question_index"] = 0
 
         elif user_response.lower() == "non":
-            # Passer à la section suivante
             section_title = conversation_state.get("section_title", "Section inconnue")
             conversation_state["state"] = "waiting_for_section"
             return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "conversation_state": conversation_state})
-        
+
         next_question, conversation_state = get_next_question(conversation_state)
+        question_number = conversation_state.get("current_question_index", 0) + 1
+
         if next_question:
-            return jsonify({"response": next_question, "conversation_state": conversation_state})
+            return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": conversation_state["section_title"], "question_number": question_number})
         else:
             if conversation_state["multi_entry"]:
                 conversation_state["adding_more"] = True
