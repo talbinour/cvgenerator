@@ -61,57 +61,73 @@ const CVModel7 = () => {
     }
   }, [userId]);
 
-  const updateUserResponse = (response, sectionKey) => {
+  const updateUserResponse = (response, sectionKey, questionNumber) => {
     setCvModel((prevCvModel) => {
       const updatedModel = { ...prevCvModel };
-  
-      // Mettre à jour le modèle de CV en fonction de la sectionKey
-      if (sectionKey === "Contact Info") {
-        // Mettre à jour les informations de contact appropriées
-        updatedModel[response.field] = response.value;
-      } else if (sectionKey === "Education") {
-        // Mettre à jour les détails de l'éducation
-        if (!updatedModel.education) {
-          updatedModel.education = [];
+
+      switch (sectionKey) {
+        case "CONTACT INFO": {
+          const contactInfoFields = ["phone", "email", "website", "linkedin", "address"];
+          updatedModel[contactInfoFields[questionNumber - 1]] = response;
+          break;
         }
-        updatedModel.education.push(response);
-      } else if (sectionKey === "Languages") {
-        // Mettre à jour les compétences linguistiques
-        if (!updatedModel.languages) {
-          updatedModel.languages = [];
+        case "Education": {
+          const educationFields = ["startDate", "endDate", "degree", "institution"];
+          if (!updatedModel.education[0]) updatedModel.education = [{}];
+          if (!updatedModel.education[0][educationFields[questionNumber - 1]]) {
+            updatedModel.education[0][educationFields[questionNumber - 1]] = response;
+          } else {
+            updatedModel.education.push({ [educationFields[questionNumber - 1]]: response });
+          }
+          break;
         }
-        updatedModel.languages.push(response);
-      } else if (sectionKey === "Interests") {
-        // Mettre à jour les intérêts
-        updatedModel.interests.push(response);
-      } else if (sectionKey === "Professional Skills") {
-        // Mettre à jour les compétences professionnelles
-        if (!updatedModel.professionalSkills) {
-          updatedModel.professionalSkills = [];
+        case "Experience": {
+          const experienceFields = ["startDate", "endDate", "ville", "jobTitle", "employeur", "description"];
+          if (!updatedModel.experiences[0]) updatedModel.experiences = [{}];
+          if (!updatedModel.experiences[0][experienceFields[questionNumber - 1]]) {
+            updatedModel.experiences[0][experienceFields[questionNumber - 1]] = response;
+          } else {
+            updatedModel.experiences.push({ [experienceFields[questionNumber - 1]]: response });
+          }
+          break;
         }
-        updatedModel.professionalSkills.push(response);
+        case "Languages": {
+          if (!updatedModel.languages[0]) updatedModel.languages = [{}];
+          updatedModel.languages[0].name = response;
+          break;
+        }
+        case "Interests": {
+          updatedModel.interests.push(response);
+          break;
+        }
+        case "Professional Skills": {
+          if (!updatedModel.professionalSkills[0]) updatedModel.professionalSkills = [{}];
+          updatedModel.professionalSkills[0].skillName = response;
+          break;
+        }
+        default:
+          break;
       }
-  
+
       return updatedModel;
     });
   };
-  
 
-  function formatDate(dateString) {
+  const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
-  }
+  };
 
   const saveCVToServer = async () => {
     try {
       const response = await axios.post(`http://localhost:8080/cv/${userId}/`, cvModel);
-      console.log('New CV Data:', response.data);
+      console.log("New CV Data:", response.data);
       navigate("/model7-user");
     } catch (error) {
-      console.error('Error creating CV:', error);
+      console.error("Error creating CV:", error);
     }
   };
 
@@ -177,7 +193,9 @@ const CVModel7 = () => {
               <ul>
                 {cvModel.education?.map((edu, index) => (
                   <li key={index}>
-                    <h5>{formatDate(edu.startDate)} - {formatDate(edu.endDate)}</h5>
+                    <h5>
+                      {edu.startDate ? formatDate(edu.startDate) : ""} - {edu.endDate ? formatDate(edu.endDate) : ""}
+                    </h5>
                     <h4>{edu.degree}</h4>
                     <h4>{edu.institution}</h4>
                   </li>
@@ -208,43 +226,38 @@ const CVModel7 = () => {
               {cvModel.experiences?.map((exp, index) => (
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
-                    <h5>{formatDate(exp.startDate)} - {formatDate(exp.endDate)}</h5>
+                    <h5>
+                      {exp.startDate ? formatDate(exp.startDate) : ""} - {exp.endDate ? formatDate(exp.endDate) : ""}
+                    </h5>
                     <h5>{exp.ville}</h5>
-                    <h5>{exp.jobTitle} at {exp.employeur}</h5>
                   </div>
                   <div className={styles.text}>
+                    <h4>{exp.jobTitle}</h4>
+                    <h4>{exp.employeur}</h4>
                     <p>{exp.description}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className={styles.skills}>
+            <div className={styles.professionalSkills}>
               <h2 className={styles.title2}>Professional Skills</h2>
-              {cvModel.professionalSkills?.map((skill, index) => (
-                <div className={styles.box} key={index}>
-                  <h4>{skill.skillName}</h4>
-                  <div className={styles.percent}>
-                    <div style={{ width: skill.proficiency }}></div>
-                  </div>
-                </div>
-              ))}
+              <div className={styles.box}>
+                <h4>{cvModel.professionalSkills?.map((skill) => skill.skillName).join(", ")}</h4>
+              </div>
             </div>
             <div className={styles.interests}>
               <h2 className={styles.title2}>Interests</h2>
               <ul>
                 {cvModel.interests.map((interest, index) => (
-                  <li key={index}>
-                    <span className={styles.icon}>
-                      <i className="fa fa-star" aria-hidden="true"></i>
-                    </span>
-                    <span className={styles.text}>{interest}</span>
-                  </li>
+                  <li key={index}>{interest}</li>
                 ))}
               </ul>
             </div>
-            <button className={styles.saveButton} onClick={saveCVToServer}>
-              Terminer
-            </button>
+            <div className={styles.right_Side}>
+              <button className={styles.cv_btn} onClick={saveCVToServer}>
+                Sauvegarder le CV
+              </button>
+            </div>
           </div>
         </div>
       </div>

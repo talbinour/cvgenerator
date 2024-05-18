@@ -73,7 +73,7 @@ train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_input = request.json.get("message") # type: ignore
+    user_input = request.json.get("message")  # type: ignore
     bot_response = str(bot.get_response(user_input))
     return jsonify({"response": bot_response})
 
@@ -85,9 +85,9 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message_data = data.get("message")# type: ignore
-    user_id = data.get("user_id")# type: ignore
-    conversation_id = data.get("conversation_id")# type: ignore
+    message_data = data.get("message")  # type: ignore
+    user_id = data.get("user_id")  # type: ignore
+    conversation_id = data.get("conversation_id")  # type: ignore
 
     bot_response = bot.get_response(message_data)
 
@@ -156,7 +156,6 @@ def get_next_question(conversation_state):
         return next_question, conversation_state
     else:
         return None, conversation_state
-
 @app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
