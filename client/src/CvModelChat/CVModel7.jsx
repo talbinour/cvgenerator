@@ -20,7 +20,7 @@ const CVModel7 = () => {
     address: "",
     education: [{}],
     languages: [{}],
-    profile: "",
+    profile: [],
     experiences: [{}],
     professionalSkills: [{}],
     interests: [],
@@ -48,7 +48,7 @@ const CVModel7 = () => {
             address: userData.address,
             education: [{}],
             languages: [{}],
-            profile: "",
+            profile: [],
             experiences: [{}],
             professionalSkills: [{}],
             interests: [],
@@ -91,7 +91,7 @@ const CVModel7 = () => {
           }
           break;
         }
-        case "Languages": {
+        case "LANGUAGES": {
           if (!updatedModel.languages[0]) updatedModel.languages = [{}];
           updatedModel.languages[0].name = response;
           break;
@@ -100,7 +100,14 @@ const CVModel7 = () => {
           updatedModel.interests.push(response);
           break;
         }
-        case "Professional Skills": {
+        case "PROFILE": {
+          if (!Array.isArray(updatedModel.profile)) {
+            updatedModel.profile = [];
+          }
+          updatedModel.profile.push(response);
+          break;
+        }
+        case "COMPeTENCES PROFESSIONNELLES": {
           if (!updatedModel.professionalSkills[0]) updatedModel.professionalSkills = [{}];
           updatedModel.professionalSkills[0].skillName = response;
           break;
