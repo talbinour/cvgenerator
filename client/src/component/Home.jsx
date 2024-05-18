@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from './Home.module.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Chat from "../chatbot2"; 
+import Chat from "../chatbot/chatbot2"; 
 import boot from '../assets/robotics.png';
 
 const Home = () => {

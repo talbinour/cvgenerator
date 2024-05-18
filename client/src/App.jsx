@@ -14,6 +14,7 @@ import ResumesPage from './DashboardPage/ResumesPage';
 import JobOffersPage from './DashboardPage/JobOffersPage';
 import ApplicationsPage from './DashboardPage/ApplicationsPage';
 import DashboardContent from './DashboardPage/DashboardContent';
+import Modal from './DashboardPage/Modal';
 import Contact from './component/contact';
 import Skills from "./DashboardPage/Skills";
 import NewPassword from './NewPassword';
@@ -36,8 +37,8 @@ import Edit from "./Cv/edit";
 import Edit6 from "./Cv/edit6";
 import Edit5 from "./Cv/editmodel5";
 import ModeleEdit from "./Cv/ModeleEdit";
-import Chatbot from "./chatbot";
-import Chatbot2 from "./chatbot2";
+import Chatbot from "./chatbot/chatbot";
+import Chatbot2 from "./chatbot/chatbot2";
 import CVModel6 from "./CvModelChat/CVModel6";
 import CVModel from "./CvModelChat/CVModel";
 import CVModel5 from "./CvModelChat/CVModel5";
@@ -48,7 +49,6 @@ import NewQuestion from "./CvModelChat/NewQuestion";
 import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
 import StylePalette from './Style/StylePalette';
-import Box from './box';
 import Sitemap from './component/sitemap'; // Assurez-vous que le chemin d'importation est correct
 import CookiePolicy from './component/CookiePolicy'; // Assurez-vous que le chemin d'importation est correct
 import EditCv from "./Cv/editCv.jsx"; 
@@ -88,6 +88,7 @@ function App() {
           <Route path='/Model5' element={<Model5 />} />
           <Route path='/Model6' element={<Model6 />} />
           <Route path='/Model7' element={<Model7/>} />
+          <Route path='/Modal' element={<Modal/>} />
           <Route path='/model7-user/:userId/:cvId/:id' element={<ModelUser/>} />
           <Route path='/model6-user/userId/cvId/cvDate' element={<ModelUser6/>} />
           <Route path='/Model8' element={<Model8/>} />
@@ -107,7 +108,6 @@ function App() {
           <Route path='/StylePalette' element={<StylePalette />} />
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/cookiePolicy" element={<CookiePolicy />} />
-          <Route path='/box' element={<Box />} />
           <Route path='/NewQuestion' element={<NewQuestion />} />
           <Route path="/change-password/:email/:verificationCode" element={<NewPassword />} />
           {/* Add routes for Login and SignUp if needed */}
