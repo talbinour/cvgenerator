@@ -157,11 +157,11 @@ def get_next_question(conversation_state):
     else:
         return None, conversation_state
 
-@app.route("/new-question", methods=["POST"]) # type: ignore
+@app.route("/new-question", methods=["POST"])
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state", {})# type: ignore
-    user_response = data.get("message")# type: ignore
+    conversation_state = data.get("conversation_state", {})
+    user_response = data.get("message")
 
     if not conversation_state:
         next_question = "À quelle section souhaitez-vous commencer ?"
@@ -170,7 +170,7 @@ def generate_next_question_route():
 
     if conversation_state.get("state") == "waiting_for_section":
         section_title = user_response.strip().lower()
-        section_matched = next((section for section in cv_questions["sections"] if section["section_title"].lower() == section_title), None)# type: ignore
+        section_matched = next((section for section in cv_questions["sections"] if section["section_title"].lower() == section_title), None)
 
         if section_matched:
             section_title = section_matched["section_title"]
@@ -183,26 +183,29 @@ def generate_next_question_route():
                 "multi_entry": section_title.lower() in multi_entry_sections,
                 "adding_more": False
             })
-            next_question = section_questions[0]["example"] if section_questions else None
+            if section_questions:
+                next_question = section_questions[0]["example"]
+                conversation_state["current_question_index"] = 1
+            else:
+                next_question = None
             return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": section_title, "question_number": 1})
         else:
             return jsonify({"response": "La section que vous avez choisie n'existe pas. Veuillez réessayer.", "conversation_state": {"state": "waiting_for_section"}})
 
     elif conversation_state.get("state") == "section":
         if conversation_state.get("adding_more"):
-            conversation_state["adding_more"] = False
-            return jsonify({"response": "Voulez-vous ajouter un autre exemple dans cette section ? (oui/non)", "conversation_state": conversation_state})
-
-        if user_response.lower() == "oui":
-            conversation_state["current_question_index"] = 0
-
-        elif user_response.lower() == "non":
-            section_title = conversation_state.get("section_title", "Section inconnue")
-            conversation_state["state"] = "waiting_for_section"
-            return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "conversation_state": conversation_state})
+            if user_response.lower() == "oui":
+                conversation_state["current_question_index"] = 0
+                conversation_state["adding_more"] = False
+            elif user_response.lower() == "non":
+                section_title = conversation_state.get("section_title", "Section inconnue")
+                conversation_state = {"state": "waiting_for_section"}
+                return jsonify({"response": f"Vous avez répondu à toutes les questions de la section '{section_title}'. Veuillez choisir une autre section.", "conversation_state": conversation_state})
+            else:
+                return jsonify({"response": "Voulez-vous ajouter un autre exemple dans cette section ? (oui/non)", "conversation_state": conversation_state})
 
         next_question, conversation_state = get_next_question(conversation_state)
-        question_number = conversation_state.get("current_question_index", 0) + 1
+        question_number = conversation_state.get("current_question_index", 0)
 
         if next_question:
             return jsonify({"response": next_question, "conversation_state": conversation_state, "section_key": conversation_state["section_title"], "question_number": question_number})
