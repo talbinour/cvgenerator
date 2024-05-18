@@ -5,69 +5,92 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import styles from "./chatbot.module.css";
 import axios from "axios";
 
-const Chat = ({ updateTitleContent, updateUserResponse }) => {
+const Chat = ({ updateUserResponse }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [conversationState, setConversationState] = useState(null);
+  const [sectionKey, setSectionKey] = useState(""); // eslint-disable-line no-unused-vars
+  const [questionNumber, setQuestionNumber] = useState(0); // eslint-disable-line no-unused-vars
   const [conversationBlocked, setConversationBlocked] = useState(false);
+  const [isSending, setIsSending] = useState(false); // Nouvel état pour gérer l'envoi en cours
 
   const sendMessage = async () => {
     if (!input.trim()) {
-      setMessages((prevMessages) => [...prevMessages, { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: "S'il vous plaît répondez à la question précédente.", user: "bot" }
+      ]);
       return;
     }
 
-    const response = await axios.post("http://localhost:5000/new-question", {
-      message: input,
-      conversation_state: conversationState,
-    });
+    setIsSending(true); // Désactiver le bouton d'envoi pendant l'envoi
 
-    const botResponse = response.data.response;
-    const nextQuestionKey = response.data.next_question_key;
+    try {
+      const response = await axios.post("http://localhost:5000/new-question", {
+        message: input,
+        conversation_state: conversationState,
+      });
 
-    setMessages((prevMessages) => [...prevMessages, { text: input, user: "me" }, { text: botResponse, user: "bot" }]);
-    setInput("");
-    setConversationState(response.data.conversation_state);
+      const botResponse = response.data.response;
 
-    if (!response.data.conversation_state) {
-      setConversationBlocked(true);
-      setMessages((prevMessages) => [...prevMessages, { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }]);
-    } else {
-      setConversationBlocked(false);
-    }
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: input, user: "me" },
+        { text: botResponse, user: "bot" }
+      ]);
+      setInput("");
+      setConversationState(response.data.conversation_state);
 
-    if (updateUserResponse) {
-      updateUserResponse(input, nextQuestionKey);
-    }
-
-    if (updateTitleContent) {
-      updateTitleContent(botResponse, input);
+      if (response.data.conversation_state) {
+        setSectionKey(response.data.section_key);
+        setQuestionNumber(response.data.question_number);
+        updateUserResponse(input, response.data.section_key, response.data.question_number);
+        setConversationBlocked(false);
+      } else {
+        setConversationBlocked(true);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: "Merci pour les informations. Votre CV est complet.", user: "bot" }
+        ]);
+      }
+    } catch (error) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: "Erreur lors de l'envoi du message. Veuillez réessayer.", user: "bot" }
+      ]);
+    } finally {
+      setIsSending(false); // Réactiver le bouton d'envoi après l'envoi
     }
   };
 
   useEffect(() => {
     const sendInitialMessage = async () => {
-      const response = await axios.post("http://localhost:5000/new-question", {
-        conversation_state: null,
-      });
+      try {
+        const response = await axios.post("http://localhost:5000/new-question", {
+          conversation_state: null,
+        });
 
-      const botResponse = response.data.response;
-      setMessages([{ text: botResponse, user: "bot" }]);
-      setConversationState(response.data.conversation_state);
+        const botResponse = response.data.response;
+        setMessages([{ text: botResponse, user: "bot" }]);
+        setConversationState(response.data.conversation_state);
+        setSectionKey(response.data.section_key);
+        setQuestionNumber(response.data.question_number);
+      } catch (error) {
+        setMessages([{ text: "Erreur lors de l'initialisation de la conversation. Veuillez réessayer plus tard.", user: "bot" }]);
+      }
     };
 
-    // Utilisation de `messages.length` pour éviter de répéter la question initiale.
     if (messages.length === 0) {
       sendInitialMessage();
     }
-  }, [messages]);
+  }, []); // Passer un tableau vide pour s'assurer que cette fonction ne s'exécute qu'une fois lors du montage
 
   const handleSendMessage = async () => {
     await sendMessage();
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && !isSending && !conversationBlocked) {
       sendMessage();
     }
   };
@@ -98,9 +121,13 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
             value={input}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            disabled={conversationBlocked}
+            disabled={conversationBlocked || isSending}
           />
-          <button className={styles.sendButton} onClick={handleSendMessage} disabled={conversationBlocked}>
+          <button
+            className={styles.sendButton}
+            onClick={handleSendMessage}
+            disabled={conversationBlocked || isSending}
+          >
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
         </div>
@@ -110,8 +137,7 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
 };
 
 Chat.propTypes = {
-  updateTitleContent: PropTypes.func,
-  updateUserResponse: PropTypes.func,
+  updateUserResponse: PropTypes.func.isRequired,
 };
 
 export default Chat;

@@ -69,11 +69,11 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    user_input = request.json.get("message") # type: ignore
+    user_input = request.json.get("message")  # type: ignore
     bot_response = str(bot.get_response(user_input))
     return jsonify({"response": bot_response})
 
@@ -85,9 +85,9 @@ def profile():
 @app.route("/save-message", methods=["POST"])
 def save_message():
     data = request.json
-    message_data = data.get("message")# type: ignore
-    user_id = data.get("user_id")# type: ignore
-    conversation_id = data.get("conversation_id")# type: ignore
+    message_data = data.get("message")  # type: ignore
+    user_id = data.get("user_id")  # type: ignore
+    conversation_id = data.get("conversation_id")  # type: ignore
 
     bot_response = bot.get_response(message_data)
 
@@ -157,11 +157,11 @@ def get_next_question(conversation_state):
     else:
         return None, conversation_state
 
-@app.route("/new-question", methods=["POST"]) # type: ignore
+@app.route("/new-question", methods=["POST"])  # type: ignore
 def generate_next_question_route():
     data = request.json
-    conversation_state = data.get("conversation_state", {})# type: ignore
-    user_response = data.get("message")# type: ignore
+    conversation_state = data.get("conversation_state", {})  # type: ignore
+    user_response = data.get("message")  # type: ignore
 
     if not conversation_state:
         next_question = "À quelle section souhaitez-vous commencer ?"
@@ -170,7 +170,7 @@ def generate_next_question_route():
 
     if conversation_state.get("state") == "waiting_for_section":
         section_title = user_response.strip().lower()
-        section_matched = next((section for section in cv_questions["sections"] if section["section_title"].lower() == section_title), None)# type: ignore
+        section_matched = next((section for section in cv_questions["sections"] if section["section_title"].lower() == section_title), None)  # type: ignore
 
         if section_matched:
             section_title = section_matched["section_title"]
@@ -195,7 +195,6 @@ def generate_next_question_route():
 
         if user_response.lower() == "oui":
             conversation_state["current_question_index"] = 0
-
         elif user_response.lower() == "non":
             section_title = conversation_state.get("section_title", "Section inconnue")
             conversation_state["state"] = "waiting_for_section"
