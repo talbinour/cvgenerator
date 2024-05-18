@@ -21,7 +21,7 @@
   position: relative;
   max-height: 90%;
   max-width: 70%;
-  overflow-y: auto; /* To handle content overflow */
+  overflow-y: auto; /* Pour gérer le débordement du contenu */
 }
 
 .closeButton {
