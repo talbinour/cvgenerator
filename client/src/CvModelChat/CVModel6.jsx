@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Chat from "../chatbot";
+import Chat from "../chatbot/chatbot";
 import axios from "axios";
 import styles from "./CVModel6.module.css";
 import avatar from "../assets/cvprofile.jpeg";

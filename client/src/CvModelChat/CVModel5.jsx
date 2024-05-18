@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Chat from "../chatbot";
+import Chat from "../chatbot/chatbot";
 //import styles from '../Cv/model7.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
 import styles from './CVModel5.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
 import '@fortawesome/fontawesome-free/css/all.css';

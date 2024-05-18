@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot2.module.css';
-import logoImage from './assets/chatbot.png';
-import defaultAvatar from './assets/user.png';
+import logoImage from '../assets/chatbot.png';
+import defaultAvatar from '../assets/user.png';
 import { v4 as uuidv4 } from 'uuid';
 
 const Chat = () => {
