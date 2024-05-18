@@ -60,35 +60,43 @@ const CVModel7 = () => {
         });
     }
   }, [userId]);
-  const updateUserResponse = (response, sectionKey, questionNumber) => {
-  setCvModel((prevCvModel) => {
-    const updatedModel = { ...prevCvModel };
 
-  if (sectionKey === "CONTACT INFO") {
-    const contactInfoFields = ['phone', 'email', 'website', 'linkedin', 'address'];
-    updatedModel[contactInfoFields[questionNumber - 1]] = response;
-  } else if (sectionKey === "Education") {
-    const educationFields = ['startDate', 'endDate', 'degree', 'institution'];
-    if (!updatedModel.education[0]) updatedModel.education = [{}];
-    updatedModel.education[0][educationFields[questionNumber - 1]] = response;
-  } else if (sectionKey === "Experience") {
-    const experienceFields = ['startDate', 'endDate', 'ville', 'jobTitle', 'employeur', 'description'];
-    if (!updatedModel.experiences[0]) updatedModel.experiences = [{}];
-    updatedModel.experiences[0][experienceFields[questionNumber - 1]] = response;
-  } else if (sectionKey === "Languages") {
-    if (!updatedModel.languages[0]) updatedModel.languages = [{}];
-    updatedModel.languages[0].name = response;
-  } else if (sectionKey === "Interests") {
-    updatedModel.interests.push(response);
-  } else if (sectionKey === "Professional Skills") {
-    if (!updatedModel.professionalSkills[0]) updatedModel.professionalSkills = [{}];
-    updatedModel.professionalSkills[0].skillName = response;
-  }
+  const updateUserResponse = (response, sectionKey) => {
+    setCvModel((prevCvModel) => {
+      const updatedModel = { ...prevCvModel };
+  
+      // Mettre à jour le modèle de CV en fonction de la sectionKey
+      if (sectionKey === "Contact Info") {
+        // Mettre à jour les informations de contact appropriées
+        updatedModel[response.field] = response.value;
+      } else if (sectionKey === "Education") {
+        // Mettre à jour les détails de l'éducation
+        if (!updatedModel.education) {
+          updatedModel.education = [];
+        }
+        updatedModel.education.push(response);
+      } else if (sectionKey === "Languages") {
+        // Mettre à jour les compétences linguistiques
+        if (!updatedModel.languages) {
+          updatedModel.languages = [];
+        }
+        updatedModel.languages.push(response);
+      } else if (sectionKey === "Interests") {
+        // Mettre à jour les intérêts
+        updatedModel.interests.push(response);
+      } else if (sectionKey === "Professional Skills") {
+        // Mettre à jour les compétences professionnelles
+        if (!updatedModel.professionalSkills) {
+          updatedModel.professionalSkills = [];
+        }
+        updatedModel.professionalSkills.push(response);
+      }
+  
+      return updatedModel;
+    });
+  };
+  
 
-  return updatedModel;
-  });
-};
- 
   function formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();

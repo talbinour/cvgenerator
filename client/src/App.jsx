@@ -14,6 +14,7 @@ import ResumesPage from './DashboardPage/ResumesPage';
 import JobOffersPage from './DashboardPage/JobOffersPage';
 import ApplicationsPage from './DashboardPage/ApplicationsPage';
 import DashboardContent from './DashboardPage/DashboardContent';
+import Modal from './DashboardPage/Modal';
 import Contact from './component/contact';
 import Skills from "./DashboardPage/Skills";
 import NewPassword from './NewPassword';
@@ -88,6 +89,7 @@ function App() {
           <Route path='/Model5' element={<Model5 />} />
           <Route path='/Model6' element={<Model6 />} />
           <Route path='/Model7' element={<Model7/>} />
+          <Route path='/Modal' element={<Modal/>} />
           <Route path='/model7-user/:userId/:cvId/:id' element={<ModelUser/>} />
           <Route path='/model6-user/userId/cvId/cvDate' element={<ModelUser6/>} />
           <Route path='/Model8' element={<Model8/>} />

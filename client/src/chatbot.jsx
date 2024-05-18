@@ -21,6 +21,7 @@ const Chat = ({ updateTitleContent, updateUserResponse }) => {
       message: input,
       conversation_state: conversationState,
     });
+    
 
     const botResponse = response.data.response;
     const nextQuestionKey = response.data.next_question_key;
