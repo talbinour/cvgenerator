@@ -18,11 +18,11 @@ const CVModel7 = () => {
     website: "",
     linkedin: "",
     address: "",
-    education: [{}],
-    languages: [{}],
+    education: [{ startDate: "", endDate: "", institution: "", degree: "" }],
+    languages: [{ name: "", proficiency: "" }],
     profile: "",
-    experiences: [{}],
-    professionalSkills: [{}],
+    experiences: [{ startDate: "", endDate: "", ville: "", jobTitle: "", employeur: "", description: "" }],
+    professionalSkills: [{ skillName: "", proficiency: "" }],
     interests: [],
   });
 
@@ -46,11 +46,11 @@ const CVModel7 = () => {
             website: userData.website,
             linkedin: userData.linkedin,
             address: userData.address,
-            education: [{}],
-            languages: [{}],
+            education: [{ startDate: "", endDate: "", institution: "", degree: "" }],
+            languages: [{ name: "", proficiency: "" }],
             profile: "",
-            experiences: [{}],
-            professionalSkills: [{}],
+            experiences: [{ startDate: "", endDate: "", ville: "", jobTitle: "", employeur: "", description: "" }],
+            professionalSkills: [{ skillName: "", proficiency: "" }],
             interests: [],
             photo: userData.photo,
           });
@@ -72,28 +72,36 @@ const CVModel7 = () => {
           break;
         }
         case "Education": {
-          const educationFields = ["startDate", "endDate", "degree", "institution"];
-          if (!updatedModel.education[0]) updatedModel.education = [{}];
-          if (!updatedModel.education[0][educationFields[questionNumber - 1]]) {
-            updatedModel.education[0][educationFields[questionNumber - 1]] = response;
-          } else {
-            updatedModel.education.push({ [educationFields[questionNumber - 1]]: response });
+          const educationFields = ["startDate", "endDate", "institution", "degree"];
+          const educationIndex = Math.floor((questionNumber - 1) / educationFields.length);
+          const fieldIndex = (questionNumber - 1) % educationFields.length;
+
+          if (!updatedModel.education[educationIndex]) {
+            updatedModel.education.push({});
           }
+          updatedModel.education[educationIndex][educationFields[fieldIndex]] = response;
           break;
         }
         case "Experience": {
           const experienceFields = ["startDate", "endDate", "ville", "jobTitle", "employeur", "description"];
-          if (!updatedModel.experiences[0]) updatedModel.experiences = [{}];
-          if (!updatedModel.experiences[0][experienceFields[questionNumber - 1]]) {
-            updatedModel.experiences[0][experienceFields[questionNumber - 1]] = response;
-          } else {
-            updatedModel.experiences.push({ [experienceFields[questionNumber - 1]]: response });
+          const experienceIndex = Math.floor((questionNumber - 1) / experienceFields.length);
+          const fieldIndex = (questionNumber - 1) % experienceFields.length;
+
+          if (!updatedModel.experiences[experienceIndex]) {
+            updatedModel.experiences.push({});
           }
+          updatedModel.experiences[experienceIndex][experienceFields[fieldIndex]] = response;
           break;
         }
         case "Languages": {
-          if (!updatedModel.languages[0]) updatedModel.languages = [{}];
-          updatedModel.languages[0].name = response;
+          const languagesFields = ["name", "proficiency"];
+          const languageIndex = Math.floor((questionNumber - 1) / languagesFields.length);
+          const fieldIndex = (questionNumber - 1) % languagesFields.length;
+
+          if (!updatedModel.languages[languageIndex]) {
+            updatedModel.languages.push({});
+          }
+          updatedModel.languages[languageIndex][languagesFields[fieldIndex]] = response;
           break;
         }
         case "Interests": {
@@ -101,8 +109,14 @@ const CVModel7 = () => {
           break;
         }
         case "Professional Skills": {
-          if (!updatedModel.professionalSkills[0]) updatedModel.professionalSkills = [{}];
-          updatedModel.professionalSkills[0].skillName = response;
+          const professionalSkillsFields = ["skillName", "proficiency"];
+          const skillIndex = Math.floor((questionNumber - 1) / professionalSkillsFields.length);
+          const fieldIndex = (questionNumber - 1) % professionalSkillsFields.length;
+
+          if (!updatedModel.professionalSkills[skillIndex]) {
+            updatedModel.professionalSkills.push({});
+          }
+          updatedModel.professionalSkills[skillIndex][professionalSkillsFields[fieldIndex]] = response;
           break;
         }
         default:
@@ -239,25 +253,32 @@ const CVModel7 = () => {
                 </div>
               ))}
             </div>
-            <div className={styles.professionalSkills}>
+            <div className={styles.professional_skills}>
               <h2 className={styles.title2}>Professional Skills</h2>
-              <div className={styles.box}>
-                <h4>{cvModel.professionalSkills?.map((skill) => skill.skillName).join(", ")}</h4>
+              <div className={styles.skills}>
+                {cvModel.professionalSkills?.map((skill, index) => (
+                  <div className={styles.box} key={index}>
+                    <h4>{skill.skillName}</h4>
+                    <div className={styles.percent}>
+                      <div style={{ width: skill.proficiency }}></div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <div className={styles.interests}>
               <h2 className={styles.title2}>Interests</h2>
               <ul>
-                {cvModel.interests.map((interest, index) => (
-                  <li key={index}>{interest}</li>
+                {cvModel.interests?.map((interest, index) => (
+                  <li key={index}>
+                    <span className={styles.text}>{interest}</span>
+                  </li>
                 ))}
               </ul>
             </div>
-            <div className={styles.right_Side}>
-              <button className={styles.cv_btn} onClick={saveCVToServer}>
-                Sauvegarder le CV
-              </button>
-            </div>
+            <button onClick={saveCVToServer} className={styles.btn}>
+              Save to Server
+            </button>
           </div>
         </div>
       </div>
