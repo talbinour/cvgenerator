@@ -28,7 +28,7 @@ Slider.propTypes = {
 
 const CVModel7 = () => {
   const navigate = useNavigate();
-  const [currentCVId] = useState(null);
+  const [currentCVId,setCurrentCVId] = useState(null);
 
   const [userId, setUserId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
@@ -49,10 +49,7 @@ const CVModel7 = () => {
     interests: [],
   });
   
-  const getCurrentCVId = () => {
-    return currentCVId;
-  };
-
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -65,6 +62,7 @@ const CVModel7 = () => {
           const userId = userData.id || userData.user_id;
           setUserPhoto(response.data.user.photo);
           setUserId(userId);
+          setCurrentCVId(userId);
           setCvModel({
             name: userData.nom,
             prenom: userData.prenom,
@@ -92,7 +90,7 @@ const CVModel7 = () => {
   const updateUserResponse = (response, sectionKey, questionNumber) => {
     setCvModel((prevCvModel) => {
       const updatedModel = { ...prevCvModel };
-
+  
       switch (sectionKey) {
         case "CONTACT INFO": {
           const contactInfoFields = ["phone", "email", "website", "linkedin", "address"];
@@ -101,79 +99,93 @@ const CVModel7 = () => {
         }
         case "Education": {
           const educationFields = ["startDate", "endDate", "institution", "degree"];
-          const educationIndex = Math.floor((questionNumber - 1) / educationFields.length);
           const fieldIndex = (questionNumber - 1) % educationFields.length;
-
-          if (!updatedModel.education[educationIndex]) {
+  
+          if (!Array.isArray(updatedModel.education)) {
+            updatedModel.education = [];
+          }
+  
+          // Si le champ actuel est "startDate", alors on commence une nouvelle entrée
+          if (fieldIndex === 0) {
             updatedModel.education.push({});
           }
-          updatedModel.education[educationIndex][educationFields[fieldIndex]] = response;
+  
+          // Met à jour la dernière entrée de la liste
+          updatedModel.education[updatedModel.education.length - 1][educationFields[fieldIndex]] = response;
           break;
         }
         case "Experience": {
           const experienceFields = ["startDate", "endDate", "ville", "jobTitle", "employeur", "description"];
-          const experienceIndex = Math.floor((questionNumber - 1) / experienceFields.length);
           const fieldIndex = (questionNumber - 1) % experienceFields.length;
-
-          if (!updatedModel.experiences[experienceIndex]) {
+  
+          if (!Array.isArray(updatedModel.experiences)) {
+            updatedModel.experiences = [];
+          }
+  
+          // Si le champ actuel est "startDate", alors on commence une nouvelle entrée
+          if (fieldIndex === 0) {
             updatedModel.experiences.push({});
           }
-          updatedModel.experiences[experienceIndex][experienceFields[fieldIndex]] = response;
+  
+          // Met à jour la dernière entrée de la liste
+          updatedModel.experiences[updatedModel.experiences.length - 1][experienceFields[fieldIndex]] = response;
           break;
         }
         case "LANGUAGES": {
-          const languageIndex = Math.floor((questionNumber - 1) / 2);
-          const isProficiency = questionNumber % 2 === 0;
-
-          if (!updatedModel.languages[languageIndex]) {
+          const languageFields = ["name", "proficiency"];
+          const fieldIndex = (questionNumber - 1) % languageFields.length;
+  
+          if (!Array.isArray(updatedModel.languages)) {
+            updatedModel.languages = [];
+          }
+  
+          // Si le champ actuel est "name", alors on commence une nouvelle entrée
+          if (fieldIndex === 0) {
             updatedModel.languages.push({ name: "", proficiency: "0" });
           }
-
-          if (isProficiency) {
-            updatedModel.languages[languageIndex].proficiency = response;
-          } else {
-            updatedModel.languages[languageIndex].name = response;
-          }
+  
+          // Met à jour la dernière entrée de la liste
+          updatedModel.languages[updatedModel.languages.length - 1][languageFields[fieldIndex]] = response;
           break;
         }
         case "interets": {
           if (!Array.isArray(updatedModel.interests)) {
             updatedModel.interests = [];
           }
-          if (!updatedModel.interests.includes(response)) {
-            updatedModel.interests.push(response);
-          }
+          updatedModel.interests = [...updatedModel.interests, response];
           break;
         }
         case "PROFILE": {
-          if (!Array.isArray(updatedModel.profile)) {
-            updatedModel.profile = [];
-          }
-          updatedModel.profile.push(response);
+          updatedModel.profile = response;
           break;
         }
         case "competences professionnelles": {
-          const skillIndex = Math.floor((questionNumber - 1) / 2);
-          const isProficiency = questionNumber % 2 === 0;
+          const skillFields = ["skillName", "proficiency"];
+          const fieldIndex = (questionNumber - 1) % skillFields.length;
   
-          if (!updatedModel.professionalSkills[skillIndex]) {
+          if (!Array.isArray(updatedModel.professionalSkills)) {
+            updatedModel.professionalSkills = [];
+          }
+  
+          // Si le champ actuel est "skillName", alors on commence une nouvelle entrée
+          if (fieldIndex === 0) {
             updatedModel.professionalSkills.push({ skillName: "", proficiency: "0" });
           }
   
-          if (isProficiency) {
-            updatedModel.professionalSkills[skillIndex].proficiency = response;
-          } else {
-            updatedModel.professionalSkills[skillIndex].skillName = response;
-          }
+          // Met à jour la dernière entrée de la liste
+          updatedModel.professionalSkills[updatedModel.professionalSkills.length - 1][skillFields[fieldIndex]] = response;
           break;
         }
         default:
           break;
       }
-
+  
       return updatedModel;
     });
   };
+  
+  
+  
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -182,21 +194,56 @@ const CVModel7 = () => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
+  const validateAndFormatCVData = (cvModel) => {
+    const formattedCVModel = { ...cvModel };
+  
+    // Assurez-vous que profile est une chaîne de caractères
+    if (Array.isArray(formattedCVModel.profile)) {
+      formattedCVModel.profile = formattedCVModel.profile.join(", ");
+    }
+  
+    // Assurez-vous que toutes les dates sont présentes et au bon format
+    formattedCVModel.education = formattedCVModel.education.map((edu) => {
+      return {
+        ...edu,
+        period: {
+          startDate: edu.startDate ? formatDate(edu.startDate) : undefined,
+          endDate: edu.endDate ? formatDate(edu.endDate) : undefined,
+        }
+      };
+    });
+  
+    formattedCVModel.experiences = formattedCVModel.experiences.map((exp) => {
+      return {
+        ...exp,
+        period: {
+          startDate: exp.startDate ? formatDate(exp.startDate) : undefined,
+          endDate: exp.endDate ? formatDate(exp.endDate) : undefined,
+        }
+      };
+    });
+  
+    return formattedCVModel;
+  };
+  
   const saveCVToServer = async () => {
     try {
+      const formattedCVModel = validateAndFormatCVData(cvModel);
+  
       const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
-      const isEmptyField = requiredFields.some(field => !cvModel[field]);
+      const isEmptyField = requiredFields.some(field => !formattedCVModel[field]);
       if (isEmptyField) {
         alert('Veuillez remplir tous les champs obligatoires.');
         return;
       }
-      const cvId = getCurrentCVId();
+  
+      const cvId = currentCVId;
       if (!cvId) {
         console.error('CV ID is undefined');
         return;
       }
-      const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
+  
+      const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, formattedCVModel);
       console.log('CV saved successfully:', response.data);
       const id = response.data.cvData._id;
       navigate(`/model7-user/${userId}/${cvId}/${id}`);
@@ -204,7 +251,6 @@ const CVModel7 = () => {
       console.error('Error saving CV:', error);
     }
   };
-
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.leftPanel}>
@@ -221,11 +267,8 @@ const CVModel7 = () => {
                   <img src={avatar} alt="Profile" />
                 )}
               </div>
-              <h2>
-                {cvModel.name} {cvModel.prenom}
-                <br />
-                <span>{cvModel.profession}</span>
-              </h2>
+              <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
+            <h3>{cvModel.profession}</h3>       
             </div>
             <h3 className={styles.title}>CONTACT INFO</h3>
             <div className={styles.contactInfo}>
