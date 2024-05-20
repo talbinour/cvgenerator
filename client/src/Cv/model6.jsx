@@ -17,7 +17,7 @@ function CvOrResume() {
             <h2>Emaan Bari<br /><span>Computer Scientist</span></h2>
           </div>
           <div className={styles.contactInfo}>
-            <h3 className={styles.title}>Contact Info</h3>
+            <h3 className={styles.title}>INFORMATIONS DE CONTACT</h3>
             <ul>
               <li>
                 <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
@@ -42,7 +42,7 @@ function CvOrResume() {
             </ul>
           </div>
           <div className={`${styles.contactInfo} ${styles.education}`}>
-            <h3 className={styles.title}>EDUCATION</h3>
+            <h3 className={styles.title}>ÉDUCATION</h3>
             <ul>
               <li>
                 <h5>2017 - 2019</h5>
@@ -62,7 +62,7 @@ function CvOrResume() {
             </ul>
           </div>
           <div className={styles.contactInfo}>
-            <h3 className={styles.title}>LANGUAGES</h3>
+            <h3 className={styles.title}>LANGUES</h3>
             <ul>
               <li>
                 <span className={styles.text}>English</span>
@@ -81,7 +81,7 @@ function CvOrResume() {
         </div>
         <div className={styles.right_Side}>
           <div className={styles.about}>
-            <h2 className={styles.title2}>Profile</h2>
+            <h2 className={styles.title2}>PROFIL</h2>
             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,<br /> tenetur architecto omnis maxime delectus quae quo reprehenderit quas laudantium.Itaque sequi commodi vero suscipit reiciendis ea aspernatur cum.Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro exercitationem nesciunt,tenetur architecto omnis maxime delectus quae quo reprehenderit quas laudantium. <br />Itaque sequi commodi vero suscipit reiciendis ea aspernatur cum.</p>
           </div>
           <div className={styles.about}>
@@ -108,7 +108,7 @@ function CvOrResume() {
             </div>
           </div>
           <div className={`${styles.about} ${styles.skills}`}>
-            <h2 className={styles.title2}>Professional Skills</h2>
+            <h2 className={styles.title2}>COMPÉTENCES PROFESSIONNELLES</h2>
             <div className={styles.box}>
               <h4>Html</h4>
               <div className={styles.percent}>
@@ -135,7 +135,7 @@ function CvOrResume() {
             </div>
           </div>
           <div className={styles.AboutInterest}>
-            <h2 className={styles.title2}>Interest</h2>
+            <h2 className={styles.title2}>CENTRES D&lsquo;INTÉRÊT</h2>
             <ul>
               <li><i className="fa fa-bar-chart" aria-hidden="true"></i>Trading</li>
               <li><i className="fa fa-laptop" aria-hidden="true"></i>Developing</li>

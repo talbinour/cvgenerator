@@ -42,7 +42,7 @@ const JobSearchInterface = () => {
       const response = await axios.get('https://jobs-api14.p.rapidapi.com/list', {
         params: formData,
         headers: {
-          'X-RapidAPI-Key': 'c1920b4343msh2be3b5cf75bc49ap13305fjsn956054001cba',
+          'X-RapidAPI-Key': '5a736f8247mshce33c49290ce21ep16e096jsn96175f56f724',
           'X-RapidAPI-Host': 'jobs-api14.p.rapidapi.com'
         }
       });
@@ -69,7 +69,7 @@ const JobSearchInterface = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Interface de Recherche d&apos;Emploi</h1>
+      <h1 className={styles.title}> Recherche d&apos;Emploi</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <label htmlFor="query" className={styles.label}>Mots-clés :</label>
         <input type="text" id="query" name="query" value={formData.query} onChange={handleChange} required className={styles.input} />

@@ -270,7 +270,7 @@
                     />
               </div>
               <div className={styles.contactInfo}>
-                <h3 className={styles.title}>Contact Info</h3>
+                <h3 className={styles.title}>INFORMATIONS DE CONTACT</h3>
                 <ul>
                   <li>
                     <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>
@@ -325,7 +325,7 @@
                 </ul>
               </div>
               <div className={`${styles.contactInfo} ${styles.education}`}>
-               <h3 className={styles.title}>EDUCATION</h3>
+               <h3 className={styles.title}>ÉDUCATION</h3>
                <ul>
                   {cvModel.education.map((edu, index) => (
                   <li key={index}>
@@ -370,7 +370,7 @@
                </div>
               </div>
               <div className={`${styles.contactInfo} ${styles.languages}`}>
-                <h3 className={styles.title}>LANGUAGES</h3>
+                <h3 className={styles.title}>LANGUES</h3>
                 <ul>
                   {cvModel.languages.map((lang, index) => (
                     <div className={styles.box} key={index}>
@@ -410,7 +410,7 @@
             {/* Partie droite */}
             <div className={styles.right_Side}>
               <div className={styles.about}>
-                <h2 className={styles.title2}>Profile</h2>
+                <h2 className={styles.title2}>PROFIL</h2>
                 <textarea
                   value={cvModel.profile}
                   onChange={(e) => handleChange(e, 'profile')}
@@ -419,7 +419,7 @@
                 />
               </div>
               <div className={styles.about}>
-                <h2 className={styles.title2}>Experience</h2>
+                <h2 className={styles.title2}>EXPÉRIENCE</h2>
                 {cvModel.experiences.map((exp, index) => (
                     <div className={styles.box} key={index}>
                       <div className={styles.year_company}>
@@ -473,7 +473,7 @@
                   </div>
               </div>
               <div className={`${styles.about} ${styles.skills}`}>
-                <h2 className={styles.title2}>Professional Skills</h2>
+                <h2 className={styles.title2}>COMPÉTENCES PROFESSIONNELLES</h2>
                   {cvModel.professionalSkills.map((skill, index) => (
                     <div className={styles.box} key={index}>
                       <input
@@ -504,7 +504,7 @@
                 </div>        
               </div>
               <div className={styles.AboutInterest}>
-                <h2 className={styles.title2}>Interest</h2>
+                <h2 className={styles.title2}>CENTRES D&lsquo;INTÉRÊT</h2>
                 <ul contentEditable={true}>
                   {cvModel.interests.map((interest, index) => (
                     <li key={index}><i className="fa fa-circle" aria-hidden="true"></i>{interest}

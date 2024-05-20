@@ -3,15 +3,13 @@ import axios from 'axios';
 import { FaTrash, FaDownload, FaEdit } from 'react-icons/fa';
 import moment from 'moment'; // Import de Moment.js
 import styles from './DashboardContent.module.css';
-import JobSearchInterface from './JobOffersPage'; // Import de l'interface de recherche d'emploi
+//import JobSearchInterface from './JobOffersPage'; // Import de l'interface de recherche d'emploi
 
 const DashboardContent = () => {
   const [cvsList, setCvsList] = useState([]);
   const [selectedCV, setSelectedCV] = useState(null);
   const [userId, setUserId] = useState('');
-  const [ setProfession] = useState('');
-  const [ setPays] = useState('');
-
+  
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,8 +19,7 @@ const DashboardContent = () => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
           setUserId(userId);
-          setPays(userData.pays);
-          setProfession(userData.profession );
+         
         })
         .catch(error => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
@@ -119,7 +116,6 @@ const DashboardContent = () => {
           </div>
         </div>
       )}
-      <JobSearchInterface /> {/* Placer l'interface de recherche d'emploi ici */}
     </div>
   );
 };

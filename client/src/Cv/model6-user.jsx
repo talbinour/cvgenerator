@@ -1,28 +1,17 @@
-import React, { useState, useEffect ,useCallback } from 'react';
-import styles from './model6.module.css'; // Assurez-vous d'avoir le fichier model5.module.css dans votre projet
+import React, { useState, useEffect} from 'react';
+import styles from './model6.module.css'; 
 import '@fortawesome/fontawesome-free/css/all.css';
 import avatar from '../assets/cvprofile.jpeg';
 import axios from 'axios';
 import * as htmlToImage from 'html-to-image';
-import html2pdf from 'html2pdf.js';
-import StylePalette from '../Style/StylePalette';
+import { useParams } from 'react-router-dom'; // Importer useParams depuis react-router-dom
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+
 function CvOuResume() {
-  const [userId, setUserId] = useState(null);
-  const [currentCVId, setCurrentCVId] = useState(null);
+  const { userId, cvId, id } = useParams(); // Récupérer les paramètres userId, cvId et _id de l'URL
   const [imageURL, setImageURL] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
-  const [cvStyle, setCvStyle] = useState({});
-  const applyStyle = (style) => {
-    setCvStyle(style);
-  };
-
-  // Fonction pour gérer le changement de style sélectionné
- 
-
-  
-  const getCurrentCVId = () => {
-    return currentCVId;
-  };
   const [cvModel, setCvModel] = useState({
     name: 'John Doe',
     jobTitle: 'Développeur Web',
@@ -56,80 +45,72 @@ function CvOuResume() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      axios
-        .get('http://localhost:8080/current-username', { 
-          withCredentials: true ,
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
+    console.log( userId, cvId, id);
+      // Charger les données de l'utilisateur
+      axios.get('http://localhost:8080/current-username', {  
+        withCredentials: true, 
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0' 
         }
       })
-        .then((response) => {
-          const userData = response.data.user;
-          const userId = userData.id || userData.user_id;
-          setUserPhoto(response.data.user.photo);
+      .then((userResponse) => {
+        const userData = userResponse.data.user;
+        setUserPhoto(userData.photo);
 
-          setUserId(userId);
-          setCurrentCVId(userId);
+        // Charger les données du CV en utilisant les paramètres d'URL
+        axios.get(`http://localhost:8080/cv/${userId}/${cvId}/${id}`)
+        .then((cvResponse) => {
+          const cvData = cvResponse.data.cvData;
+            console.log(cvData )
+          // Mettre à jour le state cvModel avec les données du CV et de l'utilisateur
           setCvModel({
-            ...cvModel,
-            name: userData.nom,
-            prenom: userData.prenom,
-            phone: userData.Nbphone,
-            email: userData.email,
-            address: userData.pays,
-            profession:userData.profession,
-            photo:userData.photo,
+            ...cvData,
+           
           });
         })
-        .catch((error) => {
-          console.error('Erreur lors de la récupération des informations utilisateur:', error);
+        .catch((cvError) => {
+          console.error('Erreur lors du chargement du CV:', cvError);
         });
+      })
+      .catch((userError) => {
+        console.error('Erreur lors de la récupération des informations utilisateur:', userError);
+      });
+    
+  }, [userId, cvId, id]); // Ajouter userId, cvId et _id à la liste des dépendances pour recharger les données lorsque les paramètres d'URL changent
+
+
+  const generatePDF = async () => {
+
+    const imageDownloadResult = await handleDownload();
+    if (!imageDownloadResult.success) {
+      window.alert("Le téléchargement de  cv a échoué, veuillez réessayer.");
+      return;
     }
-  }, []);
-
-
-  useEffect(() => {
-    loadCVFromServer();
-  }, [userId]);
-
-  const loadCVFromServer =  useCallback(async () => {
-    try {
-      const cvId = getCurrentCVId();
-      if (!cvId) {
-        console.error('ID du CV non défini');
-        return;
-      }
-
-      const response = await axios.get(`http://localhost:8080/cv/${userId}/${cvId}`);
-      setCvModel(response.data.cvData);
-    } catch (error) {
-      console.error('Erreur lors du chargement du CV:', error);
-    }
-  }, [userId, getCurrentCVId]); 
-
-  const generatePDF = () => {
     const element = document.getElementById('cv-content');
-
     if (!element) {
       console.error('Élément avec l\'ID "cv-content" introuvable.');
       return;
     }
 
-    const opt = {
-        margin: -0.5,
-        filename: 'mon_cv.pdf',
-        image: { type: 'jpeg', quality: 1 }, // Amélioration de la qualité de l'image
-        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true, width: element.clientWidth, height: element.clientHeight },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } // S'assurer que le format est A4
-    };
-
-    html2pdf().from(element).set(opt).save();
-    handleDownload();
+    html2canvas(element, {
+      scale: 2, // Augmentation de la résolution
+      useCORS: true, // Permet de charger des images de sources externes
+      onclone: (document) => {
+        document.getElementById('cv-content').style.visibility = 'visible';
+      }
+    }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'pt',
+        format: [canvas.width, canvas.height]
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save('downloaded-cv.pdf');
+      handleDownload();
+    });
   };
 
   const handleDownload = async () => {
@@ -137,8 +118,7 @@ function CvOuResume() {
       const element = document.getElementById('cv-content');
       if (!element) {
         console.error('Élément avec l\'ID "cv-content" introuvable.');
-        return;
-      }
+        return { success: false };      }
       
 
       const url = await htmlToImage.toPng(element, { quality: 0.8, width: 1100});
@@ -147,22 +127,26 @@ function CvOuResume() {
       const response = await fetch(url);
       const blob = await response.blob();
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      console.log(userId, cvId, id)
       const formData = new FormData();
       formData.append('image', blob, 'cv_image.png');
       formData.append('userId', userId);
       formData.append('imageURL', imageURL);
-
-      const uploadResponse = await fetch('http://localhost:8080/api/save-image', {
+      formData.append('pageURL', window.location.pathname); 
+      formData.append('cvId', cvId); 
+      formData.append('id', id); 
+      const uploadResponse = await fetch(`http://localhost:8080/api/save-image/${userId}/${cvId}/${id}`, {
         method: 'POST',
         body: formData
       });
-
-      console.log('Réponse de téléchargement de l\'image:', uploadResponse);
+      if (!uploadResponse.ok) throw new Error('Failed to upload image');
+      return { success: true };
     } catch (error) {
       console.error('Erreur lors de la manipulation du téléchargement:', error);
+      return { success: false };
     }
   };
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -173,8 +157,7 @@ function CvOuResume() {
 
   return (
     <div className={`${styles['print-area']} ${styles.resume}`}>
-       <StylePalette applyStyle={applyStyle} />     
-       <div style={cvStyle}>
+     
       <div id="cv-content" className={styles.container}>
       
         <div className={styles.editButton}>
@@ -294,7 +277,7 @@ function CvOuResume() {
         </div>
       </div>
       </div>
-    </div>
+   
   );
 }
 

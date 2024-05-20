@@ -174,7 +174,7 @@ function CvOuResume() {
             <h3>{cvModel.profession}</h3>         
              </div>
           <div className={styles.contactInfo}>
-            <h3 className={styles.title}>Informations de Contact</h3>
+            <h3 className={styles.title}>INFORMATIONS DE CONTACT</h3>
             <ul>
               <li>
                 <span className={styles.icon}><i className="fa fa-phone" aria-hidden="true"></i></span>

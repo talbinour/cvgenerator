@@ -1,28 +1,52 @@
+/* ApplicationsPage.module.css */
+
 /* Style du conteneur principal */
 .container {
-    max-width: 600px; /* Largeur maximale du conteneur */
-    margin: 0 auto; /* Centrage horizontal du conteneur */
-    padding: 20px; /* Espacement intérieur du conteneur */
-  }
-  
-  /* Style des conteneurs individuels des conversations */
-  .conversation {
-    border: 1px solid #ccc; /* Bordure autour de chaque conversation */
-    border-radius: 5px; /* Bordure arrondie */
-    padding: 15px; /* Espacement intérieur */
-    margin-bottom: 15px; /* Marge en bas pour séparer les conversations */
-  }
-  
-  /* Style du lien vers la conversation */
-  .conversation a {
-    color: #333; /* Couleur du texte */
-    text-decoration: none; /* Pas de soulignement */
-    font-weight: bold; /* Texte en gras */
-  }
-  
-  /* Style de la date de la conversation */
-  .conversation p {
-    margin-top: 5px; /* Marge en haut pour la date */
-    color: #777; /* Couleur de la date */
-  }
-  
+  max-width: 800px; /* Largeur maximale du conteneur */
+  margin: 0 auto; /* Centrage horizontal du conteneur */
+  padding: 20px; /* Espacement intérieur du conteneur */
+  font-family: 'Arial', sans-serif; /* Police moderne */
+}
+
+/* Style des titres */
+h1 {
+  text-align: center;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Style des conteneurs individuels des conversations */
+.conversation {
+  border: 1px solid #ddd; /* Bordure plus légère */
+  border-radius: 10px; /* Coins arrondis */
+  padding: 20px; /* Espacement intérieur */
+  margin-bottom: 20px; /* Marge en bas pour séparer les conversations */
+  background-color: #f9f9f9; /* Couleur de fond légère */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  transition: all 0.3s ease; /* Animation de transition fluide */
+}
+
+.conversation:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au survol */
+}
+
+/* Style du lien vers la conversation */
+.conversation a {
+  color: #007bff; /* Couleur du lien */
+  text-decoration: none; /* Pas de soulignement */
+  font-weight: bold; /* Texte en gras */
+  transition: color 0.3s ease; /* Animation de transition pour la couleur */
+  font-size: 1.2em;
+}
+
+.conversation a:hover {
+  color: #0056b3; /* Couleur du lien au survol */
+}
+
+/* Style de la date de la conversation */
+.conversation p {
+  margin-top: 10px; /* Marge en haut pour la date */
+  color: #888; /* Couleur de la date */
+  font-size: 0.9em;
+}
