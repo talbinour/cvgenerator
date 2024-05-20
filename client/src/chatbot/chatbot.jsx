@@ -2,15 +2,64 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import styles from "./chatbot.module.css";
+import styled from "styled-components";
 import axios from "axios";
+
+const Wrapper = styled.div`
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+`;
+
+const MessageContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+`;
+
+const Message = styled.div`
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: ${({ user }) => (user === "me" ? "#007bff" : "#f8f9fa")};
+  color: ${({ user }) => (user === "me" ? "#fff" : "#212529")};
+`;
+
+const InputContainer = styled.div`
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+`;
+
+const InputField = styled.input`
+  flex: 1;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+`;
+
+const SendButton = styled.button`
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+`;
 
 const Chat = ({ updateUserResponse }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [conversationState, setConversationState] = useState(null);
-  const [sectionKey, setSectionKey] = useState(""); // eslint-disable-line no-unused-vars
-  const [questionNumber, setQuestionNumber] = useState(0); // eslint-disable-line no-unused-vars
+  const [sectionKey, setSectionKey] = useState("");
+  const [questionNumber, setQuestionNumber] = useState(0);
   const [conversationBlocked, setConversationBlocked] = useState(false);
 
   const sendMessage = async () => {
@@ -22,7 +71,6 @@ const Chat = ({ updateUserResponse }) => {
       return;
     }
 
-    // Update the user response before sending the new question
     updateUserResponse(input, sectionKey, questionNumber);
 
     try {
@@ -75,7 +123,7 @@ const Chat = ({ updateUserResponse }) => {
     };
 
     sendInitialMessage();
-  }, []); // Passer un tableau vide pour s'assurer que cette fonction ne s'exécute qu'une fois lors du montage
+  }, []);
 
   const handleSendMessage = async () => {
     if (!conversationBlocked) {
@@ -96,40 +144,27 @@ const Chat = ({ updateUserResponse }) => {
   };
 
   return (
-    <div className={styles.pageWrapper}>
-      <div className={styles.leftPanel}>
-        <div className={styles.container}>
-          <div className={styles.messageContainer}>
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`${styles.message} ${
-                  message.user === "me" ? styles.me : styles.bot
-                }`}
-              >
-                {message.user}: {message.text}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className={styles.inputContainerBottom}>
-          <input
-            className={styles.inputField}
-            value={input}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            disabled={conversationBlocked}
-          />
-          <button
-            className={styles.sendButton}
-            onClick={handleSendMessage}
-            disabled={conversationBlocked}
-          >
-            <FontAwesomeIcon icon={faPaperPlane} />
-          </button>
-        </div>
-      </div>
-    </div>
+    <Wrapper>
+      <MessageContainer>
+        {messages.map((message, index) => (
+          <Message key={index} user={message.user}>
+            {message.user}: {message.text}
+          </Message>
+        ))}
+      </MessageContainer>
+      <InputContainer>
+        <InputField
+          value={input}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          disabled={conversationBlocked}
+          placeholder="Écrivez votre message..."
+        />
+        <SendButton onClick={handleSendMessage} disabled={conversationBlocked}>
+          <FontAwesomeIcon icon={faPaperPlane} />
+        </SendButton>
+      </InputContainer>
+    </Wrapper>
   );
 };
 

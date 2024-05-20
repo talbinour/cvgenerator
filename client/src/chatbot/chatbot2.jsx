@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 import styles from './chatbot2.module.css';
 import logoImage from '../assets/chatbot.png';
 import defaultAvatar from '../assets/user.png';
@@ -14,7 +14,9 @@ const Chat = () => {
     const [userPhoto, setUserPhoto] = useState(null);
     const [userId, setUserId] = useState(null);
     const [conversationId, setConversationId] = useState(null);
+    const [isListening, setIsListening] = useState(false); // État pour gérer l'état d'écoute du microphone
     const messageQueueRef = useRef([]); // Store messages to send when conversationId is ready
+    const recognition = useRef(null);
 
     const params = useParams();
 
@@ -79,8 +81,40 @@ const Chat = () => {
             });
     };
     
-    
-    
+    const toggleRecognition = () => {
+        if (!isListening) {
+            startRecognition();
+        } else {
+            stopRecognition();
+        }
+    };
+
+    const startRecognition = () => {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("La reconnaissance vocale n'est pas prise en charge dans ce navigateur.");
+            return;
+        }
+        
+        recognition.current = new window.webkitSpeechRecognition();
+        recognition.current.lang = "fr-FR"; // Langue française
+
+        recognition.current.onresult = (event) => {
+            const currentTranscript = event.results[0][0].transcript;
+            setInput(currentTranscript); // Mettez à jour l'entrée avec le texte reconnu
+        };
+
+        recognition.current.onend = () => {
+            setIsListening(false);
+        };
+
+        recognition.current.start();
+        setIsListening(true);
+    };
+
+    const stopRecognition = () => {
+        recognition.current.stop();
+        setIsListening(false);
+    };
     
     const sendMessage = async (message) => {
         const response = await fetch("http://localhost:5000/chat", {
@@ -154,16 +188,24 @@ const Chat = () => {
                             <p className="mt-2 text-xs text-gray-500">{new Date(message.timestamp).toLocaleString()}</p>
                         </div>
                     ))}
-
                     </div>
-                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
-                    <button className={styles.sendButton} onClick={handleSendMessage}>
-                        <FontAwesomeIcon icon={faPaperPlane} />
+                    {/* Bouton pour activer/désactiver la reconnaissance vocale */}
+                    <button onClick={toggleRecognition}>
+                        <FontAwesomeIcon icon={isListening ? faMicrophoneSlash : faMicrophone} />
                     </button>
-
+                    <input
+                            className={styles.inputField}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                        />
+                        <button className={styles.sendButton} onClick={handleSendMessage}>
+                            <FontAwesomeIcon icon={faPaperPlane} />
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+       
     );
 };
 
