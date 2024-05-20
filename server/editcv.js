@@ -124,6 +124,7 @@ router.post('/api/save-image/:userId/:cvId/:id', upload.single('image'), async (
     const userId = req.params.userId;
     const cvId = req.params.cvId;
     const id = req.params.id;
+    const editurl = req.body.editurl;
 
     if (!userId || !image) {
       throw new Error('Invalid request: userId or image is missing.');
@@ -139,6 +140,7 @@ router.post('/api/save-image/:userId/:cvId/:id', upload.single('image'), async (
       existingImage.imageSize = image.size;
       existingImage.pageURL = req.body.pageURL;
       existingImage.imageUrl = imageURL;
+      existingImage.editurl = editurl;
 
       // Enregistrez les modifications apportées à l'image existante
       existingImage = await existingImage.save();
@@ -156,7 +158,8 @@ router.post('/api/save-image/:userId/:cvId/:id', upload.single('image'), async (
       imagePath: image.path,
       imageSize: image.size,
       pageURL: req.body.pageURL,
-      imageUrl: imageURL
+      imageUrl: imageURL, 
+      editurl :editurl
     });
 
     // Sauvegarder la nouvelle image dans la base de données
