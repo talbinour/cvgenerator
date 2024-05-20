@@ -23,6 +23,7 @@ const imageSchema = new mongoose.Schema({
   imageSize: { type: Number, required: true },
   imageUrl: { type: String,required: true  } ,
   pageURL: { type: String },
+  editurl: { type: String },
   date: {
     type: Date,
     default: Date.now

@@ -50,9 +50,10 @@ const DashboardContent = () => {
     return moment(dateString).format('DD MMMM YYYY'); // Formatage de la date avec Moment.js
   };
 
-  const handleImageClick = (cvId, imageUrl, pageURL, date, userId, id, imageName) => {
-    setSelectedCV({ cvId, imageUrl, pageURL, date, userId, id, imageName });
+  const handleImageClick = (cvId, imageUrl, pageURL, date, userId, id, imageName, editurl) => {
+    setSelectedCV({ cvId, imageUrl, pageURL, date, userId, id, imageName, editurl });
   };
+  
 
   const handleDeleteClick = async (cvId) => {
     try {
@@ -85,7 +86,7 @@ const DashboardContent = () => {
               src={cv.imageUrl}
               alt={cv.imageName}
               className={styles['cv-image']}
-              onClick={() => handleImageClick(cv.cvId, cv.imageUrl, cv.pageURL, cv.date, cv.userId, cv.id, cv.imageName)}
+              onClick={() => handleImageClick(cv.cvId, cv.imageUrl, cv.pageURL, cv.date, cv.userId, cv.id, cv.imageName , cv.editurl)}
             />
             <div className={styles['cv-details']}>
               <p className={styles['cv-title']}>{cv.imageName}</p>
@@ -107,7 +108,7 @@ const DashboardContent = () => {
             <img src={selectedCV.imageUrl} alt="Selected CV" className={styles['full-cv-image']} />
           </div>
           <div className={styles['button-container']}>
-            <button className={styles['edit-button']} onClick={() => window.open(`/editcv/${selectedCV.userId}/${selectedCV.cvId}/${selectedCV.id}`, '_blank')}>
+            <button className={styles['edit-button']} onClick={() => window.open(`/${selectedCV.editurl}/${selectedCV.userId}/${selectedCV.cvId}/${selectedCV.id}`, '_blank')}>
               Edit <FaEdit />
             </button>
             <button className={styles['download-button']} onClick={() => window.open(selectedCV.pageURL, '_blank')}>

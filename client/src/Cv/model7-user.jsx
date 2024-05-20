@@ -135,6 +135,7 @@ function CvOuResume() {
       formData.append('pageURL', window.location.pathname); 
       formData.append('cvId', cvId); 
       formData.append('id', id); 
+      formData.append('editurl', 'editcv'); 
       const uploadResponse = await fetch(`http://localhost:8080/api/save-image/${userId}/${cvId}/${id}`, {
         method: 'POST',
         body: formData
