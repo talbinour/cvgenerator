@@ -28,6 +28,8 @@ Slider.propTypes = {
 
 const CVModel7 = () => {
   const navigate = useNavigate();
+  const [currentCVId] = useState(null);
+
   const [userId, setUserId] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
   const [cvModel, setCvModel] = useState({
@@ -46,6 +48,11 @@ const CVModel7 = () => {
     professionalSkills: [{ skillName: "", proficiency: "0" }],
     interests: [],
   });
+  
+  const getCurrentCVId = () => {
+    return currentCVId;
+  };
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -178,11 +185,23 @@ const CVModel7 = () => {
 
   const saveCVToServer = async () => {
     try {
-      const response = await axios.post(`http://localhost:8080/cv/${userId}/`, cvModel);
-      console.log("New CV Data:", response.data);
-      navigate("/model7-user");
+      const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
+      const isEmptyField = requiredFields.some(field => !cvModel[field]);
+      if (isEmptyField) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+      const cvId = getCurrentCVId();
+      if (!cvId) {
+        console.error('CV ID is undefined');
+        return;
+      }
+      const response = await axios.post(`http://localhost:8080/cv/${userId}/${cvId}`, cvModel);
+      console.log('CV saved successfully:', response.data);
+      const id = response.data.cvData._id;
+      navigate(`/model7-user/${userId}/${cvId}/${id}`);
     } catch (error) {
-      console.error("Error creating CV:", error);
+      console.error('Error saving CV:', error);
     }
   };
 
@@ -326,12 +345,13 @@ const CVModel7 = () => {
               </ul>
             </div>
 
-            <button onClick={saveCVToServer} className={styles.btn}>
-              Save to Server
-            </button>
+            
           </div>
         </div>
       </div>
+      <button onClick={saveCVToServer} className={styles.finishButton}>
+        Sauvegarder le cv
+      </button>
     </div>
   );
 };

@@ -365,19 +365,16 @@ textarea {
   }
   
   .finishButton {
-    position: fixed; /* Modifier la position en fixe */
-    left: 50%; /* Aligner le bouton au centre */
-    transform: translateX(-50%); /* Centrer horizontalement */
+    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
+    top: 70px; /* Position par rapport au haut de la fenêtre */
+    right: 20px; /* Position par rapport à la droite de la fenêtre */
     padding: 10px 20px;
     font-size: 25px;
-    bottom: 20px; /* Espacement du bas */
     background-color: #053466;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: flex;
-    z-index: 999; /* Assurer que le bouton est au-dessus de tout le contenu */
 }
 
 .finishButton:hover {
