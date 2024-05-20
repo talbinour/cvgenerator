@@ -3,11 +3,15 @@ import axios from 'axios';
 import { FaTrash, FaDownload, FaEdit } from 'react-icons/fa';
 import moment from 'moment'; // Import de Moment.js
 import styles from './DashboardContent.module.css';
+import JobSearchInterface from './JobOffersPage'; // Import de l'interface de recherche d'emploi
 
 const DashboardContent = () => {
   const [cvsList, setCvsList] = useState([]);
   const [selectedCV, setSelectedCV] = useState(null);
   const [userId, setUserId] = useState('');
+  const [ setProfession] = useState('');
+  const [ setPays] = useState('');
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -17,6 +21,8 @@ const DashboardContent = () => {
           const userData = response.data.user;
           const userId = userData.id || userData.user_id;
           setUserId(userId);
+          setPays(userData.pays);
+          setProfession(userData.profession );
         })
         .catch(error => {
           console.error('Erreur lors de la récupération des informations utilisateur:', error);
@@ -46,17 +52,15 @@ const DashboardContent = () => {
 
   const handleImageClick = (cvId, imageUrl, pageURL, date, userId, id, imageName) => {
     setSelectedCV({ cvId, imageUrl, pageURL, date, userId, id, imageName });
-
   };
 
   const handleDeleteClick = async (cvId) => {
     try {
-
-        // Demande de confirmation à l'utilisateur avant de supprimer l'image
-        const confirmed = window.confirm('Êtes-vous sûr de vouloir supprimer cette image ?');
-        if (!confirmed) {
-          return; // Annuler la suppression si l'utilisateur n'a pas confirmé
-        }
+      // Demande de confirmation à l'utilisateur avant de supprimer l'image
+      const confirmed = window.confirm('Êtes-vous sûr de vouloir supprimer cette image ?');
+      if (!confirmed) {
+        return; // Annuler la suppression si l'utilisateur n'a pas confirmé
+      }
 
       const response = await axios.delete(`http://localhost:8080/cv/${userId}/${cvId}`);
       console.log('Image deleted successfully:', response.data);
@@ -75,13 +79,13 @@ const DashboardContent = () => {
     <div>
       <h1>Dashboard</h1>
       <div className={styles['cv-list']}>
-        {cvsList.map((cv) => (
+        {cvsList.slice(-3).map((cv) => (
           <div key={cv._id} className={styles['cv-item']}>
             <img
               src={cv.imageUrl}
               alt={cv.imageName}
               className={styles['cv-image']}
-              onClick={() => handleImageClick( cv.cvId, cv.imageUrl, cv.pageURL, cv.date, cv.userId,cv.id, cv.imageName)}
+              onClick={() => handleImageClick(cv.cvId, cv.imageUrl, cv.pageURL, cv.date, cv.userId, cv.id, cv.imageName)}
             />
             <div className={styles['cv-details']}>
               <p className={styles['cv-title']}>{cv.imageName}</p>
@@ -95,28 +99,27 @@ const DashboardContent = () => {
       </div>
       {selectedCV && (
         <div className={styles['alert-area']}>
-
-        <div>
-        <button className={styles['close-button']} onClick={() => setSelectedCV(null)}>X</button>
-        <p className={styles['date-text']}>Date de création du CV : {formatDate(selectedCV.date)}</p>
+          <div>
+            <button className={styles['close-button']} onClick={() => setSelectedCV(null)}>X</button>
+            <p className={styles['date-text']}>Date de création du CV : {formatDate(selectedCV.date)}</p>
+          </div>
+          <div className={styles['cv-content']}>
+            <img src={selectedCV.imageUrl} alt="Selected CV" className={styles['full-cv-image']} />
+          </div>
+          <div className={styles['button-container']}>
+            <button className={styles['edit-button']} onClick={() => window.open(`/editcv/${selectedCV.userId}/${selectedCV.cvId}/${selectedCV.id}`, '_blank')}>
+              Edit <FaEdit />
+            </button>
+            <button className={styles['download-button']} onClick={() => window.open(selectedCV.pageURL, '_blank')}>
+              Télécharger <FaDownload />
+            </button>
+            <button className={styles['delete-button']} onClick={() => handleDeleteClick(selectedCV.cvId)}>
+              Supprimer <FaTrash />
+            </button>
+          </div>
         </div>
-        <div className={styles['cv-content']}>
-          <img src={selectedCV.imageUrl} alt="Selected CV" className={styles['full-cv-image']} />
-        </div>
-        <div className={styles['button-container']}>
-          <button className={styles['edit-button']} onClick={() => window.open(`/editcv/${selectedCV.userId}/${selectedCV.cvId}/${selectedCV.id}`, '_blank')}>
-            Edit  <FaEdit /> 
-          </button>
-          <button className={styles['download-button']} onClick={() => window.open(selectedCV.pageURL, '_blank')}>
-            Télécharger <FaDownload />
-          </button>
-          <button className={styles['delete-button']} onClick={() => handleDeleteClick(selectedCV.cvId)}>
-            Supprimer <FaTrash />
-          </button>
-        </div>
-      </div>
-      
       )}
+      <JobSearchInterface /> {/* Placer l'interface de recherche d'emploi ici */}
     </div>
   );
 };

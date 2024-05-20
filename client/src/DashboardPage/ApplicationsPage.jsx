@@ -34,6 +34,7 @@ const Applications = () => {
 
   return (
     <div>
+      <h1>Historique des conversations</h1>
       <ul>
         {conversations.map(conversation => (
           <li key={conversation.id}>

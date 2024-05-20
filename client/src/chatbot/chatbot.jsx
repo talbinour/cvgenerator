@@ -22,6 +22,9 @@ const Chat = ({ updateUserResponse }) => {
       return;
     }
 
+    // Update the user response before sending the new question
+    updateUserResponse(input, sectionKey, questionNumber);
+
     try {
       const response = await axios.post("http://localhost:5000/new-question", {
         message: input,
@@ -41,7 +44,6 @@ const Chat = ({ updateUserResponse }) => {
       if (response.data.conversation_state) {
         setSectionKey(response.data.section_key);
         setQuestionNumber(response.data.question_number);
-        updateUserResponse(input, response.data.section_key, response.data.question_number);
         setConversationBlocked(false);
       } else {
         setConversationBlocked(true);

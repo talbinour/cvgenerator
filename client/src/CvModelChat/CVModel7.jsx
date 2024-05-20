@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from "react";
 import Chat from "../chatbot/chatbot";
 import axios from "axios";
+import PropTypes from 'prop-types'; // Ajout de l'importation de PropTypes
 import styles from "./CVModel7.module.css";
 import avatar from "../assets/cvprofile.jpeg";
 import { useNavigate } from "react-router-dom";
+
+// Définition du composant Slider intégré
+const Slider = ({ value, onChange }) => {
+  return (
+    <input
+      type="range"
+      min="0"
+      max="100"
+      value={value}
+      onChange={onChange}
+      className={styles.slider}
+    />
+  );
+};
+
+// Ajout des propTypes pour le composant Slider
+Slider.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
 const CVModel7 = () => {
   const navigate = useNavigate();
@@ -19,10 +40,10 @@ const CVModel7 = () => {
     linkedin: "",
     address: "",
     education: [{ startDate: "", endDate: "", institution: "", degree: "" }],
-    languages: [{ name: "", proficiency: "" }],
+    languages: [{ name: "", proficiency: "0" }],
     profile: "",
     experiences: [{ startDate: "", endDate: "", ville: "", jobTitle: "", employeur: "", description: "" }],
-    professionalSkills: [{ skillName: "", proficiency: "" }],
+    professionalSkills: [{ skillName: "", proficiency: "0" }],
     interests: [],
   });
 
@@ -47,10 +68,10 @@ const CVModel7 = () => {
             linkedin: userData.linkedin,
             address: userData.address,
             education: [{ startDate: "", endDate: "", institution: "", degree: "" }],
-            languages: [{ name: "", proficiency: "" }],
+            languages: [{ name: "", proficiency: "0" }],
             profile: "",
             experiences: [{ startDate: "", endDate: "", ville: "", jobTitle: "", employeur: "", description: "" }],
-            professionalSkills: [{ skillName: "", proficiency: "" }],
+            professionalSkills: [{ skillName: "", proficiency: "0" }],
             interests: [],
             photo: userData.photo,
           });
@@ -93,30 +114,50 @@ const CVModel7 = () => {
           updatedModel.experiences[experienceIndex][experienceFields[fieldIndex]] = response;
           break;
         }
-        case "Languages": {
-          const languagesFields = ["name", "proficiency"];
-          const languageIndex = Math.floor((questionNumber - 1) / languagesFields.length);
-          const fieldIndex = (questionNumber - 1) % languagesFields.length;
+        case "LANGUAGES": {
+          const languageIndex = Math.floor((questionNumber - 1) / 2);
+          const isProficiency = questionNumber % 2 === 0;
 
           if (!updatedModel.languages[languageIndex]) {
-            updatedModel.languages.push({});
+            updatedModel.languages.push({ name: "", proficiency: "0" });
           }
-          updatedModel.languages[languageIndex][languagesFields[fieldIndex]] = response;
-          break;
-        }
-        case "Interests": {
-          updatedModel.interests.push(response);
-          break;
-        }
-        case "Professional Skills": {
-          const professionalSkillsFields = ["skillName", "proficiency"];
-          const skillIndex = Math.floor((questionNumber - 1) / professionalSkillsFields.length);
-          const fieldIndex = (questionNumber - 1) % professionalSkillsFields.length;
 
-          if (!updatedModel.professionalSkills[skillIndex]) {
-            updatedModel.professionalSkills.push({});
+          if (isProficiency) {
+            updatedModel.languages[languageIndex].proficiency = response;
+          } else {
+            updatedModel.languages[languageIndex].name = response;
           }
-          updatedModel.professionalSkills[skillIndex][professionalSkillsFields[fieldIndex]] = response;
+          break;
+        }
+        case "interets": {
+          if (!Array.isArray(updatedModel.interests)) {
+            updatedModel.interests = [];
+          }
+          if (!updatedModel.interests.includes(response)) {
+            updatedModel.interests.push(response);
+          }
+          break;
+        }
+        case "PROFILE": {
+          if (!Array.isArray(updatedModel.profile)) {
+            updatedModel.profile = [];
+          }
+          updatedModel.profile.push(response);
+          break;
+        }
+        case "competences professionnelles": {
+          const skillIndex = Math.floor((questionNumber - 1) / 2);
+          const isProficiency = questionNumber % 2 === 0;
+  
+          if (!updatedModel.professionalSkills[skillIndex]) {
+            updatedModel.professionalSkills.push({ skillName: "", proficiency: "0" });
+          }
+  
+          if (isProficiency) {
+            updatedModel.professionalSkills[skillIndex].proficiency = response;
+          } else {
+            updatedModel.professionalSkills[skillIndex].skillName = response;
+          }
           break;
         }
         default:
@@ -203,12 +244,13 @@ const CVModel7 = () => {
               </ul>
             </div>
             <div className={styles.education}>
-              <h3 className={styles.title}>EDUCATION</h3>
+              <h3 className={styles.title}>Education</h3>
               <ul>
                 {cvModel.education?.map((edu, index) => (
                   <li key={index}>
                     <h5>
-                      {edu.startDate ? formatDate(edu.startDate) : ""} - {edu.endDate ? formatDate(edu.endDate) : ""}
+                      {edu.startDate ? formatDate(edu.startDate) : ""} -{" "}
+                      {edu.endDate ? formatDate(edu.endDate) : ""}
                     </h5>
                     <h4>{edu.degree}</h4>
                     <h4>{edu.institution}</h4>
@@ -222,9 +264,13 @@ const CVModel7 = () => {
                 {cvModel.languages?.map((lang, index) => (
                   <li key={index}>
                     <span className={styles.text}>{lang.name}</span>
-                    <span className={styles.percent}>
-                      <div style={{ width: lang.proficiency }}></div>
-                    </span>
+                    <Slider
+                      value={lang.proficiency}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        updateUserResponse(newValue, "LANGUAGES", (index * 2) + 2);
+                      }}
+                    />
                   </li>
                 ))}
               </ul>
@@ -241,7 +287,8 @@ const CVModel7 = () => {
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
                     <h5>
-                      {exp.startDate ? formatDate(exp.startDate) : ""} - {exp.endDate ? formatDate(exp.endDate) : ""}
+                      {exp.startDate ? formatDate(exp.startDate) : ""} -{" "}
+                      {exp.endDate ? formatDate(exp.endDate) : ""}
                     </h5>
                     <h5>{exp.ville}</h5>
                   </div>
@@ -254,28 +301,31 @@ const CVModel7 = () => {
               ))}
             </div>
             <div className={styles.professional_skills}>
-              <h2 className={styles.title2}>Professional Skills</h2>
+              <h2 className={styles.title2}>Compétences Professionnelles</h2>
               <div className={styles.skills}>
                 {cvModel.professionalSkills?.map((skill, index) => (
                   <div className={styles.box} key={index}>
                     <h4>{skill.skillName}</h4>
-                    <div className={styles.percent}>
-                      <div style={{ width: skill.proficiency }}></div>
-                    </div>
+                    <Slider
+                      value={skill.proficiency}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        updateUserResponse(newValue, "COMPETENCES PROFESSIONNELLES", (index * 2) + 2);
+                      }}
+                    />
                   </div>
                 ))}
               </div>
             </div>
-            <div className={styles.interests}>
-              <h2 className={styles.title2}>Interests</h2>
+            <div className={styles.AboutInterest}>
+              <h2 className={styles.title2}>Intérêts</h2>
               <ul>
                 {cvModel.interests?.map((interest, index) => (
-                  <li key={index}>
-                    <span className={styles.text}>{interest}</span>
-                  </li>
+                  <li key={index}>{interest}</li>
                 ))}
               </ul>
             </div>
+
             <button onClick={saveCVToServer} className={styles.btn}>
               Save to Server
             </button>
