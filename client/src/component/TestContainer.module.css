@@ -1,3 +1,20 @@
+/* TestContainer.module.css */
+
+.container {
+  margin-top: 20px;
+}
+
+.title {
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+
+.grid {
+  margin-top: 20px;
+}
+
 .card {
   display: flex;
   flex-direction: column;
@@ -6,16 +23,28 @@
   transition: opacity 0.5s ease-in-out;
 }
 
+.flagImage {
+  width: 40px !important; /* Taille réduite des drapeaux */
+  height: 50px;
+  margin-bottom: 10px;
+}
+
 .marker {
+  margin-top: 10px;
   font-weight: bold;
+  color: #333;
 }
 
 .description {
-  margin-top: 10px;
+  color: #666;
+  margin: 10px 0;
 }
 
 .link {
-  margin-top: 10px;
-  color: #007bff;
+  color: #1e90ff;
   text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
 }

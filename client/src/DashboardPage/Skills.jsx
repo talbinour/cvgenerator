@@ -30,29 +30,29 @@ const Skills = () => {
   const getCountryCode = (test) => {
     switch (test.description) {
       case 'EN':
-        return 'us'; // Utilisation de 'us' pour le drapeau des États-Unis
+        return 'us';
       case 'ES':
-        return 'es'; // Utilisation de 'es' pour le drapeau de l'Espagne
+        return 'es';
       case 'PT':
-        return 'pt'; // Utilisation de 'pt' pour le drapeau du Portugal
+        return 'pt';
       default:
-        return 'fr'; // Utilisation de 'fr' pour les autres descriptions (drapeau de la France)
+        return 'fr';
     }
   };
 
   return (
     <Container className={styles.container}>
       <Typography variant="h4" className={styles.title}>Liste des tests de langue</Typography>
-      <Grid container spacing={3} className={styles.grid}>
+      <Grid container spacing={2} className={styles.grid}>
         {tests.map((test, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
             <Card className={styles.card}>
               <CardMedia
                 component="img"
-                height="140"
                 image={`/flags/${test.countryCode}.png`}
                 alt={`Drapeau de ${test.marker}`}
-                onError={(e) => { e.target.onerror = null; e.target.src = '/flags/default.png'; }} // Afficher une image par défaut en cas d'erreur
+                className={styles.flagImage}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/flags/default.png'; }}
               />
               <CardContent>
                 <Typography variant="h6" component="div" className={styles.marker}>

@@ -13,7 +13,7 @@ const Home = () => {
   const cvListRef = useRef(null);
   const [showDescription, setShowDescription] = useState(false); 
   const [typedText, setTypedText] = useState(''); 
-  const description = "Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
+  const description = "  Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
   const [showChat, setShowChat] = useState(false);
   const [showChatMessage, setShowChatMessage] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(0);

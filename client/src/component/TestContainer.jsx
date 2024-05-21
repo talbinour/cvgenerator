@@ -18,31 +18,34 @@ const TestContainer = ({ tests }) => {
   };
 
   return (
-    <Grid container spacing={3} className={styles.grid}>
-      {tests.map((test, index) => (
-        <Grid item xs={12} sm={6} md={4} key={index}>
-          <Card className={styles.card}>
-            <CardMedia
-              component="img"
-              height="140"
-              image={`/flags/${getCountryCode(test)}.png`}
-              alt={`Drapeau de ${test.marker}`}
-            />
-            <CardContent>
-              <Typography variant="h6" component="div" className={styles.marker}>
-                {test.marker || 'Test de langue'}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" className={styles.description}>
-                {test.description}
-              </Typography>
-              <Link href={test.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                Lien vers le test
-              </Link>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+    <div className={styles.container}>
+      <Grid container spacing={2} className={styles.grid}>
+        {tests.map((test, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card className={styles.card}>
+              <CardMedia
+                component="img"
+                image={`/flags/${getCountryCode(test)}.png`}
+                alt={`Drapeau de ${test.marker}`}
+                className={styles.flagImage}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/flags/default.png'; }}
+              />
+              <CardContent>
+                <Typography variant="h6" component="div" className={styles.marker}>
+                  {test.marker || 'Test de langue'}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" className={styles.description}>
+                  {test.description}
+                </Typography>
+                <Link href={test.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                  Lien vers le test
+                </Link>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
 };
 

@@ -217,7 +217,7 @@
 .chatContainer {
   position: fixed;
   bottom: 150px;
-  overflow-y:hidden ;
+  overflow-y:auto ;
   right: 50px;
   z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
   background-color: #ffffff; /* Couleur de fond */

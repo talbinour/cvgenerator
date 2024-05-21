@@ -6,6 +6,7 @@
   margin: 0 auto; /* Centrage horizontal du conteneur */
   padding: 20px; /* Espacement intérieur du conteneur */
   font-family: 'Arial', sans-serif; /* Police moderne */
+  max-height: 100%;
 }
 
 /* Style des titres */
@@ -13,7 +14,7 @@ h1 {
   text-align: center;
   font-size: 2em;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 50px;
 }
 
 /* Style des conteneurs individuels des conversations */

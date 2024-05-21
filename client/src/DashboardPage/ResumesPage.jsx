@@ -73,7 +73,7 @@ const Dashboard = () => {
   };
   return (
     <div>
-      <h1>ResumesPage</h1>
+      <h1>Mes CV</h1>
       <div className={styles['cv-list']}>
         {cvsList.map((cv) => (
            <div key={cv._id} className={styles['cv-item']}>
