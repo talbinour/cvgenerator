@@ -177,25 +177,26 @@ const Chat = () => {
             <div className={styles.leftPanel}>
                 <div className={styles.container}>
                     <div className={styles.messageContainer}>
-                    {messages.map((message, index) => (
-                        <div key={index} className={`flex items-start gap-2 ${message.sender === 'user' ? 'justify-end' : ''}`}>
-                            <div className={`flex-shrink-0 rounded-full ${message.sender === 'user' ? 'order-2 ml-4' : 'mr-4'}`}>
-                                <img
-                                    alt={`${message.sender} Avatar`}
-                                    className="rounded-full"
-                                    src={message.sender === 'user' ? (userPhoto ? `http://localhost:8080/${userPhoto}` : defaultAvatar) : logoImage}
-                                    style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%'}}
-                                />
-                            </div>
-                            <div className={styles.messageText}>
-                                <div className={`flex-1 rounded-lg p-2 ${message.sender === 'user' ? styles.userMessage : styles.botMessage}`}>
-                                    <p>{message.text}</p>
+                        {messages.map((message, index) => (
+                            <div key={index} className={`flex items-start gap-2 ${message.sender === 'user' ? 'justify-end' : ''}`}>
+                                <div className={`flex-shrink-0 rounded-full ${message.sender === 'user' ? 'order-2 ml-4' : 'mr-4'}`}>
+                                    <img
+                                        alt={`${message.sender} Avatar`}
+                                        className="rounded-full"
+                                        src={message.sender === 'user' ? (userPhoto ? `http://localhost:8080/${userPhoto}` : defaultAvatar) : logoImage}
+                                        style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '50%'}}
+                                    />
                                 </div>
+                                <div className={styles.messageText}>
+                                    <div className={`flex-1 rounded-lg p-2 ${message.sender === 'user' ? styles.userMessage : styles.botMessage}`}>
+                                        <p>{message.text}</p>
+                                    </div>
+                                </div>
+                                <p className="mt-2 text-xs text-gray-500">{new Date(message.timestamp).toLocaleString()}</p>
                             </div>
-                            <p className="mt-2 text-xs text-gray-500">{new Date(message.timestamp).toLocaleString()}</p>
-                        </div>
-                    ))}
+                        ))}
                     </div>
+                    {/* Bouton pour activer/désactiver la reconnaissance vocale */}
                     <button onClick={toggleRecognition}>
                         <FontAwesomeIcon icon={isListening ? faMicrophoneSlash : faMicrophone} />
                     </button>
