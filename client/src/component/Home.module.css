@@ -100,7 +100,7 @@
   padding: 20px 0;
 }
 .models h1 {
-  
+  font-size: 2em;
   margin-bottom: 20px;
 }
 /* Footer styles */
@@ -208,6 +208,8 @@
   align-items: center;
   font-size: 24px; /* Ajuster la taille de la police */
   animation: pulseAnimation 2s infinite; /* Ajouter l'animation de pulsation */
+  background-color: #fff;
+  border-radius: 30%;
 }
 
 
@@ -215,7 +217,7 @@
 .chatContainer {
   position: fixed;
   bottom: 150px;
-  overflow-y:auto ;
+  overflow-y:hidden ;
   right: 50px;
   z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
   background-color: #ffffff; /* Couleur de fond */
@@ -322,4 +324,24 @@
   border-style: solid;
   border-color: #bebebe transparent transparent transparent;
   transform: translateX(-50%);
+}
+.testContainer {
+  position: relative;
+  width: 100%;
+  height: 200px; /* Ajustez selon vos besoins */
+  overflow: hidden;
+}
+
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.languageTests h1 {
+  font-size: 2em;
+  margin-bottom: 30px;
 }

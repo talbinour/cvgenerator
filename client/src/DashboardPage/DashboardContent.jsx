@@ -3,7 +3,6 @@ import axios from 'axios';
 import { FaTrash, FaDownload, FaEdit } from 'react-icons/fa';
 import moment from 'moment'; // Import de Moment.js
 import styles from './DashboardContent.module.css';
-//import JobSearchInterface from './JobOffersPage'; // Import de l'interface de recherche d'emploi
 
 const DashboardContent = () => {
   const [cvsList, setCvsList] = useState([]);

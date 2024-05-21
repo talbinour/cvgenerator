@@ -46,6 +46,7 @@ import CVModel3 from "./CvModelChat/CVModel3";
 import CVModel2 from "./CvModelChat/CVModel2";
 import CVModel7 from "./CvModelChat/CVModel7";
 import NewQuestion from "./CvModelChat/NewQuestion";
+import Speech from "./chatbot/Speech";
 import CVSelection from "./CVSelectionPage";
 import TestUpdate from './TestUpdate';
 import StylePalette from './Style/StylePalette';
@@ -100,6 +101,7 @@ function App() {
           <Route path='/edit5-cv' element={<Edit5/>} />
           <Route path='/ModeleEdit' element={<ModeleEdit/>} />
           <Route path='/chatbot' element={<Chatbot />} />
+          <Route path='/Speech' element={<Speech />} />
           <Route path='/chatbot2/:conversation_id' element={<Chatbot2 />} />
           <Route path='/CVModel6' element={<CVModel6 />} />
           <Route path='/CVModel' element={<CVModel />} />

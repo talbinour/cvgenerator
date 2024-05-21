@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane, faMicrophone, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import { faVolumeUp } from '@fortawesome/free-solid-svg-icons'; // Import de l'icône de volume
 import styles from './chatbot2.module.css';
 import logoImage from '../assets/chatbot.png';
 import defaultAvatar from '../assets/user.png';
@@ -14,7 +15,10 @@ const Chat = () => {
     const [userPhoto, setUserPhoto] = useState(null);
     const [userId, setUserId] = useState(null);
     const [conversationId, setConversationId] = useState(null);
-    const messageQueueRef = useRef([]); // Store messages to send when conversationId is ready
+    const [isListening, setIsListening] = useState(false);
+    const messageQueueRef = useRef([]);
+    const recognition = useRef(null);
+    const speechSynthesis = useRef(window.speechSynthesis); // Utilisation d'une référence pour conserver l'instance de la synthèse vocale
 
     const params = useParams();
 
@@ -34,7 +38,6 @@ const Chat = () => {
 
         fetchUserData();
 
-        // Set or initialize conversationId from URL or generate a new one
         if (params.conversation_id) {
             setConversationId(params.conversation_id);
         } else {
@@ -65,22 +68,55 @@ const Chat = () => {
                         timestamp: new Date(msg.timestamp)
                     };
     
-                    // Retourner un tableau contenant à la fois le message de l'utilisateur et la réponse du bot
                     return [userMessage, botMessage];
                 });
                 
-                setMessages(prevMessages => {
-                    // Concaténer les nouveaux messages avec les messages existants
-                    return [...prevMessages, ...newMessages];
-                });
+                setMessages(prevMessages => [...prevMessages, ...newMessages]);
+
+                const lastBotMessage = newMessages.find(msg => msg.sender === 'bot');
+                if (lastBotMessage) {
+                    speak(lastBotMessage.text);
+                }
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des messages de la conversation :', error);
             });
     };
     
-    
-    
+    const toggleRecognition = () => {
+        if (!isListening) {
+            startRecognition();
+        } else {
+            stopRecognition();
+        }
+    };
+
+    const startRecognition = () => {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("La reconnaissance vocale n'est pas prise en charge dans ce navigateur.");
+            return;
+        }
+        
+        recognition.current = new window.webkitSpeechRecognition();
+        recognition.current.lang = "fr-FR";
+
+        recognition.current.onresult = (event) => {
+            const currentTranscript = event.results[0][0].transcript;
+            setInput(currentTranscript);
+        };
+
+        recognition.current.onend = () => {
+            setIsListening(false);
+        };
+
+        recognition.current.start();
+        setIsListening(true);
+    };
+
+    const stopRecognition = () => {
+        recognition.current.stop();
+        setIsListening(false);
+    };
     
     const sendMessage = async (message) => {
         const response = await fetch("http://localhost:5000/chat", {
@@ -131,6 +167,11 @@ const Chat = () => {
         }
     };
 
+    const speak = (text) => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        speechSynthesis.current.speak(utterance);
+    };
+
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.leftPanel}>
@@ -154,13 +195,23 @@ const Chat = () => {
                             <p className="mt-2 text-xs text-gray-500">{new Date(message.timestamp).toLocaleString()}</p>
                         </div>
                     ))}
-
                     </div>
-                    <input className={styles.inputField} value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={handleKeyPress} />
+                    <button onClick={toggleRecognition}>
+                        <FontAwesomeIcon icon={isListening ? faMicrophoneSlash : faMicrophone} />
+                    </button>
+                    {/* Bouton pour activer la synthèse vocale */}
+                    <button className={styles.listenButton} onClick={() => speak(messages[messages.length - 1].text)}>
+                        <FontAwesomeIcon icon={faVolumeUp} />
+                    </button>
+                    <input
+                        className={styles.inputField}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                    />
                     <button className={styles.sendButton} onClick={handleSendMessage}>
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </button>
-
                 </div>
             </div>
         </div>
@@ -168,3 +219,4 @@ const Chat = () => {
 };
 
 export default Chat;
+

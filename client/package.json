@@ -54,6 +54,7 @@
     "react-router-dom": "^6.22.3",
     "react-spinners": "^0.13.8",
     "react-toastify": "^10.0.4",
+    "react-world-flags": "^1.6.0",
     "resemblejs": "^5.0.0",
     "semver": "^7.6.0",
     "styled-components": "^6.1.8",
