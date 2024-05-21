@@ -13,7 +13,12 @@ const Skills = () => {
         if (response.status !== 200) {
           throw new Error('Erreur lors de la récupération des données');
         }
-        setTests(response.data);
+        console.log(response.data); // Ajouté pour déboguer
+        const updatedTests = response.data.map(test => ({
+          ...test,
+          countryCode: getCountryCode(test)
+        }));
+        setTests(updatedTests);
       } catch (error) {
         console.error('Erreur lors de la récupération des données:', error);
       }
@@ -21,6 +26,19 @@ const Skills = () => {
 
     fetchData();
   }, []);
+
+  const getCountryCode = (test) => {
+    switch (test.description) {
+      case 'EN':
+        return 'us'; // Utilisation de 'us' pour le drapeau des États-Unis
+      case 'ES':
+        return 'es'; // Utilisation de 'es' pour le drapeau de l'Espagne
+      case 'PT':
+        return 'pt'; // Utilisation de 'pt' pour le drapeau du Portugal
+      default:
+        return 'fr'; // Utilisation de 'fr' pour les autres descriptions (drapeau de la France)
+    }
+  };
 
   return (
     <Container className={styles.container}>
@@ -34,10 +52,11 @@ const Skills = () => {
                 height="140"
                 image={`/flags/${test.countryCode}.png`}
                 alt={`Drapeau de ${test.marker}`}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/flags/default.png'; }} // Afficher une image par défaut en cas d'erreur
               />
               <CardContent>
                 <Typography variant="h6" component="div" className={styles.marker}>
-                  {test.marker}
+                  {test.marker || 'Test de langue'}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" className={styles.description}>
                   {test.description}

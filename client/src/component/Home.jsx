@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chat from "../chatbot/chatbot2"; 
 import boot from '../assets/robotics.png';
+import TestContainer from './TestContainer';
 
 const Home = () => {
   const [cvList, setCVList] = useState([]);
@@ -12,9 +13,11 @@ const Home = () => {
   const cvListRef = useRef(null);
   const [showDescription, setShowDescription] = useState(false); 
   const [typedText, setTypedText] = useState(''); 
-  const description = "  Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
-  const [showChat, setShowChat] = useState(false); // Ajoutez une variable d'état pour contrôler l'affichage du chatbot
-  const [showChatMessage, setShowChatMessage] = useState(false); // Ajoutez une variable d'état pour contrôler l'affichage du message de chat
+  const description = "Votre parcours professionnel intelligemment raconté. Commencez ici pour créer un CV qui se démarque. Sélectionnez un modèle, remplissez vos informations, et notre plateforme générera un CV professionnel en quelques minutes.";
+  const [showChat, setShowChat] = useState(false);
+  const [showChatMessage, setShowChatMessage] = useState(false);
+  const [currentTestIndex, setCurrentTestIndex] = useState(0);
+  const [tests, setTests] = useState([]);
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -30,6 +33,19 @@ const Home = () => {
     };
 
     fetchCurrentUser();
+  }, []);
+  
+  useEffect(() => {
+    const fetchTests = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/tests-langue');
+        setTests(response.data);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données:', error);
+      }
+    };
+
+    fetchTests();
   }, []);
 
   useEffect(() => {
@@ -80,6 +96,13 @@ const Home = () => {
     }
   }, [showDescription, description]);
 
+  useEffect(() => {
+    const testInterval = setInterval(() => {
+      setCurrentTestIndex((prevIndex) => (prevIndex + 3) % tests.length);
+    }, 3000);
+    return () => clearInterval(testInterval);
+  }, [tests]);
+
   const handleCVClick = (cvcontent) => {
     navigate(`/${cvcontent}`);
   };
@@ -96,16 +119,16 @@ const Home = () => {
   };
 
   const toggleChat = () => {
-    setShowChat(!showChat); // Inverser la valeur de showChat lorsque l'utilisateur clique sur l'icône du chatbot
-    setShowChatMessage(false); // Réinitialiser l'état de l'affichage du message de chat
+    setShowChat(!showChat);
+    setShowChatMessage(false);
   };
 
   const handleChatIconMouseEnter = () => {
-    setShowChatMessage(true); // Afficher le message de chat lorsque l'utilisateur survole l'icône du chatbot
+    setShowChatMessage(true);
   };
 
   const handleChatIconMouseLeave = () => {
-    setShowChatMessage(false); // Masquer le message de chat lorsque l'utilisateur quitte l'icône du chatbot
+    setShowChatMessage(false);
   };
 
   const chatContainer = useRef(null);
@@ -136,8 +159,9 @@ const Home = () => {
           </div>
         )}
       </div>
+      
       <section className={styles.hero}>
-        <h1>Bienvenue sur Cevor</h1>
+      <h1 className="h1Title">Bienvenue sur Cevor</h1>
         <div className={styles.descriptionContainer}>
           <p className={`${styles.description} ${showDescription ? styles.show : ''}`}>
             {typedText}
@@ -146,7 +170,7 @@ const Home = () => {
         <button className={styles.createButton} onClick={handleWriteCVClick}>Commencer votre CV</button>
       </section>
       <section className={styles.models}>
-        <h1>Explorez nos modèles</h1>
+      <h1 className="h1Title">Explorez nos modèles</h1>
         <div className={styles.cvListHorizontal} ref={cvListRef}>
           {cvList.map((cv, index) => (
             <div key={index} className={styles.cvItem} onClick={() => handleCVClick(cv.content)}>
@@ -155,6 +179,12 @@ const Home = () => {
             </div>
           ))}
         </div>
+      </section>
+      <section className={styles.languageTests}>
+      <h1 className="h1Title">Tests de Langue</h1>
+        {tests.length > 0 && (
+          <TestContainer tests={tests.slice(currentTestIndex, currentTestIndex + 3)} />
+        )}
       </section>
       <footer className={styles.footer}>
         <p>Des questions ? Consultez notre FAQ ou contactez-nous directement.</p>
@@ -165,4 +195,3 @@ const Home = () => {
 };
 
 export default Home;
-

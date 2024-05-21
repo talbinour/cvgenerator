@@ -69,7 +69,7 @@ def train_from_json(directory):
                 print(f"Erreur de décodage JSON dans le fichier {file_path}: {e}")
 
 # Entraîner à partir du répertoire contenant les fichiers JSON
-train_from_json(r"C:\Users\isran\cvgenerator\venv\cv_chatbot_data")
+train_from_json(r"C:\Users\ADMIN\cvgenerator\venv\cv_chatbot_data")
 
 @app.route("/chat", methods=["POST"])
 def chat():
