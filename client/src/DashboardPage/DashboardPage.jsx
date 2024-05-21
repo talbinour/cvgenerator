@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+//import {  useNavigate } from "react-router-dom";
 import styles from './dashboardPage.module.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import DashboardContent from './DashboardContent'; 
@@ -12,7 +12,7 @@ const DashboardPage = () => {
   const [selectedItem, setSelectedItem] = useState("dashboard");
   const [showAlert, setShowAlert] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
@@ -39,9 +39,9 @@ const DashboardPage = () => {
     setShowAlert(true);
   };
 
-  const navigateToChatbot = () => {
+  /* const navigateToChatbot = () => {
     navigate("/cvselection");
-  };
+  }; */
 
   return (
     <div className={styles['page-container']}>
@@ -50,7 +50,7 @@ const DashboardPage = () => {
           <div className={styles['question-icon']}>
             <i className={`fas fa-question-circle fa-2x ${styles['question-icon-style']}`} onClick={showQuestionAlert}></i>
           </div>
-          <button onClick={navigateToChatbot} className={styles['new-button']}>+ Nouveau</button>
+         {/* <button onClick={navigateToChatbot} className={styles['new-button']}>+ Nouveau</button> */}
           <ul className={styles['clickable-list']}>
             <li onClick={() => handleItemClick("dashboard")} className={selectedItem === 'dashboard' ? styles['selected'] : ''}>
               <i className="fas fa-tachometer-alt"></i>Tableau de bord
