@@ -2,9 +2,16 @@
 .pageWrapper {
     padding: 6%;
     display: flex;
-    flex-direction: column-reverse; /* Afficher les messages de bas en haut */
-    height: 100vh; /* Hauteur de la vue à 100% de la hauteur de l'écran */
-    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+    flex-direction: column;
+    height: 100vh; 
+    overflow-y: auto;
+}
+
+/* Conteneur des messages */
+.messageContainer {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 20px; /* Ajouter un peu d'espace en bas */
 }
 
 /* Message box */
@@ -36,16 +43,16 @@
 /* Date du message */
 .messageTimestamp {
     font-size: 12px;
-    color: #fff;
+    color: #666;
     margin-top: 2px;
 }
 
 /* Couleur du texte de l'utilisateur */
 .userMessage {
-    background-color: #F1B4BB; /* Bleu */
-    color: #fff; /* Blanc */
+    background-color: #314fa0ba; /* Bleu */
+    color: #fff !important; /* Blanc */
     border-radius: 20px; /* Coins arrondis */
-    border: 1px solid #ccc;
+    border: 1px solid  #ccc;
     margin: 3px;
 }
 
@@ -60,71 +67,42 @@
 
 /* Input field */
 .inputField {
-    width: calc(100% - 100px); /* Prendre la largeur restante après avoir soustrait la largeur du bouton envoyer */
+    flex-grow: 1;
     padding: 10px;
-    margin-top: 10px;
     border: 1px solid #ccc;
-    border-radius: 20px; /* Coins arrondis */
+    border-radius: 20px;
+    width: 100%;
+}
+
+/* Container for input and buttons */
+.inputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    width: 100%;
+
 }
 
 /* Send button */
-.sendButton {
-    width: 70px;
+.sendButton, .listenButton, .micButton {
     padding: 10px;
-    margin-top: 10px;
-    margin-left: 10px; /* Espacement à gauche du bouton envoyer */
+    margin-left: 10px; /* Espacement à gauche des boutons */
     background-color: #1d3063; /* Bleu */
     color: #fff;
     border: none;
-    border-radius: 20px; /* Coins arrondis */
+    border-radius: 50%; /* Coins arrondis pour les boutons */
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; /* Taille carrée */
+    height: 40px; /* Taille carrée */
+    font-size: 18px; /* Ajuster la taille de l'icône */
 }
 
-/* Avatar */
-.Avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* Chat container */
-.chatContainer {
-    position: fixed; /* Position fixe pour rester en bas de la page */
-    bottom: 0; /* Aligner en bas */
-    right: 0; /* Aligner à droite */
-    width: 100%; /* Prendre toute la largeur */
-    max-height: 50%; /* Limiter la hauteur pour empêcher le chat de couvrir tout l'écran */
-    overflow-y: hidden; /* Activer le défilement vertical si nécessaire */
-    z-index: 1000; /* Assurez-vous que le conteneur de chat est au-dessus des autres éléments */
-}
-
-/* Chat icon */
-.chatIcon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* Chat icon message */
-.chatIconMessage {
-    position: fixed;
-    bottom: 70px;
-    right: 5px;
-    background-color: #007bff;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 10px;
-    z-index: 1001; /* Assurez-vous que l'icône de message de chat est au-dessus du conteneur de chat */
-}
-
-/* Chat icon message show animation */
-@keyframes slideInFromRight {
-    from {
-        right: -200px;
-    }
-    to {
-        right: 5px;
-    }
+/* Modifier la couleur des boutons au survol */
+.sendButton:hover, .listenButton:hover, .micButton:hover {
+    background-color: #374785;
 }
