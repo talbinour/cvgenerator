@@ -11,13 +11,14 @@ const path = require('path');
 const CVController = require('../controllers/CVController');
 const editRouter = require('../editcv');
 const testRoutes = require('../test'); 
-//multer
+const job = require('../jobs'); 
 const bcrypt = require('bcrypt'); // Import bcrypt
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const CookieAcceptance = require('../CookieAcceptance');
 // Configure storage for multer
 router.use('/', testRoutes);
+router.use('/', job);
 // Configure bodyParser middleware to handle URL-encoded data with an increased parameter limit
 router.use(bodyParser.urlencoded({ parameterLimit: 100000, limit: '50mb', extended: true }));
   

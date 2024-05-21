@@ -37,7 +37,7 @@ const JobSearchInterface = () => {
     event.preventDefault();
     setLoading(true);
     setError(null);
-
+  
     try {
       const response = await axios.get('https://jobs-api14.p.rapidapi.com/list', {
         params: formData,
@@ -46,9 +46,18 @@ const JobSearchInterface = () => {
           'X-RapidAPI-Host': 'jobs-api14.p.rapidapi.com'
         }
       });
-
+  
       if (response.status === 200) {
-        setSearchResults(response.data.jobs || []);
+        const jobs = response.data.jobs || [];
+  
+        // Ajoutez l'ID utilisateur à chaque job
+        const userId = localStorage.getItem('userId'); // Assurez-vous que l'ID utilisateur est stocké dans le localStorage
+        const jobsWithUserId = jobs.map(job => ({ ...job, userId }));
+  
+        setSearchResults(jobs);
+  
+        // Enregistrer les résultats en base de données
+        await axios.post('http://localhost:8080/api/jobs', jobsWithUserId);
       } else {
         setError('Échec de la récupération des offres d\'emploi.');
       }
@@ -58,6 +67,8 @@ const JobSearchInterface = () => {
       setLoading(false);
     }
   };
+  
+  
 
   const handleJobClick = (job) => {
     setSelectedJob(job);
