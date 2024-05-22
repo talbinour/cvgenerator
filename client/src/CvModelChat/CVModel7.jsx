@@ -73,12 +73,12 @@ const CVModel7 = () => {
       const updatedModel = { ...prevCvModel };
   
       switch (sectionKey) {
-        case "CONTACT INFO": {
+        case "contact info": {
           const contactInfoFields = ["phone", "email", "website", "linkedin", "address"];
           updatedModel[contactInfoFields[questionNumber - 1]] = response;
           break;
         }
-        case "Education": {
+        case "education": {
           const educationFields = ["startDate", "endDate", "institution", "degree"];
           const fieldIndex = (questionNumber - 1) % educationFields.length;
   
@@ -95,7 +95,7 @@ const CVModel7 = () => {
           updatedModel.education[updatedModel.education.length - 1][educationFields[fieldIndex]] = response;
           break;
         }
-        case "Experience": {
+        case "experience": {
           const experienceFields = ["startDate", "endDate", "ville", "jobTitle", "employeur", "description"];
           const fieldIndex = (questionNumber - 1) % experienceFields.length;
   
@@ -112,7 +112,7 @@ const CVModel7 = () => {
           updatedModel.experiences[updatedModel.experiences.length - 1][experienceFields[fieldIndex]] = response;
           break;
         }
-        case "LANGUAGES": {
+        case "languages": {
           const languageFields = ["name", "proficiency"];
           const proficiency = parseInt(response);
 
