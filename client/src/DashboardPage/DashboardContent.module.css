@@ -1,14 +1,13 @@
-/* DashboardContent.module.css */
-
 /* General styles */
 .horizontal-container {
   display: flex;
+
 }
 
 .left-column,
 .middle-column,
 .right-column {
-  width: 33.33%;
+  width: 100%;
 }
 
 .cv-list,
@@ -28,7 +27,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 5px;
-  height: 450px;
+  height: auto;
   transition: transform 0.3s;
 }
 
@@ -40,7 +39,7 @@
 .cv-image,
 .full-cv-image {
   width: 100%;
-  height: 350px;
+  height: 200px;
   object-fit: cover;
   border-radius: 5px;
 }
@@ -72,11 +71,7 @@
 .action-icon:hover {
   color: #d89ea4;
 }
-.h5 {
-  font-size: medium;
-  color: #1f4172;
-  margin-left: auto;
-}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -89,13 +84,14 @@
 }
 
 /* Alert and popup styles */
-
-.alert-area {
+.alert-area,
+.alert-areaa {
   position: fixed;
   top: 8.5%;
   right: 0;
   overflow-y: auto;
-  width: 37%;
+  width: 100%;
+  max-width: 500px;
   height: calc(100% - 9%);
   border-radius: 3px;
   border: 2px solid #ccc;
@@ -107,20 +103,14 @@
   flex-direction: column;
 }
 
-.alert-area button {
+.alert-area button,
+.alert-areaa button {
   font-size: 20px;
   z-index: 10;
-  
 }
 
-.h5 {
-  font-size: medium;
-  color: #1f4172;
-  margin-left: auto; 
-  
-}
-
-.cv-content {
+.cv-content,
+.job-content {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -134,19 +124,20 @@
 .button-container {
   display: flex;
   justify-content: flex-end;
-  padding: 0p
+  padding: 0;
 }
 
 .full-cv-image {
   width: 100%;
-  height: 100%;
+  height: auto;
   flex-grow: 1;
   overflow-y: auto;
   object-fit: cover;
 }
 
 .download-button,
-.delete-button ,.edit-button{
+.delete-button,
+.edit-button {
   margin-top: 10px;
   color: #fff;
   border-radius: 5px;
@@ -156,7 +147,8 @@
 }
 
 .download-button:hover,
-.delete-button:hover ,.edit-button:hover{
+.delete-button:hover,
+.edit-button:hover {
   opacity: 0.8;
 }
 
@@ -164,6 +156,7 @@
   background-color: #980110;
   margin-left: 20px;
 }
+
 .edit-button {
   background-color: #757575;
   margin-right: 20px;
@@ -175,9 +168,8 @@
 
 .close-button {
   font-size: 20px;
-  margin-left: auto; /* Alignement à droite */
+  margin-left: auto;
 }
-
 
 /* Headings */
 h1 {
@@ -187,5 +179,45 @@ h1 {
 
 h2 {
   font-size: 1.5rem;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  text-align: center;
+  padding: 20px;
+}
+
+h2 + h2 {
+  margin-top: 40px;
+}
+
+.blur-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  z-index: 10;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .cv-item,
+  .job-item {
+    height: auto;
+  }
+
+  .alert-area,
+  .alert-areaa {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .full-cv-image {
+    height: auto;
+  }
 }

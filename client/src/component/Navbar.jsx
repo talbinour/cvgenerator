@@ -79,7 +79,7 @@ const Navbar = () => {
                 <div className="profile-menu-box">
                   <ul>
                     <li onClick={() => { navigate('/userprofile'); setShowProfileMenu(false); }}>
-                      Profil personnel
+                      Profil 
                     </li>
                     <li onClick={handleLogout} disabled={loadingLogout}>
                       {loadingLogout ? 'Déconnexion...' : 'Déconnexion'}

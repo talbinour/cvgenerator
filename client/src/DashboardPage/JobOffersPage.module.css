@@ -12,21 +12,10 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  
 }
 
-.container {
-  margin: 20px;
-  padding: 20px;
-  border-radius: var(--border-radius);
-  background-color: #fff;
-  box-shadow: var(--box-shadow);
-  transition: transform var(--transition-duration), box-shadow var(--transition-duration);
-}
 
-.container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
 
 .title {
   font-size: 28px;
@@ -121,4 +110,16 @@ body {
 
 .jobContainer:hover .jobDescription, .jobContainer:focus .jobDescription, .jobContainer:active .jobDescription {
   display: block;
+}
+.pageSubtitle {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: var(--primary-color); /* Utilisation de la variable de couleur principale */
+}
+
+.pageParagraph {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
 }

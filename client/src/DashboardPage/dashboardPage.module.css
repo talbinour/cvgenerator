@@ -1,17 +1,16 @@
-/* dashboardPage.module.css */
-
 /* Style for the entire page container */
 .page-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+ 
 }
 
 /* Style for the content area (excluding footer) */
 .content-area {
   display: flex;
   flex-grow: 1;
-  overflow: auto;
+  overflow: hidden; /* Hide overflow to prevent scrolling on the content area */
 }
 
 /* Style for the left area */
@@ -22,8 +21,8 @@
   width: 300px;
   border-radius: 10px;
   position: sticky;
-  top: 10%;
-  height: calc(100vh);
+  top: 0; /* Stick to the top */
+  height: 100vh; /* Take full viewport height */
 }
 
 /* Style for the right area */

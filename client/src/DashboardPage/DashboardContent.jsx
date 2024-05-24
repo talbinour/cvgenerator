@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { FaTrash, FaDownload, FaEdit, FaEye } from 'react-icons/fa';
+import {  FaDownload, FaEdit } from 'react-icons/fa';
 import moment from 'moment'; // Import de Moment.js
 import styles from './DashboardContent.module.css';
+import { FaBuilding, FaMapMarkerAlt, FaBriefcase, FaCalendarAlt, FaEye, FaTrash } from 'react-icons/fa';
 
 const DashboardContent = () => {
   const [cvsList, setCvsList] = useState([]);
@@ -89,9 +90,7 @@ const DashboardContent = () => {
 
   return (
     <div>
-    
-      
-      <h2>Mes CVs</h2> {/* Titre pour les CVs */}
+      <h2>Mes Curriculum Vitae</h2> {/* Titre pour les CVs */}
       <div className={styles['cv-list']}>
         {cvsList.slice(-3).map((cv) => (
           <div key={cv._id} className={styles['cv-item']}>
@@ -114,20 +113,23 @@ const DashboardContent = () => {
 
       <h2>Suggestion d&lsquo;emplois</h2> {/* Titre pour les emplois */}
       <div className={styles['job-list']}>
-        {jobsList.map((job) => (
-          <div key={job._id} className={styles['job-item']}>
-            <div className={styles['job-details']}>
-              <h3 className={styles['job-title']}>{job.title}</h3>
-              <p>Company: {job.company}</p>
-              <p>Location: {job.location}</p>
-              <p>Employment Type: {job.employmentType}</p>
-              <p>Date Posted: {formatDate(job.datePosted)}</p>
-              <div className={styles['job-actions']}>
-                <FaEye className={styles['action-icon']} onClick={() => handleJobClick(job)} />
-                <FaTrash className={styles['action-icon']} onClick={() => handleDeleteClick(job._id)} />
+        {jobsList
+          .sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted)) // Trier par date de publication décroissante
+          .slice(0, 5) // Sélectionner les 5 derniers emplois
+          .map((job) => (
+            <div key={job._id} className={styles['job-item']}>
+              <div className={styles['job-details']}>
+                <h3 className={styles['job-title']}>{job.title}</h3>
+                <p>Company: {job.company}</p>
+                <p>Location: {job.location}</p>
+                <p>Employment Type: {job.employmentType}</p>
+                <p>Date Posted: {formatDate(job.datePosted)}</p>
+                <div className={styles['job-actions']}>
+                  <FaEye className={styles['action-icon']} onClick={() => handleJobClick(job)} />
+                  <FaTrash className={styles['action-icon']} onClick={() => handleDeleteClick(job._id)} />
+                </div>
               </div>
             </div>
-          </div>
         ))}
       </div>
 
@@ -154,19 +156,85 @@ const DashboardContent = () => {
         </div>
       )}
 
-      {selectedJob && (
-        <div className={styles['popup']}>
-          <div className={styles['popup-content']}>
-            <button className={styles['close-button']} onClick={() => setSelectedJob(null)}>X</button>
-            <h3>{selectedJob.title}</h3>
-            <p>Company: {selectedJob.company}</p>
-            <p>Location: {selectedJob.location}</p>
-            <p>Employment Type: {selectedJob.employmentType}</p>
-            <p>Date Posted: {formatDate(selectedJob.datePosted)}</p>
-            <p>{selectedJob.description}</p>
-          </div>
+{selectedJob && (
+  <div className={styles['alert-areaa']} style={{
+    position: 'fixed',
+    top: '8.5%',
+    right: 0,
+    overflowY: 'auto',
+    width: '37%',
+    height: 'calc(100% - 9%)',
+    borderRadius: '3px',
+    border: '2px solid #ccc',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '20px',
+    flexDirection: 'column'
+  }}>
+    <div className={styles['job-details']} style={{
+      paddingTop: '20px'
+    }}>
+      <button className={styles['close-button']} onClick={() => setSelectedJob(null)} style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        fontSize: '30px',
+        color: '#1f4172',
+        border: 'none',
+        backgroundColor: 'transparent',
+        cursor: 'pointer',
+        transition: 'color 0.3s'
+      }}>X</button>
+      <h3 style={{
+        fontSize: '24px',
+        marginBottom: '10px',
+        color: 'black'
+      }}>{selectedJob.title}</h3>
+      <div className={styles['job-info']} style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        marginBottom: '10px'
+      }}>
+        <div style={{
+          flex: 1
+        }}>
+          <p style={{
+            fontSize: '20px',
+            marginBottom: '5px',
+            color: '#1d3063'
+          }}><FaBuilding style={{ marginRight: '5px' }} /> Company: {selectedJob.company}</p>
+          <p style={{
+            fontSize: '20px',
+            marginBottom: '5px',
+            color: '#1d3063'
+          }}><FaMapMarkerAlt style={{ marginRight: '5px' }} /> Location: {selectedJob.location}</p>
+          <p style={{
+            fontSize: '20px',
+            marginBottom: '5px',
+            color: '#1d3063'
+          }}><FaBriefcase style={{ marginRight: '5px' }} /> Employment Type: {selectedJob.employmentType}</p>
+          <p style={{
+            fontSize: '20px',
+            marginBottom: '20px',
+            color: '#1d3063'
+          }}><FaCalendarAlt style={{ marginRight: '5px' }} /> Date Posted: {formatDate(selectedJob.datePosted)}</p>
         </div>
-      )}
+      </div>
+      <p style={{
+        fontSize: '16px',
+        color: 'rgb(70, 69, 69)'
+      }}>{selectedJob.description.split('\n').map((paragraph, index) => (
+        <React.Fragment key={index}>
+          {paragraph}
+          <br />
+        </React.Fragment>
+      ))}</p>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

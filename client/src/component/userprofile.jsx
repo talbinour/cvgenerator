@@ -16,7 +16,14 @@ const UserProfile = () => {
   const [selectedImage, setSelectedImage] = useState(null); 
   const [profession, setProfession] = useState('');
   const inputRef = useRef(null); 
-  
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
  
 // Modifier la fonction useEffect pour récupérer l'URL de l'image de profil de l'utilisateur
   useEffect(() => {
@@ -205,10 +212,10 @@ const UserProfile = () => {
             <input
               id="dateNaissance"
               className="input full-width"
-              value={dateNaissance}
+              value= { formatDate(dateNaissance)}
               type="text"
               placeholder="Date de naissance"
-              onChange={(e) => setDateNaissance(e.target.value)}
+              onChange={(e) =>setDateNaissance(e.target.value)}
             />
           </div>
           <button className="btn" type="button" onClick={handleUpdate}>

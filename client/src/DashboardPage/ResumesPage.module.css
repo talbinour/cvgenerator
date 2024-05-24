@@ -1,0 +1,190 @@
+/* Styles généraux */
+.cv-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cv-item {
+  width: calc(33.333% - 16px);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.cv-item:hover {
+  transform: scale(1.05);
+}
+
+.cv-image {
+  width: 100%;
+  height: auto;
+}
+
+.cv-details {
+  padding: 16px;
+}
+
+.cv-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cv-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-icon {
+  cursor: pointer;
+  color: #dc2626;
+}
+
+/* Styles pour l'alerte et le popup */
+.alert-area {
+  position: fixed;
+  top: 8.5%;
+  right: 0;
+  overflow-y: auto;
+  width: 37%;
+  height: calc(100% - 9%);
+  border-radius: 3px;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  flex-direction: column;
+}
+
+.alert-area button {
+  font-size: 20px;
+  z-index: 10;
+}
+
+.h5 {
+  font-size: medium;
+  color: #1f4172;
+  margin-left: auto;
+}
+
+.cv-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+}
+
+.full-cv-image {
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
+  object-fit: cover;
+}
+
+.download-button,
+.delete-button,
+.edit-button {
+  margin-top: 10px;
+  color: #fff;
+  border-radius: 5px;
+  height: 40px;
+  width: 200px;
+  padding: 0;
+}
+
+.download-button:hover,
+.delete-button:hover,
+.edit-button:hover {
+  opacity: 0.8;
+}
+
+.delete-button {
+  background-color: #980110;
+  margin-left: 20px;
+}
+
+.edit-button {
+  background-color: #757575;
+  margin-right: 20px;
+}
+
+.download-button {
+  background-color: #053466;
+}
+
+.close-button {
+  font-size: 20px;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .cv-item {
+    width: calc(50% - 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .cv-item {
+    width: 100%;
+  }
+
+  .button-container {
+    flex-direction: column;
+  }
+
+  .edit-button,
+  .download-button,
+  .delete-button {
+    margin-bottom: 8px;
+  }
+}
+
+.grid {
+  font-size: 20px;
+  margin-left: auto; 
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+/* Styles pour le bouton de basculement entre l'affichage en grille et l'affichage en liste */
+.toggleViewButtons {
+  display: flex;
+  gap: 10px;
+  font-size: 20px;
+  margin-left: auto; 
+  margin-bottom: 40px;
+  margin-top: 20px;
+}
+
+.toggleViewButtons button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+.toggleViewButtons button:hover {
+  color: #1f4172;
+}
+
+.toggleViewButtons button.active {
+  color: #1f4172;
+  font-weight: bold;
+}
+

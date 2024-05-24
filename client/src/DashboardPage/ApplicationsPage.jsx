@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { Link } from 'react-router-dom'; 
-import styles from './ApplicationsPage.module.css'; // Import the CSS module
+import { Link } from 'react-router-dom';
+import styles from './ApplicationsPage.module.css';
 
 const Applications = () => {
   const [conversations, setConversations] = useState([]);
@@ -35,16 +35,22 @@ const Applications = () => {
   }, [userId]);
 
   return (
-    <div className={styles.container}>
-      <h1>Historique des conversations</h1>
-      <ul>
-        {conversations.map(conversation => (
-          <li key={conversation.id} className={styles.conversation}>
-            <Link to={`/chatbot2/${conversation.conversation_id}`}>{conversation.title}</Link>
-            <p>Date : {conversation.date}</p>
-          </li>
-        ))}
-      </ul>
+    <div className={styles.pageContainer}>
+      <main className={styles.mainContent}>
+        <h1>Historique des conversations</h1>
+        {conversations.length > 0 ? (
+          <ul>
+            {conversations.map(conversation => (
+              <li key={conversation.id} className={styles.conversation}>
+                <Link to={`/chatbot2/${conversation.conversation_id}`}>{conversation.title}</Link>
+                <p>Date : {conversation.date}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.noConversations}>Aucune conversation trouvée.</p>
+        )}
+      </main>
     </div>
   );
 };

@@ -304,7 +304,7 @@ const CVModel7 = () => {
         section = line.replace(/\*\*/g, '').toLowerCase();
       } else {
         switch (section) {
-          case 'Profil': {
+          case 'profil': {
             newCVData.profile += line + ' ';
             break;
           }
@@ -325,7 +325,7 @@ const CVModel7 = () => {
             });
             break;
           }
-          case 'Formation': {
+          case 'Formation'||'Éducation': {
             const [degree, institution, period2] = line.split(',');
             const [startDate2, endDate2] = period2.replace(')', '').split('(');
             newCVData.education.push({

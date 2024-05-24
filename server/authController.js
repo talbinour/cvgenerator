@@ -213,26 +213,7 @@ class AuthController {
       res.status(400).json({ message: 'Not Authorized' });
     }
   }
-/*
-  async protectedRouteHandler(req, res) {
-    try {
-      // Assurez-vous que l'utilisateur est authentifié avant d'accéder à cette route
-      if (req.isAuthenticated()) {
-        // Vous pouvez accéder aux données de l'utilisateur authentifié via req.user
-        const user = req.user;
-  
-        // Ajoutez ici la logique spécifique pour la route protégée
-        // Par exemple, renvoyer des données protégées
-        res.status(200).json({ message: 'Route protégée réussie', user });
-      } else {
-        // Si l'utilisateur n'est pas authentifié, renvoyez une réponse appropriée
-        res.status(401).json({ message: 'Non autorisé' });
-      }
-    } catch (error) {
-      console.error('Erreur dans protectedRouteHandler:', error);
-      res.status(500).json({ message: 'Erreur serveur' });
-    }
-  }*/
+
   async  verifyEmail(req, res) {
     try {
       const emailToken = req.params.emailToken;
