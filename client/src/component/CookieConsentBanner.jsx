@@ -36,15 +36,17 @@ export default function Cookies({ onConsentChange }) {
   return (
     <div className="cookies-container"> {/* Ajout d'une classe pour le conteneur */}
       <div className="cookies-content"> {/* Ajout d'une classe pour le contenu */}
-        <div className="cookies-header"> {/* Ajout d'une classe pour l'en-tête */}
-          <CookieIcon className="cookies-icon" /> {/* Ajout d'une classe pour l'icône */}
-          <a href="#" className="cookies-reject" onClick={handleReject}>Continuer sans accepter</a> {/* Ajout d'une classe pour le lien de rejet */}
-        </div>
-        <h2 className="cookies-title">Nous utilisons des cookies</h2> {/* Ajout d'une classe pour le titre */}
+           {/* Ajout d'une classe pour l'icône */}
+        
+        <h2 className="cookies-title"><CookieIcon className="cookies-icon" /> Nous utilisons des cookies</h2> {/* Ajout d'une classe pour le titre */}
         <p className="cookies-text">
           Ce site utilise des cookies pour vous garantir la meilleure expérience sur notre site.
         </p> {/* Ajout d'une classe pour le texte */}
+        <div className="button">
         <button className="cookies-accept" onClick={handleAccept}>Accepter</button> {/* Ajout d'une classe pour le bouton d'acceptation */}
+        <a href="#" className="cookies-reject" onClick={handleReject}>Continuer sans accepter</a> 
+        </div>
+       
       </div>
     </div>
   );

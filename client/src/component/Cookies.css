@@ -1,29 +1,25 @@
 .cookies-container {
+  margin: 0;
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
   z-index: 1000; /* Assure que le conteneur est au-dessus du contenu existant */
 }
 
 .cookies-content {
-  max-width: 400px;
+  
+  width: 100%; /* S'assure que le contenu prend toute la largeur disponible */
   padding: 20px;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 0 0; /* Coins arrondis en haut seulement */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.cookies-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+
 
 .cookies-icon {
   width: 32px;
@@ -31,30 +27,40 @@
 }
 
 .cookies-reject {
-  color: gray;
+  color: #21759b;
   text-decoration: none;
+  margin-left: 1300px;
+  padding-bottom: 5px; /* Ajoute un peu d'espace entre le texte et la ligne */
+  border-bottom: 2px solid #333; /* Ajoute une ligne sous le texte */
 }
 
 .cookies-title {
-  margin-top: 20px;
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  margin: 0; /* Supprime le margin-top si nécessaire */
 }
 
 .cookies-text {
+  margin: 0;
   margin-top: 10px;
   font-size: 16px;
   color: #666;
+  text-align: center; /* Centre le texte horizontalement */
 }
 
+
 .cookies-accept {
-  margin-top: 20px;
+  margin: 0;
+ 
   padding: 10px 20px;
   border: none;
-  background-color:  #F1B4BB;
+  background-color: #0056b3;
   color: white;
   font-size: 16px;
-  border-radius: 4px;
-  cursor: pointer;
+ 
+}
+.button{
+  margin-left: 1100px;
+  margin: 0;
 }

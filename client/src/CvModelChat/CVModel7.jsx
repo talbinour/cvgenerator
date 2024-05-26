@@ -74,7 +74,7 @@ const CVModel7 = () => {
           break;
         }
         case "education": {
-          const educationFields = ["startDate", "endDate", "institution", "degree"];
+          const educationFields = ["startDate", "endDate", "degree","institution"];
           const fieldIndex = (questionNumber - 1) % educationFields.length;
 
           if (!Array.isArray(updatedModel.education)) {
@@ -304,6 +304,11 @@ const CVModel7 = () => {
         section = line.replace(/\*\*/g, '').toLowerCase();
       } else {
         switch (section) {
+          case 'Informations personnelles': {
+            const [fieldName, fieldValue] = line.split(':');
+            newCVData[fieldName.trim().toLowerCase()] = fieldValue.trim();
+            break;
+          }
           case 'profil': {
             newCVData.profile += line + ' ';
             break;
@@ -325,7 +330,7 @@ const CVModel7 = () => {
             });
             break;
           }
-          case 'Formation'||'Éducation': {
+          case 'Éducation': {
             const [degree, institution, period2] = line.split(',');
             const [startDate2, endDate2] = period2.replace(')', '').split('(');
             newCVData.education.push({
@@ -341,7 +346,7 @@ const CVModel7 = () => {
             newCVData.languages.push({ name: language.trim(), proficiency: parseInt(proficiency2) });
             break;
           }
-          case '*Intérêts': {
+          case 'Intérêts': {
             newCVData.interests.push(line.trim());
             break;
           }

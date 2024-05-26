@@ -9,8 +9,10 @@ import Home from "./component/Home";
 import About from "./component/About";
 import Services from "./component/Services";
 import Profile from "./component/Profile";
+import Blog from "./component/Blog";
 import DashboardPage from './DashboardPage/DashboardPage';
 import ResumesPage from './DashboardPage/ResumesPage';
+import Testimonials from './component/Testimonials';
 import JobOffersPage from './DashboardPage/JobOffersPage';
 import ApplicationsPage from './DashboardPage/ApplicationsPage';
 import DashboardContent from './DashboardPage/DashboardContent';
@@ -70,9 +72,11 @@ function App() {
           <Route path='/cvselection' element={<CVSelection />}  />
           <Route path='/test' element={<TestUpdate />}  />
           <Route path='/skills' element={<Skills />}  />
+          <Route path='/Testimonials' element={<Testimonials />}  />
           <Route path='/login' element={<Login />}  />
           <Route path='/services' element={<Services />} />
           <Route path='/Signup' element={<SignUp />} /> 
+          <Route path='/Blog' element={<Blog />} /> 
           <Route path="/dashboard" element={<DashboardPage />} /> 
           <Route path="/dashboard/:cvId" element={<DashboardContent />} />          <Route path="/resumes" element={<ResumesPage />} />           
           <Route path="/JobOffers" element={<JobOffersPage />} /> 

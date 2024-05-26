@@ -1,0 +1,60 @@
+.pressedReviews {
+    margin-top: 50px;
+  }
+  
+  .pressedReviews .h1Title {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .reviewForm {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .userSelect {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+  }
+  
+  .messageInput {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .submitButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #0056b3;
+  }
+  .starEmpty {
+    color: yellow; /* Couleur jaune */
+  }
+  .stars {
+    display: flex;
+    justify-content: center; /* Centrer horizontalement */
+  }
+  
+  .star {
+    font-size: 2em; /* Augmentez la taille des étoiles */
+    margin: 0 5px; /* Ajoutez un espace entre les étoiles */
+  }

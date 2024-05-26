@@ -1,21 +1,34 @@
-/* General container style */
+/* Home.module.css */
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
-  background-color: #FFF; /* White background for the whole container */
+  background-color: #fff;
+}
+@keyframes moveBackground {
+  from {
+    background-position: 0 0; /* Début de la position de l'image de fond */
+  }
+  to {
+    background-position: 100% 0; /* Fin de la position de l'image de fond */
+  }
+}
+.heroAnimated {
+  animation: moveBackground 20s linear infinite;
 }
 
-/* Hero section style */
 .hero {
+  animation: moveBackground 20s linear infinite;
   text-align: center;
-  padding: 20px 20px;
-  background-color: #FFF; /* White background */
-  color: #132043; /* Dark blue text for contrast */
+  margin-top: 0px;
+  background-color: #fff;
+  color: #132043;
   border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .hero h1 {
@@ -29,8 +42,8 @@
 }
 
 .createButton {
-  background-color: #F1B4BB; /* Pink button */
-  color: #FFF;
+  background-color: #f1b4bb;
+  color: #fff;
   font-size: 1.1em;
   padding: 12px 24px;
   border: none;
@@ -39,15 +52,15 @@
   transition: all 0.3s ease;
 }
 
+
 .createButton:hover {
-  background-color: #f8d7da; /* Lighter pink on hover */
+  background-color: #f8d7da;
 }
 
-/* CV list styles */
 .cvListHorizontal {
   display: flex;
   gap: 20px;
-  padding: 10px; /* Restored original padding */
+  padding: 10px;
   overflow-x: auto;
   align-items: center;
 }
@@ -67,8 +80,8 @@
 
 .cvItem {
   flex: 0 0 auto;
-  width: calc(25% - 20px); /* Restored original width */
-  max-height: 400px; /* Restored original height */
+  width: calc(25% - 20px);
+  max-height: 400px;
   background-color: #f3f4f6;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -99,14 +112,15 @@
 .models {
   padding: 20px 0;
 }
+
 .models h1 {
   font-size: 2em;
   margin-bottom: 20px;
 }
-/* Footer styles */
+
 .footer {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 20px; /* Réduit la marge supérieure */
   padding-top: 20px;
   border-top: 1px solid #ccc;
   background-color: #fff;
@@ -119,200 +133,125 @@
 
 .downloadButton {
   color: #040404;
-  
   padding: 10px 20px;
   border-radius: 25px;
   transition: background-color 0.3s ease;
 }
 
 .downloadButton:hover {
-  background-color: #1F4172; /* Slightly darker blue on hover */
+  background-color: #1f4172;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hero, .models, .footer {
-    padding: 20px;
-  }
-
-  .createButton, .downloadButton {
-    padding: 10px 15px;
-  }
-
-  .cvListHorizontal {
-    gap: 10px;
-  }
-
-  .hero h1 {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-  }
-
-  .hero p {
-    font-size: 1em;
-  }
-}
 .descriptionContainer {
-  max-width: 800px; /* Largeur maximale du conteneur */
-  margin: 0 auto; /* Centrer le conteneur horizontalement */
-  padding: 30px; /* Espacement intérieur du conteneur */
-  background-color: #f9f9f9; /* Couleur de fond du conteneur */
-  border-radius: 10px; /* Bord arrondi du conteneur */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
-  margin-bottom: 15px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px; /* Réduit la marge inférieure */
 }
 
 .description {
-  color: #132043; /* Couleur du texte */
-  font-size: 20px; /* Taille de la police */
-  line-height: 1.6; /* Hauteur de ligne */
-  opacity: 0; /* Opacité initiale à 0 pour l'animation */
-  transition: opacity 0.5s ease; /* Transition de l'opacité pour l'animation */
+  color: #132043;
+  font-size: 20px;
+  line-height: 1.6;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 .show {
-  opacity: 1; /* Opacité à 1 pour afficher le texte */
+  opacity: 1;
 }
 
-
 .typing-animation::after {
-  content: "|"; /* Afficher un curseur clignotant */
-  animation: blink-caret 0.75s step-end infinite alternate; /* Animation du curseur clignotant */
+  content: "|";
+  animation: blink-caret 0.75s step-end infinite alternate;
 }
 
 @keyframes blink-caret {
   from, to {
-    color: transparent; /* Rendre le curseur clignotant invisible */
+    color: transparent;
   }
   50% {
-    color: black; /* Rendre le curseur clignotant visible */
+    color: black;
   }
 }
-/* Styles pour l'icône du chatbot */
-/* Styles pour le conteneur de l'icône du chatbot */
+
 .chatIconContainer {
-  width: 100px; /* Largeur du conteneur */
-  height: 100px; /* Hauteur du conteneur */
+  width: 100px;
+  height: 100px;
 }
+
 .chatIcon {
   position: fixed;
   bottom: 50px;
   right: 50px;
   z-index: 1000;
   cursor: pointer;
-  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease; /* Ajouter une transition pour un mouvement fluide */
-  width: 5%; /* Ajuster la largeur */
-  height: 10%; /* Ajuster la hauteur */
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+  width: 5%;
+  height: 10%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px; /* Ajuster la taille de la police */
-  animation: pulseAnimation 2s infinite; /* Ajouter l'animation de pulsation */
+  font-size: 24px;
+  animation: pulseAnimation 2s infinite;
   background-color: #fff;
   border-radius: 30%;
 }
 
-
-/* Styles pour le conteneur du chatbot */
-.chatContainer {
-  position: fixed;
-  bottom: 150px;
-  overflow-y:auto ;
-  right: 50px;
-  z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
-  background-color: #ffffff; /* Couleur de fond */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
-  border-radius: 10px; /* Coins arrondis */
-  max-height: 70%; /* Hauteur maximale du conteneur */
-  width:25%; /* Largeur du conteneur */
-  height: 60%;
-  transition: transform 0.3s ease, opacity 0.3s ease; /* Ajoute une transition fluide */
+.chatIcon:hover {
+  transform: scale(1.1);
 }
 
-/* Styles pour le chatbot lui-même */
-.Chat {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 20px; /* Ajouter un espacement intérieur */
+@keyframes pulseAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-/* Styles pour la page d'accueil */
-.container {
-  position: relative; /* Permet de positionner les éléments enfants par rapport à celui-ci */
-  z-index: 1; /* Assure que le contenu de la page d'accueil est affiché au-dessus du chatbot */
-}
-
-/* Styles pour l'overlay */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Couleur de fond semi-transparente */
-  z-index: 998; /* Assure que l'overlay est affiché en dessous du chatbot mais au-dessus du contenu de la page d'accueil */
-  display: none; /* Masque par défaut l'overlay */
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  display: none;
 }
+
 .overlay.active {
-  display: block; /* Affiche l'overlay lorsque la classe active est présente */
-}
-.chatIcon:hover {
-  transform: scale(1.1); /* Fait grossir l'icône lorsqu'elle est survolée */
-}
-
-@keyframes pulseAnimation {
-  0% {
-    transform: scale(1); /* Taille de départ */
-  }
-  50% {
-    transform: scale(1.1); /* Taille maximale à mi-chemin */
-  }
-  100% {
-    transform: scale(1); /* Retour à la taille de départ */
-  }
-}
-
-/* Styles pour la bulle de discussion */
-.chatIcon::before {
-  content: attr(data-message); /* Affiche le contenu dynamique */
-  position: absolute;
-  bottom: calc(100% + 10px);
-  right: 50%;
-  transform: translateX(50%);
-  background-color: #f1f1f1;
-  color: #333;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  display: block;
 }
 
 .chatIcon:hover::before {
   opacity: 1;
 }
 
-.chatIconContainer {
-  position: relative; /* Ajouté pour positionner correctement le message par rapport à l'icône */
-}
-
 .chatIconMessage {
-  bottom: 50px; /* Distance au-dessus de l'icône */
+  bottom: 50px;
   transform: translateX(-50%);
   background-color: #d5d5d5;
   padding: 12px 20px;
-  border-radius: 10px; /* Bordures arrondies pour la bulle */
+  border-radius: 10px;
   font-size: 16px;
   color: #333;
-  white-space:initial;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  display: flex; 
+  white-space: initial;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
   position: fixed;
   bottom: 150px;
-  right:50px;
+  right: 50px;
   width: 160px;
-  z-index: 999; 
+  z-index: 999;
 }
 
 .chatIconMessage::before {
@@ -325,23 +264,188 @@
   border-color: #bebebe transparent transparent transparent;
   transform: translateX(-50%);
 }
-.testContainer {
-  position: relative;
-  width: 100%;
-  height: 200px; /* Ajustez selon vos besoins */
-  overflow: hidden;
+.howItWorks {
+  text-align: center;
+  padding: 20px;
 }
 
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-.languageTests h1 {
+.howItWorks h2 {
   font-size: 2em;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.step {
+  flex: 1 1 300px;
+  max-width: 300px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step h3 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.step p {
+  font-size: 1.1em;
+}
+
+.videoContainer {
+  margin-top: 50px;
+}
+.reviews {
+  padding: 20px 0;
+}
+
+.reviews .h1Title {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+
+.pressedReviews {
+  margin-top: 50px;
+}
+
+.pressedReviews .h1Title {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.reviewForm {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.userSelect {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+}
+
+.messageInput {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.submitButton {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #0056b3;
+}
+
+.stars {
+  display: flex;
+  justify-content: center; /* Centrer horizontalement */
+  font-size: 2em; /* Augmentez la taille des étoiles */
+  margin: 0 5px;
+}
+/* Existing styles... */
+
+.userReviews {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.reviewList {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.reviewItem {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  min-width: 200px;
+}
+
+.reviewStars {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.starIcon {
+  color: gold;
+}
+
+.reviewMessage {
+  font-size: 14px;
+}
+
+/* Ajout de styles pour la section des avis des utilisateurs */
+.userReviews {
+  padding: 0px;
+  background-color: #fff;
+  margin: 0px;
+}
+
+.reviewList {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.reviewItem {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  min-width: 200px;
+}
+
+.reviewStars {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.starIcon {
+  color: gold;
+}
+
+.starIconFilled {
+  color: gold; /* Couleur des étoiles remplies */
+}
+
+.userName {
+  font-weight: bold;
+}
+
+.userPhoto {
+  width: 50px; /* Taille de la photo de l'utilisateur */
+  height: 50px;
+  border-radius: 50%; /* Pour une forme arrondie */
+  margin-right: 10px;
+  object-fit: cover;
+}
+
