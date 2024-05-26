@@ -217,8 +217,7 @@ const CVModel7 = () => {
           {
             parts: [
               {
-                text: `Créer un CV professionnelle à partir des données suivantes et ,garder la meme  titre des section: ${JSON.stringify(formattedCVModel)}`
-              }
+                text: `Veuillez améliorer le contenu de ce CV en conservant exactement les mêmes titres de sections et le même format. Voici les données du CV : ${JSON.stringify(formattedCVModel)}`              }
             ]
           }
         ]
@@ -301,44 +300,58 @@ const CVModel7 = () => {
     let section = '';
     lines.forEach(line => {
       if (line.startsWith('**')) {
-        section = line.replace(/\*\*/g, '').toLowerCase();
+        section = line.replace(/\*\*/g, '').toLowerCase().trim();
       } else {
         switch (section) {
-          case 'Informations personnelles': {
-            const [fieldName, fieldValue] = line.split(':');
-            newCVData[fieldName.trim().toLowerCase()] = fieldValue.trim();
+          case 'informations personnelles': {
+            const [fieldName, fieldValue] = line.split(':').map(item => item.trim());
+            if (fieldName && fieldValue && fieldName in newCVData) {
+              newCVData[fieldName] = fieldValue;
+            }
             break;
           }
           case 'profil': {
-            newCVData.profile += line + ' ';
+            newCVData.profile += line.trim() + ' ';
             break;
           }
-          case 'Compétences professionnelles': {
-            const [skill, proficiency] = line.split('(');
-            newCVData.professionalSkills.push({ skillName: skill.trim(), proficiency: parseInt(proficiency) });
+          case 'compétences professionnelles': {
+            const match = line.match(/(.+)\s\(Maîtrise\s:\s(\d+)\/10\)/);
+            if (match) {
+              const [, skillName, proficiency] = match;
+              newCVData.professionalSkills.push({ skillName: skillName.trim(), proficiency: proficiency.trim() });
+            }
             break;
           }
-          case 'Expériences': {
-            const [jobTitle, employer, period] = line.split(',');
-            const [startDate, endDate] = period.replace(')', '').split('(');
-            newCVData.experiences.push({
-              jobTitle: jobTitle.trim(),
-              employeur: employer.trim(),
-              startDate: new Date(startDate.trim()),
-              endDate: new Date(endDate.trim()),
-              ville: ''
-            });
+          case 'expériences professionnelles': {
+            const parts = line.split(' : ');
+            if (parts.length === 2) {
+              const [dates, details] = parts;
+              const [startDate, endDate] = dates.split(' - ').map(date => date.trim());
+              const [employeur, ville, ...description] = details.split(',').map(item => item.trim());
+              newCVData.experiences.push({
+                startDate,
+                endDate,
+                ville,
+                jobTitle: '',
+                employeur,
+                description: description.join(', ')
+              });
+            }
             break;
           }
-          case 'Éducation': {
-            const [degree, institution, period2] = line.split(',');
-            const [startDate2, endDate2] = period2.replace(')', '').split('(');
-            newCVData.education.push({
-              degree: degree.trim(),
-              institution: institution.trim(),
-              startDate: new Date(startDate2.trim()),
-              endDate: new Date(endDate2.trim())
-            });
+          case 'éducation': {
+            const parts = line.split(' : ');
+            if (parts.length === 2) {
+              const [dates, details] = parts;
+              const [startDate, endDate] = dates.split(' - ').map(date => date.trim());
+              const [institution, degree] = details.split(',').map(item => item.trim());
+              newCVData.education.push({
+                startDate,
+                endDate,
+                institution,
+                degree
+              });
+            }
             break;
           }
           case 'langues': {
@@ -346,7 +359,7 @@ const CVModel7 = () => {
             newCVData.languages.push({ name: language.trim(), proficiency: parseInt(proficiency2) });
             break;
           }
-          case 'Intérêts': {
+          case 'intérêts': {
             newCVData.interests.push(line.trim());
             break;
           }
@@ -356,8 +369,11 @@ const CVModel7 = () => {
       }
     });
   
+    newCVData.profile = newCVData.profile.trim(); // Remove trailing space
+  
     return newCVData;
   };
+  
   
   return (
     <div className={styles.pageWrapper}>
