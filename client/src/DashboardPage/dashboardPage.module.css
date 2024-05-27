@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  
  
 }
 
@@ -10,7 +11,7 @@
 .content-area {
   display: flex;
   flex-grow: 1;
-  overflow: hidden; /* Hide overflow to prevent scrolling on the content area */
+  overflow-y: auto; /* Hide overflow to prevent scrolling on the content area */
 }
 
 /* Style for the left area */

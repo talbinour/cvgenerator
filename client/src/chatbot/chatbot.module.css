@@ -1,42 +1,40 @@
-/* Container pour la page entière */
 .pageWrapper {
     padding: 6%;
     display: flex;
-    flex-direction: column-reverse; /* Afficher les messages de bas en haut */
-    height: 100vh; /* Hauteur de la vue à 100% de la hauteur de l'écran */
-    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
 }
 
-/* Message box */
 .messageContainer {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse; /* Inverser l'ordre des messages */
     align-items: flex-start;
+    flex-grow: 1; /* Pour que le conteneur des messages prenne l'espace disponible */
+    overflow-y: auto; /* Activer le défilement vertical si nécessaire */
+    scroll-behavior: smooth; /* Faire défiler le conteneur de messages en douceur vers le haut */
 }
 
-/* Message */
 .message {
-    margin-bottom: 10px;
+    margin-top: 10px; /* Déplace les messages vers le haut */
+    margin-bottom: 10px; /* Ajoute un espace en bas du dernier message */
     padding: 10px;
     border-radius: 20px;
     max-width: 70%;
-    position: relative; /* Permet de positionner la date et l'heure par rapport au message */
+    position: relative;
 }
 
-/* User message */
 .me {
-    background-color: #007bff; 
-    color: #fff; 
+    background-color: #007bff;
+    color: #fff;
     align-self: flex-end;
 }
 
-/* Bot message */
 .bot {
-    background-color: #ece5dd; 
+    background-color: #ece5dd;
     align-self: flex-start;
 }
 
-/* Date and time */
 .timestamp {
     font-size: 0.8em;
     color: #666;
@@ -45,29 +43,31 @@
     left: 0;
 }
 
-/* Input field */
-.inputField {
-    width: calc(100% - 100px); /* Prendre la largeur restante après avoir soustrait la largeur du bouton envoyer */
+.inputContainer {
+    display: flex;
+    align-items: center;
     padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px; /* Coins arrondis */
+    background-color: #f8f9fa; /* Ajout d'un arrière-plan pour le champ d'entrée */
 }
 
-/* Send button */
+.inputField {
+    flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
 .sendButton {
     width: 70px;
     padding: 10px;
-    margin-top: 10px;
-    margin-left: 10px; /* Espacement à gauche du bouton envoyer */
-    background-color: #007bff; /* blue */
+    background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 20px; /* Coins arrondis */
+    border-radius: 20px;
     cursor: pointer;
 }
 
-/* Send button hover */
 .sendButton:hover {
-    background-color: #0056b3; /* Darker blue */
+    background-color: #0056b3;
 }

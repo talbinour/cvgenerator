@@ -179,31 +179,52 @@
 }
 
 .chatIconContainer {
-  width: 100px;
-  height: 100px;
+  width: 100px; /* Largeur du conteneur */
+  height: 100px; /* Hauteur du conteneur */
 }
-
 .chatIcon {
   position: fixed;
   bottom: 50px;
   right: 50px;
   z-index: 1000;
   cursor: pointer;
-  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
-  width: 5%;
-  height: 10%;
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease; /* Ajouter une transition pour un mouvement fluide */
+  width: 5%; /* Ajuster la largeur */
+  height: 10%; /* Ajuster la hauteur */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
-  animation: pulseAnimation 2s infinite;
+  font-size: 24px; /* Ajuster la taille de la police */
+  animation: pulseAnimation 2s infinite; /* Ajouter l'animation de pulsation */
   background-color: #fff;
   border-radius: 30%;
 }
 
-.chatIcon:hover {
-  transform: scale(1.1);
+
+/* Styles pour le conteneur du chatbot */
+.chatContainer {
+  position: fixed;
+  bottom: 150px;
+  overflow-y:auto ;
+  right: 50px;
+  z-index: 999; /* Assure que le conteneur du chatbot est au-dessus de l'icône */
+  background-color: #ffffff; /* Couleur de fond */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
+  border-radius: 10px; /* Coins arrondis */
+  max-height: 70%; /* Hauteur maximale du conteneur */
+  width:25%; /* Largeur du conteneur */
+  height: 60%;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Ajoute une transition fluide */
 }
+
+/* Styles pour le chatbot lui-même */
+.Chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Ajouter un espacement intérieur */
+}
+
 
 @keyframes pulseAnimation {
   0% {

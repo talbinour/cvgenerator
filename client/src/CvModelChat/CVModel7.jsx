@@ -183,6 +183,7 @@ const CVModel7 = () => {
 
     return formattedCVModel;
   };
+  
 
   const saveCVToServer = async () => {
     try {
@@ -212,20 +213,23 @@ const CVModel7 = () => {
   const regenerateCVContent = async () => {
     try {
       const formattedCVModel = validateAndFormatCVData(cvModel);
+  
       const cvContentJSON = {
         contents: [
           {
             parts: [
               {
-                text: `Veuillez améliorer le contenu de ce CV en conservant exactement les mêmes titres de sections et le même format. Voici les données du CV : ${JSON.stringify(formattedCVModel)}`              }
+                text: `Créer un CV professionnel à partir des données suivantes, en conservant les titres des sections : ${JSON.stringify(formattedCVModel)}`
+              }
             ]
           }
         ]
       };
-
+  
       const apiKey = 'AIzaSyDUC4m-CZnwwcHCoFG_mUztkLCfEjskTmY';
-
-      const response = await axios.post(
+  
+      // Generate CV content using the external API
+      const generateResponse = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
         cvContentJSON,
         {
@@ -234,61 +238,77 @@ const CVModel7 = () => {
           },
         }
       );
-
-      console.log('API response:', response.data);
-      
-      if (!response.data || !response.data.candidates || response.data.candidates.length === 0) {
+  
+      console.log('API response:', generateResponse.data);
+  
+      if (!generateResponse.data || !generateResponse.data.candidates || generateResponse.data.candidates.length === 0) {
         console.error('Aucune donnée valide n\'a été renvoyée par l\'API.');
         return;
       }
-
-      const content = response.data.candidates[0]?.content?.parts[0]?.text;
-
+  
+      const content = generateResponse.data.candidates[0]?.content?.parts[0]?.text;
+  
       if (!content) {
         console.error('Le contenu retourné par l\'API est vide.');
         return;
       }
-
+  
       console.log('API response content:', content);
-
+  
       const newCVData = parseCVContent(content);
-
-      const updatedCvModel = {
-        ...cvModel,
-        name: newCVData.name,
-        prenom: newCVData.prenom,
-        profession: newCVData.profession,
-        phone: newCVData.phone,
-        email: newCVData.email,
-        website: newCVData.website,
-        linkedin: newCVData.linkedin,
-        address: newCVData.address,
-        profile: newCVData.profile,
-        education: newCVData.education || [],
-        languages: newCVData.languages || [],
-        experiences: newCVData.experiences || [],
-        professionalSkills: newCVData.professionalSkills || [],
-        interests: newCVData.interests || []
-      };
-
+  
+      // Mise à jour du modèle de CV uniquement si la section contient des modifications
+      const updatedCvModel = { ...cvModel };
+  
+      if (newCVData.profile) {
+        updatedCvModel.profile = newCVData.profile;
+      }
+  
+      if (newCVData.languages.length > 0) {
+        updatedCvModel.languages = newCVData.languages;
+      }
+  
+      if (newCVData.experiences.length > 0) {
+        newCVData.experiences.forEach((exp, index) => {
+          if (exp.description || exp.position || exp.employer) {
+            if (!updatedCvModel.experiences[index]) {
+              updatedCvModel.experiences[index] = {};
+            }
+            if (exp.description) {
+              updatedCvModel.experiences[index].description = exp.description;
+            }
+            if (exp.position) {
+              updatedCvModel.experiences[index].position = exp.position;
+            }
+            if (exp.employer) {
+              updatedCvModel.experiences[index].employer = exp.employer;
+            }
+          }
+        });
+      }
+  
+      if (newCVData.education.length > 0) {
+        updatedCvModel.education = newCVData.education;
+      }
+  
+      if (newCVData.professionalSkills.length > 0) {
+        updatedCvModel.professionalSkills = newCVData.professionalSkills;
+      }
+  
+      if (newCVData.interests.length > 0) {
+        updatedCvModel.interests = newCVData.interests;
+      }
+  
       setCvModel(updatedCvModel);
-
+  
     } catch (error) {
       console.error('Une erreur est survenue lors de la génération du contenu du CV :', error);
     }
   };
-
+  
   const parseCVContent = (content) => {
     const lines = content.split('\n').filter(line => line.trim() !== '');
     const newCVData = {
-      name: '',
-      prenom: '',
-      profession: '',
-      phone: '',
-      email: '',
-      website: '',
-      linkedin: '',
-      address: '',
       profile: '',
       education: [],
       languages: [],
@@ -300,66 +320,69 @@ const CVModel7 = () => {
     let section = '';
     lines.forEach(line => {
       if (line.startsWith('**')) {
-        section = line.replace(/\*\*/g, '').toLowerCase().trim();
+        section = line.replace(/\*\*/g, '').toLowerCase();
       } else {
         switch (section) {
-          case 'informations personnelles': {
-            const [fieldName, fieldValue] = line.split(':').map(item => item.trim());
-            if (fieldName && fieldValue && fieldName in newCVData) {
-              newCVData[fieldName] = fieldValue;
+          case 'profil':
+          case 'profile':
+          case 'résumé': {
+            newCVData.profile += line + ' ';
+            break;
+          }
+          case 'compétences professionnelles':
+          case 'professional skills': {
+            const [skill, proficiency] = line.split('(');
+            newCVData.professionalSkills.push({ skillName: skill.trim(), proficiency: parseInt(proficiency) });
+            break;
+          }
+          case 'langues':
+          case 'languages': {
+            const [language, proficiency] = line.split('(');
+            newCVData.languages.push({ name: language.trim(), proficiency: parseInt(proficiency) });
+            break;
+          }
+          case 'expériences':
+          case 'experiences': {
+            if (!newCVData.experiences.length || newCVData.experiences[newCVData.experiences.length - 1].description) {
+              newCVData.experiences.push({});
+            }
+            const [key, value] = line.split(':');
+            if (key && value) {
+              const keyTrimmed = key.trim().toLowerCase();
+              const valueTrimmed = value.trim();
+              if (keyTrimmed === 'description') {
+                newCVData.experiences[newCVData.experiences.length - 1].description = valueTrimmed;
+              } else if (keyTrimmed === 'poste' || keyTrimmed === 'position') {
+                newCVData.experiences[newCVData.experiences.length - 1].position = valueTrimmed;
+              } else if (keyTrimmed === 'employeur' || keyTrimmed === 'employer') {
+                newCVData.experiences[newCVData.experiences.length - 1].employer = valueTrimmed;
+              }
+            } else {
+              newCVData.experiences[newCVData.experiences.length - 1].description = line.trim();
             }
             break;
           }
-          case 'profil': {
-            newCVData.profile += line.trim() + ' ';
-            break;
-          }
-          case 'compétences professionnelles': {
-            const match = line.match(/(.+)\s\(Maîtrise\s:\s(\d+)\/10\)/);
-            if (match) {
-              const [, skillName, proficiency] = match;
-              newCVData.professionalSkills.push({ skillName: skillName.trim(), proficiency: proficiency.trim() });
+          case 'éducation':
+          case 'education': {
+            if (!newCVData.education.length || newCVData.education[newCVData.education.length - 1].degree) {
+              newCVData.education.push({});
+            }
+            const [key, value] = line.split(':');
+            if (key && value) {
+              const keyTrimmed = key.trim().toLowerCase();
+              const valueTrimmed = value.trim();
+              if (keyTrimmed === 'diplôme' || keyTrimmed === 'degree') {
+                newCVData.education[newCVData.education.length - 1].degree = valueTrimmed;
+              } else if (keyTrimmed === 'école' || keyTrimmed === 'school' || keyTrimmed === 'université' || keyTrimmed === 'university') {
+                newCVData.education[newCVData.education.length - 1].school = valueTrimmed;
+              }
+            } else {
+              newCVData.education[newCVData.education.length - 1].degree = line.trim();
             }
             break;
           }
-          case 'expériences professionnelles': {
-            const parts = line.split(' : ');
-            if (parts.length === 2) {
-              const [dates, details] = parts;
-              const [startDate, endDate] = dates.split(' - ').map(date => date.trim());
-              const [employeur, ville, ...description] = details.split(',').map(item => item.trim());
-              newCVData.experiences.push({
-                startDate,
-                endDate,
-                ville,
-                jobTitle: '',
-                employeur,
-                description: description.join(', ')
-              });
-            }
-            break;
-          }
-          case 'éducation': {
-            const parts = line.split(' : ');
-            if (parts.length === 2) {
-              const [dates, details] = parts;
-              const [startDate, endDate] = dates.split(' - ').map(date => date.trim());
-              const [institution, degree] = details.split(',').map(item => item.trim());
-              newCVData.education.push({
-                startDate,
-                endDate,
-                institution,
-                degree
-              });
-            }
-            break;
-          }
-          case 'langues': {
-            const [language, proficiency2] = line.split('(');
-            newCVData.languages.push({ name: language.trim(), proficiency: parseInt(proficiency2) });
-            break;
-          }
-          case 'intérêts': {
+          case 'intérêts':
+          case 'interests': {
             newCVData.interests.push(line.trim());
             break;
           }
@@ -369,10 +392,14 @@ const CVModel7 = () => {
       }
     });
   
-    newCVData.profile = newCVData.profile.trim(); // Remove trailing space
-  
     return newCVData;
   };
+  
+  
+  
+  
+  
+  
   
   
   return (
@@ -394,7 +421,7 @@ const CVModel7 = () => {
               <h2>{cvModel.name} <br />{cvModel.prenom}<br /></h2>
               <h3>{cvModel.profession}</h3>
             </div>
-            <h3 className={styles.title}>CONTACT INFO</h3>
+            <h3 className={styles.title}>Coordonnées</h3>
             <div className={styles.contactInfo}>
               <ul>
                 <li>
@@ -430,7 +457,7 @@ const CVModel7 = () => {
               </ul>
             </div>
             <div className={styles.education}>
-              <h3 className={styles.title}>Education</h3>
+              <h3 className={styles.title}>Éducation</h3>
               <ul>
                 {cvModel.education?.map((edu, index) => (
                   <li key={index}>
@@ -445,7 +472,7 @@ const CVModel7 = () => {
               </ul>
             </div>
             <div className={styles.languages}>
-              <h3 className={styles.title}>LANGUAGES</h3>
+              <h3 className={styles.title}>langues</h3>
               <ul>
                 {cvModel.languages && cvModel.languages.map((lang, index) => (
                   <li key={index}>
@@ -460,11 +487,11 @@ const CVModel7 = () => {
           </div>
           <div className={styles.right_Side}>
             <div className={styles.about}>
-              <h2 className={styles.title2}>Profile</h2>
+              <h2 className={styles.title2}>Profil</h2>
               <p>{cvModel.profile}</p>
             </div>
             <div className={styles.experiences}>
-              <h2 className={styles.title2}>Experience</h2>
+              <h2 className={styles.title2}>Expérience</h2>
               {cvModel.experiences?.map((exp, index) => (
                 <div className={styles.box} key={index}>
                   <div className={styles.year_company}>
