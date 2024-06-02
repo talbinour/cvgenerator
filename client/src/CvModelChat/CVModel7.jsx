@@ -6,6 +6,8 @@ import avatar from "../assets/cvprofile.jpeg";
 import { useNavigate } from "react-router-dom";
 
 const CVModel7 = () => {
+  const [regenerateButtonVisible, setRegenerateButtonVisible] = useState(true);
+const [saveButtonVisible, setSaveButtonVisible] = useState(false);
   const navigate = useNavigate();
   const [currentCVId, setCurrentCVId] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -186,6 +188,8 @@ const CVModel7 = () => {
   
 
   const saveCVToServer = async () => {
+    setRegenerateButtonVisible(true);
+    setSaveButtonVisible(false);
     try {
       const formattedCVModel = validateAndFormatCVData(cvModel);
       const requiredFields = ['name', 'phone', 'email', 'address', 'profile'];
@@ -211,6 +215,8 @@ const CVModel7 = () => {
   };
 
   const regenerateCVContent = async () => {
+    setRegenerateButtonVisible(false);
+    setSaveButtonVisible(true);
     try {
       const formattedCVModel = validateAndFormatCVData(cvModel);
   
@@ -270,25 +276,13 @@ const CVModel7 = () => {
   
       if (newCVData.experiences.length > 0) {
         newCVData.experiences.forEach((exp, index) => {
-          if (exp.description || exp.position || exp.employer) {
+          if (exp.description) {
             if (!updatedCvModel.experiences[index]) {
               updatedCvModel.experiences[index] = {};
             }
-            if (exp.description) {
-              updatedCvModel.experiences[index].description = exp.description;
-            }
-            if (exp.position) {
-              updatedCvModel.experiences[index].position = exp.position;
-            }
-            if (exp.employer) {
-              updatedCvModel.experiences[index].employer = exp.employer;
-            }
+            updatedCvModel.experiences[index].description = exp.description;
           }
         });
-      }
-  
-      if (newCVData.education.length > 0) {
-        updatedCvModel.education = newCVData.education;
       }
   
       if (newCVData.professionalSkills.length > 0) {
@@ -346,43 +340,12 @@ const CVModel7 = () => {
             if (!newCVData.experiences.length || newCVData.experiences[newCVData.experiences.length - 1].description) {
               newCVData.experiences.push({});
             }
-            const [key, value] = line.split(':');
-            if (key && value) {
-              const keyTrimmed = key.trim().toLowerCase();
-              const valueTrimmed = value.trim();
-              if (keyTrimmed === 'description') {
-                newCVData.experiences[newCVData.experiences.length - 1].description = valueTrimmed;
-              } else if (keyTrimmed === 'poste' || keyTrimmed === 'position') {
-                newCVData.experiences[newCVData.experiences.length - 1].position = valueTrimmed;
-              } else if (keyTrimmed === 'employeur' || keyTrimmed === 'employer') {
-                newCVData.experiences[newCVData.experiences.length - 1].employer = valueTrimmed;
-              }
-            } else {
-              newCVData.experiences[newCVData.experiences.length - 1].description = line.trim();
-            }
-            break;
-          }
-          case 'éducation':
-          case 'education': {
-            if (!newCVData.education.length || newCVData.education[newCVData.education.length - 1].degree) {
-              newCVData.education.push({});
-            }
-            const [key, value] = line.split(':');
-            if (key && value) {
-              const keyTrimmed = key.trim().toLowerCase();
-              const valueTrimmed = value.trim();
-              if (keyTrimmed === 'diplôme' || keyTrimmed === 'degree') {
-                newCVData.education[newCVData.education.length - 1].degree = valueTrimmed;
-              } else if (keyTrimmed === 'école' || keyTrimmed === 'school' || keyTrimmed === 'université' || keyTrimmed === 'university') {
-                newCVData.education[newCVData.education.length - 1].school = valueTrimmed;
-              }
-            } else {
-              newCVData.education[newCVData.education.length - 1].degree = line.trim();
-            }
+            newCVData.experiences[newCVData.experiences.length - 1].description = line.trim();
             break;
           }
           case 'intérêts':
-          case 'interests': {
+          case 'interests':
+            case 'Centres d\'intérêt': {
             newCVData.interests.push(line.trim());
             break;
           }
@@ -394,7 +357,6 @@ const CVModel7 = () => {
   
     return newCVData;
   };
-  
   
   
   
@@ -533,10 +495,9 @@ const CVModel7 = () => {
           </div>
         </div>
       </div>
-      <button onClick={regenerateCVContent} className={styles.regenerateButton}>Regenerate CV Content</button>
-      <button onClick={saveCVToServer} className={styles.finishButton}>
-        Sauvegarder le cv
-      </button>
+      <button onClick={regenerateCVContent} className={styles.regenerateButton} style={{ display: regenerateButtonVisible ? 'block' : 'none' }}>Regenerate CV Content</button>
+      <button onClick={saveCVToServer} className={styles.finishButton} style={{ display: saveButtonVisible ? 'block' : 'none' }}>Sauvegarder le cv</button>
+
     </div>
   );
 };

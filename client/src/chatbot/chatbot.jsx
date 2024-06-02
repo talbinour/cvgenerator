@@ -7,7 +7,7 @@ import axios from "axios";
 
 const Wrapper = styled.div`
   display: flex;
-  height: 100vh;
+  height: 600px;
   flex-direction: column;
 `;
 

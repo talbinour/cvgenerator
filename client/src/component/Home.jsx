@@ -142,7 +142,7 @@ const Home = () => {
       setShowDescription(true); 
     }, 400); 
     setTimeout(() => {
-      setBackgroundImage(boot);
+      setBackgroundImage();
     }, 2000);
 
 
@@ -284,7 +284,7 @@ const Home = () => {
         </div>
         {/* Vidéo */}
         <div className={styles.videoContainer}>
-    <iframe
+    {/* <iframe
       width="560"
       height="315"
       src="https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -292,7 +292,7 @@ const Home = () => {
       frameBorder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowFullScreen
-    ></iframe>
+    ></iframe> */}
   </div>
       </section>
       
@@ -325,7 +325,7 @@ const Home = () => {
           {reviews.map((review, index) => (
             <div key={index} className={styles.reviewItem}>
               <div className={styles.userInfo}>
-                <img src={review.photo}  className={styles.userPhoto} />
+                
                 
                 <p className={styles.userName}>{review.name}</p>
               </div>

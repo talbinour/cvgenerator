@@ -13,7 +13,6 @@
     width: 45%; /* Largeur du chatbot et du CV */
 }
 
-
 .right_Side {
     width: 100%; /* Prend toute la largeur de la partie droite */
     max-width: none; /* Supprimer la largeur maximale */
@@ -392,4 +391,39 @@ textarea {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+/* Positionnement du bouton "Régénérer le contenu du CV" */
+.regenerateButton {
+    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
+    top: 200px; /* Position par rapport au haut de la fenêtre */
+    right: 20px; /* Position par rapport à la droite de la fenêtre */
+    padding: 10px 20px;
+    font-size: 25px;
+    background-color: #053466;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 999; /* Assure que le bouton est au-dessus de tous les autres éléments */
+}
+
+/* Positionnement du bouton "Sauvegarder le CV" */
+.finishButton {
+    position: fixed; /* Rendre le bouton fixe par rapport à la fenêtre */
+    top: 270px; /* Position par rapport au haut de la fenêtre */
+    right: 20px; /* Position par rapport à la droite de la fenêtre */
+    padding: 10px 20px;
+    font-size: 25px;
+    background-color: #053466;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 999; /* Assure que le bouton est au-dessus de tous les autres éléments */
+}
+
+/* Style au survol pour les boutons */
+.finishButton:hover,
+.regenerateButton:hover {
+    opacity: 0.8;
 }

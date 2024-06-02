@@ -61,7 +61,7 @@ const JobSearchInterface = () => {
       const response = await axios.get('https://jobs-api14.p.rapidapi.com/list', {
         params: formData,
         headers: {
-          'X-RapidAPI-Key': '5a736f8247mshce33c49290ce21ep16e096jsn96175f56f724',
+          'X-RapidAPI-Key': 'fe26154804mshdb644780c7dd5dbp14986ajsn965417962537',
           'X-RapidAPI-Host': 'jobs-api14.p.rapidapi.com'
         }
       });
