@@ -15,6 +15,7 @@ const Navbar = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
   const profileMenuRef = useRef(null);
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -23,6 +24,7 @@ const Navbar = () => {
         .then(response => {
           setCurrentUser(response.data.user.nom);
           setUserPhoto(response.data.user.photo);
+          setUserRole(response.data.user.role);
         })
         .catch(error => {
           console.error('Erreur lors de la récupération du nom d\'utilisateur :', error);
@@ -68,6 +70,11 @@ const Navbar = () => {
           {currentUser && (
             <li>
               <Link to='/dashboard' className='dashboard'>Tableau de bord</Link>
+            </li>
+          )}
+          {currentUser && userRole === 'admin' && ( // Conditionally render the "Admin" link based on user role
+            <li>
+              <Link to='/admin' className='admin'>Admin</Link>
             </li>
           )}
           {currentUser && (
