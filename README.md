@@ -58,5 +58,5 @@ Chatbot
 
 
 Contact
-Pour toute question ou assistance, veuillez contacter notre équipe de support à l'adresse email : support@example.com
+Pour toute question ou assistance, veuillez contacter notre équipe de support à l'adresse email : verif.cevor@gmail.com
 
